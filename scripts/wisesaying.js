@@ -1,6 +1,6 @@
 const createWordsEl = () => {
-    alert("inside");
-    const wordsEl = document.createElement("li");
-}
+    alert('inside');
+    const wordsEl = document.createElement('li');
+};
 
-export {createWordsEl};
+export { createWordsEl };
