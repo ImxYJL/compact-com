@@ -1,5 +1,5 @@
 import { createWordsEl } from './wisesaying.js';
-import { createClockEl, getTime, initClock } from './clock.js';
+import { createClockEl, initClock } from './clock.js';
 
 // Desktop Element: to append a new tab
 const desktop = document.querySelector('#desktop');
@@ -8,31 +8,27 @@ const desktop = document.querySelector('#desktop');
 const sayingWordsLabel = document.querySelector('#wise-saying');
 const clockLabel = document.querySelector('#clock');
 
+//Elements will be created by click label
+let clockEl = null;
+let wordsEl = null;
+
 // Handlers for content (label) click
 const clickSayingWordsLabel = () => {
-    const wordsEl = createWordsEl();
+    wordsEl = createWordsEl();
     desktop.append(wordsEl);
 };
 
-let clockEl = null;
 const clickClockLabel = () => {
+    if (desktop.contains(clockEl)) return;
+
     clockEl = createClockEl();
-    //const clockEl = createClockEl();
     desktop.append(clockEl);
 
     //DOM 생성 이후에 달아줘야 하기 때문에 여기서 시계 그려줘야 함
     const printTimeEl = clockEl.querySelector('p');
-    console.log(printTimeEl);
-    getTime(printTimeEl);
-
-    if (clockEl) initClock(printTimeEl);
+    const printDateEl = clockEl.querySelector('#date');
+    initClock(printTimeEl, printDateEl);
 };
 
 sayingWordsLabel.addEventListener('click', clickSayingWordsLabel);
 clockLabel.addEventListener('click', clickClockLabel);
-
-// Handlers for close button click
-//initClock(); -> 얘 어카지
-() => {
-    if (clockEl) initClock(printTimeEl);
-};
