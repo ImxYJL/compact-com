@@ -8,7 +8,7 @@ const desktop = document.querySelector('#desktop');
 const sayingWordsLabel = document.querySelector('#wise-saying');
 const clockLabel = document.querySelector('#clock');
 
-//Elements will be created by click label
+// Elements will be created by click label
 let clockEl = null;
 let wordsEl = null;
 
@@ -19,14 +19,15 @@ const clickSayingWordsLabel = () => {
 };
 
 const clickClockLabel = () => {
+    // Make sure only one window is open
     if (desktop.contains(clockEl)) return;
 
     clockEl = createClockEl();
     desktop.append(clockEl);
 
-    //DOM 생성 이후에 달아줘야 하기 때문에 여기서 시계 그려줘야 함
-    const printTimeEl = clockEl.querySelector('p');
-    const printDateEl = clockEl.querySelector('#date');
+    // Set the timer after creating DOM elements
+    const printTimeEl = clockEl.querySelector('#clock-print');
+    const printDateEl = clockEl.querySelector('#date-print');
     initClock(printTimeEl, printDateEl);
 };
 
