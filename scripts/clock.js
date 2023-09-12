@@ -38,6 +38,7 @@ const setTime = (printClockEl) => {
         minutes < 10 ? `0${minutes}` : minutes
     }:${seconds < 10 ? `0${seconds}` : seconds}`;
 };
+
 const setDate = (printDateEl) => {
     const today = new Date();
     const month = getMonth(today.getMonth());
@@ -53,19 +54,27 @@ const initClock = (printClockEl, printDateEl) => {
 
     timerId = setInterval(() => {
         setTime(printClockEl);
-        //setDate(printDateEl);
+        setDate(printDateEl);
     }, 1000);
+};
+
+const attachFullTimer = (clockEl) => {
+    const printTimeEl = clockEl.querySelector('#clock-print');
+    const printDateEl = clockEl.querySelector('#date-container'); //#date-print로 하니까 컨테이너 무시됨
+    //덮어쓰기 때문인듯?
+    initClock(printTimeEl, printDateEl);
 };
 
 const createClockEl = () => {
     const clockEl = document.createElement('div');
     clockEl.className = 'window';
+    clockEl.draggable = true;
     clockEl.innerHTML = `
         <div id="clock-window">
             <div class="title-bar">
                 <div class="title-bar-text">Clock</div>
                     <div class="title-bar-controls">
-                        <button id ="clock-close-btn" aria-label="Close"></button>
+                        <button id ="close-btn" aria-label="Close"></button>
                     </div>
                 </div>
             <div class="window-body">
@@ -79,11 +88,12 @@ const createClockEl = () => {
         </div>
     `;
 
-    clockEl.querySelector('#clock-close-btn').addEventListener('click', () => {
+    attachFullTimer(clockEl);
+
+    clockEl.querySelector('#close-btn').addEventListener('click', () => {
         clearInterval(timerId);
         clockEl.remove();
     });
-
     return clockEl;
 };
 

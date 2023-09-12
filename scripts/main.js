@@ -1,5 +1,6 @@
+import { createDraggable } from './dragcontroller.js';
 import { createWordsEl } from './wisesaying.js';
-import { createClockEl, initClock } from './clock.js';
+import { createClockEl } from './clock.js';
 
 // Desktop Element: to append a new tab
 const desktop = document.querySelector('#desktop');
@@ -14,7 +15,10 @@ let wordsEl = null;
 
 // Handlers for content (label) click
 const clickSayingWordsLabel = () => {
+    if (desktop.contains(wordsEl)) return;
+
     wordsEl = createWordsEl();
+    createDraggable(wordsEl);
     desktop.append(wordsEl);
 };
 
@@ -23,12 +27,8 @@ const clickClockLabel = () => {
     if (desktop.contains(clockEl)) return;
 
     clockEl = createClockEl();
+    createDraggable(clockEl);
     desktop.append(clockEl);
-
-    // Set the timer after creating DOM elements
-    const printTimeEl = clockEl.querySelector('#clock-print');
-    const printDateEl = clockEl.querySelector('#date-print');
-    initClock(printTimeEl, printDateEl);
 };
 
 sayingWordsLabel.addEventListener('click', clickSayingWordsLabel);
