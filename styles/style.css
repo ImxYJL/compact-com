@@ -835,7 +835,8 @@ summary:focus {
     z-index: 2;
 }
 
-menu[role='tablist'] {
+/* <menu> -> <ul>  */
+ul[role='tablist'] {
     position: relative;
     margin: 0 0 -2px 0;
     text-indent: 0;
@@ -844,14 +845,14 @@ menu[role='tablist'] {
     padding-left: 3px;
 }
 
-menu[role='tablist'] > li {
+ul[role='tablist'] > li {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     box-shadow: var(--border-tab);
     z-index: 1;
 }
 
-menu[role='tablist'] > li[aria-selected='true'] {
+ul[role='tablist'] > li[aria-selected='true'] {
     padding-bottom: 2px;
     margin-top: -2px;
     background-color: var(--surface);
@@ -860,20 +861,20 @@ menu[role='tablist'] > li[aria-selected='true'] {
     margin-left: -3px;
 }
 
-menu[role='tablist'] > li > a {
+ul[role='tablist'] > li > a {
     display: block;
     color: #222;
     margin: 6px;
     text-decoration: none;
 }
-menu[role='tablist'] > li[aria-selected='true'] > a:focus {
+ul[role='tablist'] > li[aria-selected='true'] > a:focus {
     outline: none;
 }
-menu[role='tablist'] > li > a:focus {
+ul[role='tablist'] > li > a:focus {
     outline: 1px dotted #222;
 }
 
-menu[role='tablist'].multirows > li {
+ul[role='tablist'].multirows > li {
     flex-grow: 1;
     text-align: center;
 }
@@ -1133,7 +1134,6 @@ menu[role='tablist'].multirows > li {
 
 #date-print {
     font-size: 0.8rem;
-    text-decoration-line: underline;
     margin: 0.5rem;
     font-weight: bold;
 }
