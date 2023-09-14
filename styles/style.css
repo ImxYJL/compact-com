@@ -456,6 +456,8 @@ textarea {
     -moz-appearance: none;
     appearance: none;
     border-radius: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
 }
 
 input[type='text'],
@@ -843,6 +845,7 @@ ul[role='tablist'] {
     list-style-type: none;
     display: flex;
     padding-left: 3px;
+    font-weight: bold;
 }
 
 ul[role='tablist'] > li {
@@ -1109,6 +1112,10 @@ menu[role='tablist'].multirows > li {
     text-align: center;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 /* clock */
 #clock-window {
     width: 25vw;
@@ -1136,4 +1143,28 @@ menu[role='tablist'].multirows > li {
     font-size: 0.8rem;
     margin: 0.5rem;
     font-weight: bold;
+}
+
+/* Wise Saying */
+#content-container {
+    box-sizing: border-box;
+    color: transparent;
+    /* background-color: #c3baf1; */
+    background: var(--surface);
+    background-color: #b2c2e5;
+    display: block;
+    align-content: center;
+    padding: 0.5em 1em;
+    font-size: 1.5rem;
+
+    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+    text-shadow: 1px 1px var(--text-color);
+}
+
+#ws-save {
+    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+}
+
+table {
+    width: 100%;
 }

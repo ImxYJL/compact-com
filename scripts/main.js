@@ -1,5 +1,5 @@
 import { createDraggable } from './dragcontroller.js';
-import { createWordsEl } from './wisesaying.js';
+import { createlifeQuoteEl } from './lifequote.js';
 import { createClockEl } from './clock.js';
 
 // Desktop Element: to append a new tab
@@ -11,15 +11,15 @@ const clockLabel = document.querySelector('#clock');
 
 // Elements will be created by click label
 let clockEl = null;
-let wordsEl = null;
+let quoteEl = null;
 
 // Handlers for content (label) click
-const clickSayingWordsLabel = () => {
-    if (desktop.contains(wordsEl)) return;
+const clickQuoteLabel = () => {
+    if (desktop.contains(quoteEl)) return;
 
-    wordsEl = createWordsEl();
-    createDraggable(wordsEl);
-    desktop.append(wordsEl);
+    quoteEl = createlifeQuoteEl();
+    createDraggable(quoteEl);
+    desktop.append(quoteEl);
 };
 
 const clickClockLabel = () => {
@@ -31,5 +31,5 @@ const clickClockLabel = () => {
     desktop.append(clockEl);
 };
 
-sayingWordsLabel.addEventListener('click', clickSayingWordsLabel);
+sayingWordsLabel.addEventListener('click', clickQuoteLabel);
 clockLabel.addEventListener('click', clickClockLabel);
