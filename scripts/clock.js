@@ -1,50 +1,17 @@
+import { getDate, getTime } from './utility/date.js';
+
 let timerId = null; // for clearInterval()
-
-const dayOfWeeks = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
-const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-];
-
-// Convert numeric data into easy-to-read word
-const getDay = (dayNum) => dayOfWeeks[dayNum];
-const getMonth = (monthNum) => months[monthNum];
 
 // Get and set real-time datas and display it on the screen
 const setTime = (printClockEl) => {
-    const today = new Date();
-    const hours = today.getHours();
-    const minutes = today.getMinutes();
-    const seconds = today.getSeconds();
-    printClockEl.innerText = `${hours < 10 ? `0${hours}` : hours}:${
-        minutes < 10 ? `0${minutes}` : minutes
-    }:${seconds < 10 ? `0${seconds}` : seconds}`;
+    printClockEl.innerText = getTime();
 };
 
 const setDate = (printDateEl) => {
-    const today = new Date();
-    const month = getMonth(today.getMonth());
-    const date = today.getDate();
-    const day = getDay(today.getDay()); // day of the week
-    printDateEl.innerText = `${day}, ${month} ${date}`;
+    const dateInfo = getDate();
+    printDateEl.innerText = `
+        ${dateInfo.day}, ${dateInfo.month} ${dateInfo.date}
+    `;
 };
 
 // Set the timer and call it by setInterval (every sec)
@@ -90,11 +57,7 @@ const createClockEl = () => {
 
     attachFullTimer(clockEl);
 
-    clockEl.querySelector('#close-btn').addEventListener('click', () => {
-        clearInterval(timerId);
-        clockEl.remove();
-    });
     return clockEl;
 };
 
-export { createClockEl, initClock };
+export { createClockEl, initClock, timerId };

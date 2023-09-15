@@ -197,6 +197,10 @@ input[type='reset']:disabled,
 }
 
 .window {
+    /* position: absolute; 
+    it prevents the window from moving 
+    when a tab element is clicked while there are two or more open elements. */
+    position: absolute;
     box-shadow: var(--border-window-outer), var(--border-window-inner);
     background: var(--surface);
     padding: 3px;
