@@ -1,6 +1,7 @@
 import { getDate } from './utility/date.js';
 
 // HTML 요소 선택
+const desktop = document.querySelector('#desktop');
 let tabListItems = null;
 let contentBody = null;
 let lifeQuoteEl = null; // Life quote element (Root Element)
@@ -27,24 +28,82 @@ const setLifeQuoteContent = () => {
     printTextEl.innerHTML = lifeQuoteArr[randomIndex].text;
 };
 
-const setContextMenu = () => {};
+const clickContextMenuItem = (e) => {
+    if ((e.target.id = 'edit-li')) alert('edit');
+    else alert('remove');
+};
+
+const setContextMenuItem = (contentMenu) => {
+    contentMenu.style.zIndex = '5';
+    contentMenu.innerHTML = `
+        <ul>
+            <li id ='edit-li'>Edit</li>
+            <li id ='remove-li'>Remove</li>
+        </ul>
+    `;
+    contentMenu
+        .querySelectorAll('li')[0]
+        .addEventListener('click', (e) => clickContextMenuItem(e));
+    contentMenu
+        .querySelectorAll('li')[1]
+        .addEventListener('click', (e) => clickContextMenuItem(e));
+
+    return contentMenu;
+    // const contextMenuList = document.createElement('ui');
+    // contextMenuList.innerHTML
+    // const contextMenuItems = `
+    //     <li>Edit</li>
+    //     <li>Remove</li>
+    // `;
+    //contextMenuList.appendChild(contextMenuItems);
+    //contentBody.appendChild(contextMenuList);
+    // = contentBody.createElement('li');
+    // list.forEach((item) => {
+    //     const contextMenuItem = contentBody.createElement('li');
+    //     const contextMenuText =
+    // })
+};
+
+const setContextMenu = (e, clickedRow) => {
+    e.preventDefault();
+    // const py = e.pageY;
+    // const px = e.pageX;
+    const py = e.clientY;
+    const px = e.clientX;
+
+    const contextMenu = document.createElement('div');
+    contextMenu.id = 'context-menu';
+    //contextMenu.className = 'context-menu';
+    contextMenu.style.top = py + 'px';
+    contextMenu.style.left = px + 'px';
+
+    console.log(contextMenu.style.top);
+    console.log(contextMenu.style.left);
+    //console.log(e.target.pageX);
+
+    clickedRow.appendChild(setContextMenuItem(contextMenu));
+};
 
 const setEventListener = () => {
     const table = contentBody.querySelector('.interactive');
     table.addEventListener('click', (e) => {
         //alert('test');
 
-        //e.target.;
         if (e.target.tagName === 'TD') {
             //console.log('선택된 행:', event.target);
             const clickedRow = e.target.parentElement; // 클릭된 행
-            clickedRow.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                if (e.button === 2) {
-                    //alert('right');
-                    setContextMenu();
-                }
-            });
+            clickedRow.addEventListener('contextmenu', (e) =>
+                setContextMenu(e, clickedRow),
+            );
+            //clickedRow.addEventListener('click', );
+
+            // clickedRow.addEventListener('mousedown', (e) => {
+            //     e.preventDefault();
+            //     if (e.button === 2) {
+            //         //alert('right');
+            //         setContextMenu();
+            //     }
+            // });
 
             //다른곳 클릭하면 선택 해제되게끔 돌려야함
             clickedRow.classList.toggle('highlighted');

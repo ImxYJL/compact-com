@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Context Menu Example</title>
+        <style>
+            #context-menu {
+                position: absolute;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            #context-menu ul {
+                padding: 0;
+                margin: 0;
+            }
+
+            #context-menu li {
+                padding: 10px;
+                cursor: pointer;
+            }
+
+            #context-menu li:hover {
+                background-color: #f0f0f0;
+            }
+
+            .hidden {
+                display: none;
+            }
+        </style>
+        <!-- <link rel="stylesheet" href="styles.css" /> -->
+    </head>
+    <body>
+        <ul>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>
+        <div id="context-menu" class="hidden">
+            <ul>
+                <li>Edit</li>
+                <li>Delete</li>
+            </ul>
+        </div>
+        <script>
+            const contextMenu = document.getElementById('context-menu');
+            const menuItems = contextMenu.querySelectorAll('li');
+            const itemList = document.querySelectorAll('li');
+
+            // Show the context menu
+            function showContextMenu(e) {
+                e.preventDefault();
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                contextMenu.classList.remove('hidden');
+            }
+
+            // Hide the context menu
+            function hideContextMenu() {
+                contextMenu.classList.add('hidden');
+            }
+
+            // Handle context menu item click
+            menuItems.forEach((item) => {
+                item.addEventListener('click', (e) => {
+                    hideContextMenu();
+                    alert(`You clicked on: ${e.target.textContent}`);
+                });
+            });
+
+            // Attach context menu to each list item
+            itemList.forEach((item) => {
+                item.addEventListener('contextmenu', showContextMenu);
+            });
+
+            // Hide context menu when clicking outside
+            document.addEventListener('click', hideContextMenu);
+        </script>
+    </body>
+</html>
