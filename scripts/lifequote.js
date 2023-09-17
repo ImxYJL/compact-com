@@ -28,13 +28,21 @@ const setLifeQuoteContent = () => {
     printTextEl.innerHTML = lifeQuoteArr[randomIndex].text;
 };
 
+const hideContextMenu = () => {
+    contextMenu.classList.add('hidden');
+}
+
 const clickContextMenuItem = (e) => {
-    if ((e.target.id = 'edit-li')) alert('edit');
-    else alert('remove');
+    if ((e.target.id === 'edit-li')) {
+        
+    }
+    
+    else {
+        // 삭제하고 리스트 재렌더링 <- 전에 바로 됐던것같은데 ㅋ
+    }
 };
 
 const setContextMenuItem = (contentMenu) => {
-    contentMenu.style.zIndex = '5';
     contentMenu.innerHTML = `
         <ul>
             <li id ='edit-li'>Edit</li>
@@ -42,11 +50,16 @@ const setContextMenuItem = (contentMenu) => {
         </ul>
     `;
     contentMenu
-        .querySelectorAll('li')[0]
-        .addEventListener('click', (e) => clickContextMenuItem(e));
+        .querySelector('#edit-li')
+        .addEventListener('click', (e) => {
+            clickContextMenuItem(e);
+        })
+        ;
     contentMenu
-        .querySelectorAll('li')[1]
-        .addEventListener('click', (e) => clickContextMenuItem(e));
+        .querySelector('#remove-li')
+        .addEventListener('click', (e) => {
+            clickContextMenuItem(e);
+        })
 
     return contentMenu;
     // const contextMenuList = document.createElement('ui');
@@ -66,47 +79,49 @@ const setContextMenuItem = (contentMenu) => {
 
 const setContextMenu = (e, clickedRow) => {
     e.preventDefault();
-    // const py = e.pageY;
-    // const px = e.pageX;
-    const py = e.clientY;
-    const px = e.clientX;
 
     const contextMenu = document.createElement('div');
     contextMenu.id = 'context-menu';
-    //contextMenu.className = 'context-menu';
-    contextMenu.style.top = py + 'px';
-    contextMenu.style.left = px + 'px';
+    contextMenu.className = 'hidden';
 
-    console.log(contextMenu.style.top);
-    console.log(contextMenu.style.left);
-    //console.log(e.target.pageX);
+    const coords = clickedRow.getBoundingClientRect();
+    contextMenu.style.left = coords.left + "px";
+    contextMenu.style.top = coords.bottom + "px";
+
+    contextMenu.classList.remove('hidden');
 
     clickedRow.appendChild(setContextMenuItem(contextMenu));
+    document.addEventListener('click', ()=>{
+        clickedRow.classList.remove('highlighted');
+        contextMenu.classList.add('hidden');
+    });
+    //contextMenu.classList.add('hidden');
 };
 
 const setEventListener = () => {
+    // 요소마다 핸들러를 할당하지 않고, 요소의 공통 조상에 
+    // 이벤트 핸들러를 하나만 할당해도 여러 요소를 한꺼번에 다룰 수 있다.
     const table = contentBody.querySelector('.interactive');
-    table.addEventListener('click', (e) => {
-        //alert('test');
-
+    
+    table.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
         if (e.target.tagName === 'TD') {
-            //console.log('선택된 행:', event.target);
+            // 선택됐던 열 있는지 확인
+            const highlighted = table.querySelector('.highlighted');
+            if (highlighted) {
+                highlighted.classList.remove('highlighted');
+            }
+
+            
             const clickedRow = e.target.parentElement; // 클릭된 행
+            clickedRow.classList.add('highlighted');
             clickedRow.addEventListener('contextmenu', (e) =>
                 setContextMenu(e, clickedRow),
             );
-            //clickedRow.addEventListener('click', );
 
-            // clickedRow.addEventListener('mousedown', (e) => {
-            //     e.preventDefault();
-            //     if (e.button === 2) {
-            //         //alert('right');
-            //         setContextMenu();
-            //     }
-            // });
+            
+            
 
-            //다른곳 클릭하면 선택 해제되게끔 돌려야함
-            clickedRow.classList.toggle('highlighted');
 
             // const keyToDelete = parseInt(clickedRow.getAttribute('data-key')); // 클릭된 행의 key 값
             // // 배열에서 해당 key 값을 가진 객체를 찾아 제거
@@ -130,10 +145,8 @@ const printQuoteArr = (item) => {
 
     const lifeQuoteCell = row.insertCell(0);
     lifeQuoteCell.textContent = item.text;
-
     const authorCell = row.insertCell(1);
     authorCell.textContent = item.author;
-
     const dateCell = row.insertCell(2);
     dateCell.textContent = item.date;
 
