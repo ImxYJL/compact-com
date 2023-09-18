@@ -7,8 +7,9 @@ let contentBody = null;
 let lifeQuoteEl = null; // Life quote element (Root Element)
 
 let counter = 1;
-const lifeQuoteArr = [];
+const lifeQuoteMap = new Map();
 
+//class window-body 지우고싶
 const setLifeQuoteContent = () => {
     contentBody.innerHTML = `
         <div class="window" role="tabpanel">
@@ -16,29 +17,50 @@ const setLifeQuoteContent = () => {
                 <div id="content-container">
                     <p>the tab content</p>
                 </div>
-                <button>OK</button>
             </div>
         </div>
     `;
 
-    if (lifeQuoteArr.length === 0) return;
+    if (lifeQuoteMap.size === 0) return;
 
-    const randomIndex = Math.floor(Math.random() * lifeQuoteArr.length);
+    // Map의 키를 배열로 변환
+    const keysArray = Array.from(lifeQuoteMap.keys());
+    // 배열에서 무작위 인덱스 선택
+    const randomIndex = Math.floor(Math.random() * keysArray.length);
+    const randomKey = keysArray[randomIndex];
     const printTextEl = contentBody.querySelector('.window-body p');
-    printTextEl.innerHTML = lifeQuoteArr[randomIndex].text;
+
+    if (lifeQuoteMap.has(randomKey)) {
+        // 외 안되?!
+        printTextEl.innerHTML = `<p>&{lifeQuoteMap.get(randomKey).text}</p>`;
+    } else {
+        // 선택한 키에 해당하는 값이 없을 경우 처리 (근데 그럴일이 있냐)
+        printTextEl.innerHTML = 'No quote found for the random key.';
+    }
 };
 
 const hideContextMenu = () => {
     contextMenu.classList.add('hidden');
-}
+};
 
 const clickContextMenuItem = (e) => {
-    if ((e.target.id === 'edit-li')) {
-        
-    }
-    
-    else {
-        // 삭제하고 리스트 재렌더링 <- 전에 바로 됐던것같은데 ㅋ
+    const clickedRow = contentBody.querySelector('.highlighted');
+    console.log(clickedRow);
+    const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
+    console.log(clickedKey);
+    // const clickedKey = lifeQuoteArr.findIndex(
+    //     (item) => item.key === clickedKey,
+    // );
+
+    if (e.target.id === 'edit-li') {
+        // 리스트 탭의 선택 상태를 초기화하고 edit 탭으로 넘어감
+        tabListItems[1].setAttribute('aria-selected', 'false');
+        tabListItems[2].setAttribute('aria-selected', 'true');
+        setInputContent(clickedKey);
+    } else {
+        if (clickedKey !== -1) lifeQuoteMap.delete(clickedKey);
+        clickedRow.remove(); // 표에서 클릭된 행을 삭제
+        //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
     }
 };
 
@@ -49,32 +71,14 @@ const setContextMenuItem = (contentMenu) => {
             <li id ='remove-li'>Remove</li>
         </ul>
     `;
-    contentMenu
-        .querySelector('#edit-li')
-        .addEventListener('click', (e) => {
-            clickContextMenuItem(e);
-        })
-        ;
-    contentMenu
-        .querySelector('#remove-li')
-        .addEventListener('click', (e) => {
-            clickContextMenuItem(e);
-        })
+    contentMenu.querySelector('#edit-li').addEventListener('click', (e) => {
+        clickContextMenuItem(e);
+    });
+    contentMenu.querySelector('#remove-li').addEventListener('click', (e) => {
+        clickContextMenuItem(e);
+    });
 
     return contentMenu;
-    // const contextMenuList = document.createElement('ui');
-    // contextMenuList.innerHTML
-    // const contextMenuItems = `
-    //     <li>Edit</li>
-    //     <li>Remove</li>
-    // `;
-    //contextMenuList.appendChild(contextMenuItems);
-    //contentBody.appendChild(contextMenuList);
-    // = contentBody.createElement('li');
-    // list.forEach((item) => {
-    //     const contextMenuItem = contentBody.createElement('li');
-    //     const contextMenuText =
-    // })
 };
 
 const setContextMenu = (e, clickedRow) => {
@@ -85,13 +89,13 @@ const setContextMenu = (e, clickedRow) => {
     contextMenu.className = 'hidden';
 
     const coords = clickedRow.getBoundingClientRect();
-    contextMenu.style.left = coords.left + "px";
-    contextMenu.style.top = coords.bottom + "px";
+    contextMenu.style.left = coords.left + 'px';
+    contextMenu.style.top = coords.bottom + 'px';
 
     contextMenu.classList.remove('hidden');
 
     clickedRow.appendChild(setContextMenuItem(contextMenu));
-    document.addEventListener('click', ()=>{
+    document.addEventListener('click', () => {
         clickedRow.classList.remove('highlighted');
         contextMenu.classList.add('hidden');
     });
@@ -99,59 +103,56 @@ const setContextMenu = (e, clickedRow) => {
 };
 
 const setEventListener = () => {
-    // 요소마다 핸들러를 할당하지 않고, 요소의 공통 조상에 
+    // 요소마다 핸들러를 할당하지 않고, 요소의 공통 조상에
     // 이벤트 핸들러를 하나만 할당해도 여러 요소를 한꺼번에 다룰 수 있다.
     const table = contentBody.querySelector('.interactive');
-    
+
     table.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         if (e.target.tagName === 'TD') {
-            // 선택됐던 열 있는지 확인
+            // 선택됐던 열 있는지 확인한 뒤 하이라이트 제거
             const highlighted = table.querySelector('.highlighted');
-            if (highlighted) {
-                highlighted.classList.remove('highlighted');
-            }
+            if (highlighted) highlighted.classList.remove('highlighted');
 
-            
-            const clickedRow = e.target.parentElement; // 클릭된 행
+            // 선택된 행에 하이라이트 주고 컨텍스트 메뉴 세팅
+            const clickedRow = e.target.parentElement;
             clickedRow.classList.add('highlighted');
             clickedRow.addEventListener('contextmenu', (e) =>
                 setContextMenu(e, clickedRow),
             );
-
-            
-            
-
-
-            // const keyToDelete = parseInt(clickedRow.getAttribute('data-key')); // 클릭된 행의 key 값
-            // // 배열에서 해당 key 값을 가진 객체를 찾아 제거
-            // const indexToRemove = lifeQuoteArr.findIndex(
-            //     (item) => item.key === keyToDelete,
-            // );
-            // if (indexToRemove !== -1) {
-            //     lifeQuoteArr.splice(indexToRemove, 1);
-            // }
-
-            // // 표에서 클릭된 행을 삭제
-            // clickedRow.remove();
-            // //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
         }
     });
 };
 
-const printQuoteArr = (item) => {
+// 텍스트가 지정한 길이를 넘는지 체크
+// 함수이름 맘에안들어..
+const checkTextMaxLen = (text, max) => {
+    const check = text.length > max ? true : false;
+    if (check) return text.slice(0, max) + '...';
+    else return text;
+
+    // ... <- 처리를 이 함수에서 할까말까
+};
+
+const getCuttedText = () => {};
+
+const printQuoteMap = (key, item) => {
+    //console.log(`키: ${key}, 객체: ${item}`);
     const tBody = contentBody.querySelector('tbody');
     const row = tBody.insertRow();
 
     const lifeQuoteCell = row.insertCell(0);
-    lifeQuoteCell.textContent = item.text;
+    lifeQuoteCell.textContent = checkTextMaxLen(item.text, 10);
+
     const authorCell = row.insertCell(1);
-    authorCell.textContent = item.author;
+    authorCell.textContent = checkTextMaxLen(item.author, 6);
+
     const dateCell = row.insertCell(2);
     dateCell.textContent = item.date;
 
+    //console.log(item);
     //tr에 속성붙여줌
-    lifeQuoteCell.parentElement.setAttribute('data-key', item.key);
+    lifeQuoteCell.parentElement.setAttribute('data-key', key);
 };
 
 // Set default file list styles
@@ -177,15 +178,21 @@ const setFileList = () => {
         </div>
     `;
 
-    lifeQuoteArr.forEach(printQuoteArr);
+    lifeQuoteMap.forEach((item, key) => {
+        // 순서주의.. 바꾸면 안됨
+        //console.log(`키: ${key}, 객체: ${item}`);
+        printQuoteMap(key, item);
+    });
     setEventListener();
 };
 
 // create a new word item
-const createQuote = () => {
-    // Get content
+const createQuote = (clickedKey) => {
+    // Get content\
+    let key = null;
     let text = contentBody.querySelector('#ws-textarea').value;
     let author = contentBody.querySelector('input').value;
+
     if (text.trim().length === 0 || author.trim().length === 0) {
         author = text = ''; //커서 돌리고 싶은데 안되네
         alert('Please enter texts.');
@@ -194,27 +201,35 @@ const createQuote = () => {
 
     const today = getDate();
     const newQuote = {
-        key: counter++,
         text: text,
         author: author,
         date: `${today.day}, ${today.month}/${today.date}/${today.year}`,
     };
 
-    // try- catch?
-    lifeQuoteArr.push(newQuote);
-    text = author = '';
+    try {
+        key = clickedKey ? clickedKey : counter++;
+        lifeQuoteMap.set(key, newQuote);
+        //console.log(key);
+        text = author = '';
+    } catch (err) {
+        alert(`${err.name}: ${err.message}`);
+        setInputContent();
+        //console.log(err.message);
+    }
     alert('It has been saved.');
 };
 
 // 입력창 세팅
-const setInputContent = () => {
+const setInputContent = (clickedKey) => {
+    console.log(clickedKey); // undefined or 1~
+
     //버튼에 클래스 추가해서 스타일링해주자
     //폰트 크기 조절 있으면 좋을듯
     contentBody.innerHTML = `
         <div>
             <div class="status-bar">
                 <button id="ws-save-btn">🖫 SAVE</button> 
-                <button> CLEAR</button>
+                <button id="ws-clear-btn"> CLEAR</button>
             </div>
             <div class="field-row">
                 <label for="author">Author</label>
@@ -231,8 +246,17 @@ const setInputContent = () => {
         </div>
     `;
 
+    if (clickedKey) {
+        const text = contentBody.querySelector('#ws-textarea');
+        const author = contentBody.querySelector('input');
+
+        text.value = lifeQuoteMap.get(clickedKey).text;
+        author.value = lifeQuoteMap.get(clickedKey).author;
+    }
+
     const saveBtn = contentBody.querySelector('#ws-save-btn');
-    saveBtn.addEventListener('click', createQuote);
+    saveBtn.addEventListener('click', () => createQuote(clickedKey));
+    const clearBtn = contentBody.querySelector('#ws-clear-btn');
 };
 
 const setHelpContent = () => {
@@ -296,7 +320,6 @@ const createlifeQuoteEl = () => {
                     <div id="content-container">
                         <p>the tab content</p>
                     </div>
-                    <button>OK</button>
                 </div>
             </div>
         </div>

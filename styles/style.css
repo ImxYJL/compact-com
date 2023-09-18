@@ -1135,19 +1135,30 @@ button:hover {
     font-size: 1.8rem;
     font-weight: bold;
     letter-spacing: 0.03em;
+    margin-top: 0.2em;
+}
+
+/* 얘는 나중에 추가됨: clock땜에 */
+.window-body {
+    display: flex;
+    flex-direction: column; /* 텍스트를 세로 중앙 정렬하려면 컬럼 방향으로 설정 */
+    justify-content: center; /* 가로 중앙 정렬 */
 }
 
 #date-container {
     background-color: whitesmoke;
-    padding: 0.3em;
-    box-sizing: border-box;
-}
-
-#date-print {
+    text-align: center;
+    margin: 0.5em;
+    padding: 0.2em;
+    /* box-sizing: border-box; */
     font-size: 0.8rem;
-    margin: 0.5rem;
     font-weight: bold;
 }
+
+/* #date-print {
+    font-size: 0.8rem;
+    font-weight: bold;
+} */
 
 /* Wise Saying */
 #content-container {
@@ -1175,30 +1186,35 @@ table {
 
 #context-menu {
     position: fixed;
-    
+
     padding: 0;
-    margin:0;
+    margin: 0;
 }
-    #context-menu ul {
-        background-color: #fff;
-        border: 1px solid #ccc;
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        list-style: none;
-        padding: 0;
-        margin:0;
-        background-color: transparent;
-    }
+#context-menu ul {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
 
-    #context-menu li {
-        cursor: pointer;
-        color: black;
-        padding: 0.3em;
-    }
+#context-menu li {
+    cursor: pointer;
+    color: black;
+    padding: 0.3em;
+    z-index: 100;
+}
 
-    #context-menu li:hover {
-        background-color: #f0f0f0;
-    }
+#context-menu li:hover {
+    background-color: #f0f0f0;
+}
 
-    .hidden {
-        display: none;
-    }
+.hidden {
+    display: none;
+}
+
+textarea {
+    resize: none;
+}

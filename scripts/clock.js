@@ -37,20 +37,16 @@ const createClockEl = () => {
     clockEl.className = 'window';
     clockEl.draggable = true;
     clockEl.innerHTML = `
-        <div id="clock-window">
-            <div class="title-bar">
+        <div class="title-bar">
                 <div class="title-bar-text">Clock</div>
                     <div class="title-bar-controls">
                         <button id ="close-btn" aria-label="Close"></button>
-                    </div>
                 </div>
+            </div>
+        <div id="clock-window">
             <div class="window-body">
                 <div id="clock-print">0</div>
-                <div id="date-print">
-                    <div id ="date-container">
-                        <p id="date-print">0</p>
-                    </div>
-                </div>
+                <div id ="date-container">0</div>
             </div>
         </div>
     `;
