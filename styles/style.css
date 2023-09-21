@@ -76,7 +76,6 @@
         inset 2px 2px var(--button-highlight);
 }
 
-/* body 태그만 따로 수정했음 */
 body {
     display: flex;
     /* background-color: #968eaf; */
@@ -1153,6 +1152,13 @@ button:hover {
     /* box-sizing: border-box; */
     font-size: 0.8rem;
     font-weight: bold;
+
+    width: 50vw;
+    height: 15vh;
+    text-align: center;
+    align-items: center;
+    cursor: grab;
+    overflow: auto;
 }
 
 /* #date-print {
@@ -1161,6 +1167,13 @@ button:hover {
 } */
 
 /* Wise Saying */
+#window-wisesaying {
+    width: 95%;
+    height: 100%;
+    display: flex;
+    /* align-items: safe; */
+}
+
 #content-container {
     box-sizing: border-box;
     color: transparent;
@@ -1186,7 +1199,8 @@ table {
 
 #context-menu {
     position: fixed;
-
+    font-family: 'Pixelated MS Sans Serif', Arial;
+    z-index: 100;
     padding: 0;
     margin: 0;
 }
@@ -1197,18 +1211,18 @@ table {
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: transparent;
 }
 
 #context-menu li {
     cursor: pointer;
     color: black;
+    margin: 0.1em;
     padding: 0.3em;
     z-index: 100;
 }
 
 #context-menu li:hover {
-    background-color: #f0f0f0;
+    background-color: #e2e2e2;
 }
 
 .hidden {

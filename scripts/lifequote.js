@@ -9,48 +9,34 @@ let lifeQuoteEl = null; // Life quote element (Root Element)
 let counter = 1;
 const lifeQuoteMap = new Map();
 
+const isListTab = () => {
+    return tabListItems[1].getAttribute('aria-selected') === 'true'
+        ? true
+        : false;
+};
 //class window-body 지우고싶
 const setLifeQuoteContent = () => {
     contentBody.innerHTML = `
-        <div class="window" role="tabpanel">
-            <div class="window-body">
-                <div id="content-container">
-                    <p>the tab content</p>
-                </div>
-            </div>
+        <div id="content-container">
+            <p id="print-lifequote">the tab content</p>
         </div>
     `;
 
     if (lifeQuoteMap.size === 0) return;
 
-    // Map의 키를 배열로 변환
     const keysArray = Array.from(lifeQuoteMap.keys());
-    // 배열에서 무작위 인덱스 선택
     const randomIndex = Math.floor(Math.random() * keysArray.length);
     const randomKey = keysArray[randomIndex];
-    const printTextEl = contentBody.querySelector('.window-body p');
-
-    if (lifeQuoteMap.has(randomKey)) {
-        // 외 안되?!
-        printTextEl.innerHTML = `<p>&{lifeQuoteMap.get(randomKey).text}</p>`;
-    } else {
-        // 선택한 키에 해당하는 값이 없을 경우 처리 (근데 그럴일이 있냐)
-        printTextEl.innerHTML = 'No quote found for the random key.';
-    }
-};
-
-const hideContextMenu = () => {
-    contextMenu.classList.add('hidden');
+    const printTextEl = contentBody.querySelector('#print-lifequote');
+    const textToPrint = lifeQuoteMap.get(randomKey).text;
+    printTextEl.textContent = `${textToPrint}`;
 };
 
 const clickContextMenuItem = (e) => {
     const clickedRow = contentBody.querySelector('.highlighted');
-    console.log(clickedRow);
+    //console.log(clickedRow);
     const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
-    console.log(clickedKey);
-    // const clickedKey = lifeQuoteArr.findIndex(
-    //     (item) => item.key === clickedKey,
-    // );
+    //console.log(clickedKey);
 
     if (e.target.id === 'edit-li') {
         // 리스트 탭의 선택 상태를 초기화하고 edit 탭으로 넘어감
@@ -58,48 +44,91 @@ const clickContextMenuItem = (e) => {
         tabListItems[2].setAttribute('aria-selected', 'true');
         setInputContent(clickedKey);
     } else {
-        if (clickedKey !== -1) lifeQuoteMap.delete(clickedKey);
+        //if (clickedKey !== -1)
+        lifeQuoteMap.delete(clickedKey);
         clickedRow.remove(); // 표에서 클릭된 행을 삭제
         //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
     }
+    console.log(e.target.parentElement.parentElement);
+    e.target.parentElement.remove();
 };
 
-const setContextMenuItem = (contentMenu) => {
-    contentMenu.innerHTML = `
+const clickEditContextMenu = () => {
+    const clickedRow = contentBody.querySelector('.highlighted');
+    const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
+    tabListItems[1].setAttribute('aria-selected', 'false');
+    tabListItems[2].setAttribute('aria-selected', 'true');
+    setInputContent(clickedKey);
+};
+
+const clickRemoveContextMenu = () => {
+    const clickedRow = contentBody.querySelector('.highlighted');
+    const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
+    lifeQuoteMap.delete(clickedKey);
+    clickedRow.remove(); // 표에서 클릭된 행을 삭제
+    //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
+};
+
+const setContextMenuItem = (contextMenu) => {
+    contextMenu.innerHTML = `
         <ul>
             <li id ='edit-li'>Edit</li>
             <li id ='remove-li'>Remove</li>
         </ul>
     `;
-    contentMenu.querySelector('#edit-li').addEventListener('click', (e) => {
-        clickContextMenuItem(e);
+    contextMenu.querySelector('#edit-li').addEventListener('click', () => {
+        clickEditContextMenu();
+        contextMenu.remove();
     });
-    contentMenu.querySelector('#remove-li').addEventListener('click', (e) => {
-        clickContextMenuItem(e);
+    contextMenu.querySelector('#remove-li').addEventListener('click', () => {
+        clickRemoveContextMenu();
+        contextMenu.remove();
     });
 
-    return contentMenu;
+    lifeQuoteEl.addEventListener('click', () => {
+        contextMenu.remove();
+    });
+
+    return contextMenu;
 };
 
-const setContextMenu = (e, clickedRow) => {
+const getContextMenuPos = (e, contextMenu) => {
+    const quoteTable = contentBody.querySelector('.sunken-panel');
+    const selectedRow = contentBody.querySelector('.highlighted');
+    contextMenu.style.left = quoteTable.getBoundingClientRect().left + 'px';
+    contextMenu.style.top = selectedRow.getBoundingClientRect().bottom + 'px';
+};
+
+const setContextMenu = (e) => {
     e.preventDefault();
+    if (document.querySelector('#context-menu')) return;
 
     const contextMenu = document.createElement('div');
     contextMenu.id = 'context-menu';
     contextMenu.className = 'hidden';
 
-    const coords = clickedRow.getBoundingClientRect();
-    contextMenu.style.left = coords.left + 'px';
-    contextMenu.style.top = coords.bottom + 'px';
+    getContextMenuPos(e, contextMenu);
 
+    //contentBody.append(setContextMenuItem(contextMenu)); // 안됨
+    desktop.append(setContextMenuItem(contextMenu));
     contextMenu.classList.remove('hidden');
 
-    clickedRow.appendChild(setContextMenuItem(contextMenu));
-    document.addEventListener('click', () => {
-        clickedRow.classList.remove('highlighted');
-        contextMenu.classList.add('hidden');
-    });
+    // document.addEventListener('click', () => {
+    //     clickedRow.classList.remove('highlighted');
+    //     contextMenu.remove();
+    //     //contextMenu.classList.add('hidden');
+    // });
     //contextMenu.classList.add('hidden');
+
+    // 드래그될 때 contextMenu 위치 재조정될 수 있게
+    // 추측컨대 따로 위치설정 안하면 자동조정이고 하면 리스너 필요함
+    lifeQuoteEl.addEventListener('dragend', (e) => {
+        // document에 다는게 좋긴 한데 그럼 창 닫을 때 지워줘야 함
+        // (나중에 고치자)
+        // Quotelist에 있는 상황이 아니라면 contextMenu 좌표 재조정하지 않음
+        if (!isListTab()) return;
+        getContextMenuPos(e, contextMenu);
+    });
 };
 
 const setEventListener = () => {
@@ -107,20 +136,30 @@ const setEventListener = () => {
     // 이벤트 핸들러를 하나만 할당해도 여러 요소를 한꺼번에 다룰 수 있다.
     const table = contentBody.querySelector('.interactive');
 
-    table.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        if (e.target.tagName === 'TD') {
-            // 선택됐던 열 있는지 확인한 뒤 하이라이트 제거
-            const highlighted = table.querySelector('.highlighted');
-            if (highlighted) highlighted.classList.remove('highlighted');
+    table.addEventListener('click', (e) => {
+        // 선택됐던 열 있는지 확인한 뒤 하이라이트 제거
+        const highlighted = table.querySelector('.highlighted');
+        if (highlighted) highlighted.classList.remove('highlighted');
 
-            // 선택된 행에 하이라이트 주고 컨텍스트 메뉴 세팅
-            const clickedRow = e.target.parentElement;
-            clickedRow.classList.add('highlighted');
-            clickedRow.addEventListener('contextmenu', (e) =>
-                setContextMenu(e, clickedRow),
-            );
-        }
+        const clickedRow = e.target.parentElement;
+        clickedRow.classList.add('highlighted');
+
+        // 하이라이트 해제 이벤트 어떻게 하냐 ㅜㅠㅠ
+        lifeQuoteEl.addEventListener('click', (e) => {
+            //이 if문 함수로
+            if (!isListTab()) return;
+
+            const highlighted = table.querySelector('.highlighted');
+            if (highlighted && !table.contains(e.target))
+                highlighted.classList.remove('highlighted');
+        });
+
+        // 이거 내부도 테스트해야 함
+        clickedRow.addEventListener('contextmenu', (e) => {
+            console.log('in setEventListener');
+            setEventListener();
+            setContextMenu(e);
+        });
     });
 };
 
@@ -157,6 +196,7 @@ const printQuoteMap = (key, item) => {
 
 // Set default file list styles
 const setFileList = () => {
+    // 여기 스타일도 css로 빼줘야겠네...
     contentBody.innerHTML = `
         <div class="sunken-panel" style="height: 120px; width: 240px;">
             <table class="interactive">
@@ -169,7 +209,7 @@ const setFileList = () => {
                 </thead>
                 <tbody>
                     <tr data-key='0'>
-                        <td>test Quote</td>
+                        <td>test Quote </td>
                         <td>test</td>
                         <td>test</td>
                     </tr>
@@ -221,7 +261,7 @@ const createQuote = (clickedKey) => {
 
 // 입력창 세팅
 const setInputContent = (clickedKey) => {
-    console.log(clickedKey); // undefined or 1~
+    //console.log(clickedKey); // undefined or 1~
 
     //버튼에 클래스 추가해서 스타일링해주자
     //폰트 크기 조절 있으면 좋을듯
@@ -284,7 +324,7 @@ const clickTab = (e) => {
         case 'Edit':
             setInputContent();
             break;
-        case 'File List':
+        case 'Quote List':
             setFileList();
             break;
         case 'Help':
@@ -306,19 +346,19 @@ const createlifeQuoteEl = () => {
                 <button id ="close-btn" aria-label="Close"></button>
             </div>
         </div>
-        <div class="window-body">
-            <ul role="tablist">
-                <li role="tab" aria-selected="true">
+        <div id="window-wisesaying" class="window-body">
+            <ul id="lifequote-tablist" role="tablist">
+                <li id="lifequote-main" role="tab" aria-selected="true">
                     <a href="#tabs">Today's Wise Saying</a>
                 </li>
-                <li role="tab"><a href="#tabs">File List</a></li>
-                <li role="tab"><a href="#tabs">Edit</a></li>
-                <li role="tab"><a href="#tabs">Help</a></li>
+                <li id="lifequote-list" role="tab"><a href="#tabs">Quote List</a></li>
+                <li id="lifequote-edit" role="tab"><a href="#tabs">Edit</a></li>
+                <li id="lifequote-help" role="tab"><a href="#tabs">Help</a></li>
             </ul>
             <div class="window" role="tabpanel">
                 <div class="window-body">
                     <div id="content-container">
-                        <p>the tab content</p>
+                        <p id="print-lifequote">the tab content</p>
                     </div>
                 </div>
             </div>
