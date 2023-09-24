@@ -1,6 +1,6 @@
 import { getDate, getTime } from './utility/date.js';
 
-let timerId = null; // for clearInterval()
+let TIMERID = null; // for clearInterval()
 
 // Get and set real-time datas and display it on the screen
 const setTime = (printClockEl) => {
@@ -19,7 +19,7 @@ const initClock = (printClockEl, printDateEl) => {
     setTime(printClockEl);
     setDate(printDateEl);
 
-    timerId = setInterval(() => {
+    TIMERID = setInterval(() => {
         setTime(printClockEl);
         setDate(printDateEl);
     }, 1000);
@@ -56,4 +56,4 @@ const createClockEl = () => {
     return clockEl;
 };
 
-export { createClockEl, initClock, timerId };
+export { createClockEl, initClock, TIMERID };
