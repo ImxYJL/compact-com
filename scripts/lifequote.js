@@ -23,6 +23,7 @@ const setLifeQuoteContent = () => {
     const keysArray = Array.from(lifeQuoteMap.keys());
     const randomIndex = Math.floor(Math.random() * keysArray.length);
     const randomKey = keysArray[randomIndex];
+
     const printTextEl = contentBody.querySelector('#print-lifequote');
     const textToPrint = lifeQuoteMap.get(randomKey).text;
     const authorToPrint = lifeQuoteMap.get(randomKey).author;
@@ -82,7 +83,9 @@ const setContextMenuItem = (contextMenu) => {
         contextMenu.remove();
     });
 
+    // 물론 이것도 중복~
     lifeQuoteEl.addEventListener('click', () => {
+        console.log('setContextM click');
         contextMenu.remove();
     });
 
@@ -98,24 +101,23 @@ const getContextMenuPos = (contextMenu) => {
 
 const setContextMenu = (e) => {
     e.preventDefault();
-    if (document.querySelector('#context-menu')) return;
 
-    // 하이라이트된 열이 있는지 확인
-    const clickedRow = contentBody.querySelector('.highlighted');
-    if (!clickedRow) return;
+    // 이미 메뉴가 존재하거나 선택된 열이 없으면 종료
+    const clickedRow = e.target.parentElement;
+    if (document.querySelector('#context-menu') || !clickedRow) return;
 
+    // 새 context menu 제작
     const contextMenu = document.createElement('div');
     contextMenu.id = 'context-menu';
-    contextMenu.className = 'hidden';
     getContextMenuPos(contextMenu);
 
     //contentBody.append(setContextMenuItem(contextMenu)); // 안됨
     desktop.append(setContextMenuItem(contextMenu));
-    contextMenu.classList.remove('hidden');
 
     // 드래그될 때 contextMenu 위치 재조정될 수 있게
     // 추측컨대 따로 위치설정 안하면 자동조정이고 하면 리스너 필요함
 
+    // 이벤트 리스너 중첩은 안되는데 이제 위치가 안먹음
     if (lifeQuoteEl.classList.contains('hasListener')) return;
     lifeQuoteEl.classList.add('hasListener');
 
@@ -131,51 +133,41 @@ const setContextMenu = (e) => {
     });
 };
 
-const setTableEventListener = () => {
+const setTableEventListeners = () => {
     // 요소마다 핸들러를 할당하지 않고, 요소의 공통 조상에
     // 이벤트 핸들러를 하나만 할당해도 여러 요소를 한꺼번에 다룰 수 있다.
+    const fileListEl = contentBody.querySelector('#lifequote-filelist');
     const table = contentBody.querySelector('.interactive');
     let highlighted = table.querySelector('.highlighted');
     //테이블에도 id 달아줘야하남..
 
-    if (table.classList.contains('hasListener')) return;
-    table.classList.add('hasListener');
-    //탭 전환할때마다 이벤트 리스너 생성되므로 한 번ㅁㄴ 실행되게 하기
-    //해당 엘리먼트에 '클래스명'을 부여해서 해당 클래스가 없으면 이벤트 바인딩
-    //부모요소인 테이블에 클릭달고 이후에 세부처리닊 ㄱㅊ을듯?
+    const rightClickRow = (e) => setContextMenu(e);
 
-    table.addEventListener('click', (e) => {
-        // 선택됐던 열 있는지 확인한 뒤 하이라이트 제거
+    const clickRow = (e) => {
+        // 선택됐던 열 있는지 확인한 뒤 있다면 하이라이트 제거
         if (highlighted) highlighted.classList.remove('highlighted');
+        console.log('clickedRow');
 
         // 새로 선택된 요소에 하이라이트
         const clickedRow = e.target.parentElement;
         clickedRow.classList.add('highlighted');
-        console.log(clickedRow);
-
-        if (clickedRow.classList.contains('hasListener')) return;
-        clickedRow.classList.add('hasListener');
 
         // 클릭 이벤트가 일어났을 때 우측 클릭 이벤트 달기
-        clickedRow.addEventListener('contextmenu', (e) => {
-            //console.log('in setEventListener-contextmenu');
-            //console.log(clickedRow);
-            //그렇다면 이것은 넘겨줘야 하는ㄱ ㅏ 아닌가...
-            setContextMenu(e);
-        });
-    });
+        clickedRow.addEventListener('contextmenu', rightClickRow);
+    };
 
-    // 명언 전체 창에도 하이라이트 해제 걸기
-    lifeQuoteEl.addEventListener('click', (e) => {
-        if (!isListTab()) return; // 리스트 탭일 때만 실행
+    const clickQuoteListEl = (e) => {
+        highlighted = table.querySelector('.highlighted');
+        // 있을 때도 있고 없을 때도 있으므로 실시간으로 가져와야 함!
 
-        //console.log(highlighted); // 가져오기도 전인데 얘는 왜 잘나옴?
-        // 하이라이트는 있을 때도 있고 없을 때도 있으므로 잘나왔다 안나왔ㄷ 하는게 정상입니다
-        highlighted = table.querySelector('.highlighted'); // 실시간으로 가져와야 함!
-        //console.log(highlighted);
         if (highlighted && !table.contains(e.target))
             highlighted.classList.remove('highlighted');
-    });
+    };
+
+    table.addEventListener('click', clickRow);
+    fileListEl.addEventListener('click', clickQuoteListEl);
+    //마지막은 처음에 desktop, El에 달았는데 얘네는 초기화가 따로 안돼서 계속 리스너 중첩됨
+    //얘랑 드래그 이벤트랑 아예 createElement할 때 리스너 붙여주고 변수들은 외부로 빼야하나
 };
 
 // 텍스트가 지정한 길이를 넘는지 체크
@@ -218,7 +210,7 @@ const setFileListContent = () => {
         //console.log(`키: ${key}, 객체: ${item}`);
         printQuoteMap(key, item);
     });
-    setTableEventListener();
+    setTableEventListeners();
 };
 
 // create a new word item
@@ -273,10 +265,14 @@ const setInputContent = (clickedKey) => {
     saveBtn.addEventListener('click', () =>
         createQuote(clickedKey, textEl, authorEl),
     );
-    clearBtn.addEventListener(
-        'click',
-        () => (textEl.value = authorEl.value = ''),
-    );
+
+    clearBtn.addEventListener('click', () => {
+        console.log('cb'); // 와 이건 정상ㅋㅋㅋ
+    });
+    // clearBtn.addEventListener(
+    //     'click',
+    //     () => (textEl.value = authorEl.value = ''),
+    // );
     // 입력 있는 채로 나가면 확인 모달 뜨는 것도 좋을듯
 };
 

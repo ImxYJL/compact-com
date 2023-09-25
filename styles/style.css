@@ -1191,12 +1191,15 @@ button:hover {
     /* margin-bottom: 10em; */
 }
 
-#ws-save {
-    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
-}
-
 table {
     width: 100%;
+}
+
+#lifequote-filelist {
+    height: 12em;
+    width: 100%;
+    /* height: 120px;
+    width: 240px; */
 }
 
 #context-menu {
@@ -1226,19 +1229,8 @@ table {
     background-color: #e2e2e2;
 }
 
-.hidden {
-    display: none;
-}
-
 textarea {
     resize: none;
     padding: 0.5em;
     height: 8em;
-}
-
-#lifequote-filelist {
-    height: 12em;
-    width: 100%;
-    /* height: 120px;
-    width: 240px; */
 }
