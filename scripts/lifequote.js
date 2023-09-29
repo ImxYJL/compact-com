@@ -30,7 +30,7 @@ const setLifeQuoteContent = () => {
 
     // 줄바꿈 문자(\n)을 HTML 줄바꿈 태그(<br>)로 변환하여 출력합니다.
     printTextEl.innerHTML =
-        textToPrint.replace(/\n/g, '<br>') + `<br> - ${authorToPrint} -`;
+        textToPrint.replace(/\n/g, '<br>') + ` - ${authorToPrint} -`;
     // printTextEl.textContent = `${textToPrint}`;
 };
 
@@ -71,6 +71,16 @@ const clickRemoveContextMenu = () => {
     //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
 };
 
+const clickLifeQuoteEl = (contextMenu) => {
+    console.log('위');
+    // console.log(contextMenu);
+    contextMenu.remove();
+
+    // lifeQuoteEl.removeEventListener('click', (contextMenu) => {
+    //     clickLifeQuoteEl(contextMenu);
+    // });
+};
+
 const setContextMenuItem = (contextMenu) => {
     contextMenu.innerHTML = getInnerHtmlOfContextMenuEl();
 
@@ -85,18 +95,25 @@ const setContextMenuItem = (contextMenu) => {
 
     // 물론 이것도 중복~
     lifeQuoteEl.addEventListener('click', () => {
-        console.log('setContextM click');
-        contextMenu.remove();
+        clickLifeQuoteEl(contextMenu);
     });
 
     return contextMenu;
 };
+// const test = () => {
+//     console.log('testListener');
+//     lifeQuoteEl.removeEventListener('click', test);
+// };
 
 const getContextMenuPos = (contextMenu) => {
+    contextMenu.classList.add('hidden');
     const quoteTable = contentBody.querySelector('.sunken-panel');
     const clickedRow = contentBody.querySelector('.highlighted');
+    console.log(quoteTable);
+    console.log(clickedRow);
     contextMenu.style.left = quoteTable.getBoundingClientRect().left + 'px';
     contextMenu.style.top = clickedRow.getBoundingClientRect().bottom + 'px';
+    contextMenu.classList.remove('hidden');
 };
 
 const setContextMenu = (e) => {
@@ -118,19 +135,29 @@ const setContextMenu = (e) => {
     // 추측컨대 따로 위치설정 안하면 자동조정이고 하면 리스너 필요함
 
     // 이벤트 리스너 중첩은 안되는데 이제 위치가 안먹음
-    if (lifeQuoteEl.classList.contains('hasListener')) return;
-    lifeQuoteEl.classList.add('hasListener');
+    // if (lifeQuoteEl.classList.contains('hasListener')) return;
+    // lifeQuoteEl.classList.add('hasListener');
 
     lifeQuoteEl.addEventListener('dragend', () => {
         // document에 다는게 좋긴 한데 그럼 창 닫을 때 지워줘야 함
         // (나중에 고치자)
 
-        console.log('contextM listener');
+        console.log('아래');
         const clickedRow = contentBody.querySelector('.highlighted');
         // Quotelist가 아닌 다른 탭에 있거나 선택된 열이 없으면 contextMenu 좌표 재조정하지 않음
         if (!isListTab() || !clickedRow) return;
+        console.log(contextMenu);
         getContextMenuPos(contextMenu);
     });
+
+    // lifeQuoteEl.addEventListener('dragend', test);
+};
+
+const test = () => {
+    const clickedRow = contentBody.querySelector('.highlighted');
+    // Quotelist가 아닌 다른 탭에 있거나 선택된 열이 없으면 contextMenu 좌표 재조정하지 않음
+    if (!isListTab() || !clickedRow) return;
+    getContextMenuPos(contextMenu);
 };
 
 const setTableEventListeners = () => {
@@ -141,8 +168,12 @@ const setTableEventListeners = () => {
     let highlighted = table.querySelector('.highlighted');
     //테이블에도 id 달아줘야하남..
 
-    const rightClickRow = (e) => setContextMenu(e);
-
+    const rightClickRow = (e) => {
+        console.log('asdf' + e.target);
+        const tr = contentBody.querySelector('tr');
+        if (e.target == tr.firstChild) return;
+        setContextMenu(e);
+    };
     const clickRow = (e) => {
         // 선택됐던 열 있는지 확인한 뒤 있다면 하이라이트 제거
         if (highlighted) highlighted.classList.remove('highlighted');
@@ -196,8 +227,7 @@ const printQuoteMap = (key, item) => {
     const dateCell = row.insertCell(2);
     dateCell.textContent = item.date;
 
-    //console.log(item);
-    //tr에 속성붙여줌
+    //tr에 속성붙여
     lifeQuoteCell.parentElement.setAttribute('data-key', key);
 };
 
@@ -313,6 +343,7 @@ const createlifeQuoteEl = () => {
     // 이 생성 부분도 유틸로 빼면 좋을듯 다 똑같아서
     lifeQuoteEl = document.createElement('div');
     lifeQuoteEl.className = 'window';
+    // lifeQuoteEl.className = 'lifequote-element';
     lifeQuoteEl.draggable = true;
     lifeQuoteEl.innerHTML = getInnerHtmlOfLifeQuoteEl();
 
@@ -325,6 +356,7 @@ const createlifeQuoteEl = () => {
         item.addEventListener('click', clickTab);
     });
 
+    //console.log(desktop.querySelector('.window-element'));
     return lifeQuoteEl;
 };
 
@@ -363,7 +395,7 @@ const getInnerHtmlOfLifeQuoteEl = () => {
 const getInnerHtmlOfContentEl = () => {
     return `
         <div id="content-container">
-            <p id="print-lifequote">the tab content</p>
+            <p id="print-lifequote">Please add a new quote.</p>
         </div>
     `;
 };
@@ -425,50 +457,46 @@ const getInnerHtmlOfFileListEl = () => {
 
 const getInnerHtmlOfHelpEl = () => {
     return `
-        <div id="">
+        <div id="lifequote-help-body">
             <p>도움말 페이지입니다.</p>
             <ul class="tree-view">
-                <li>Table of Contents</li>
-                <li>What is web development?</li>
                 <li>
                     Today's Life Quote
                     <ul>
                         <li>등록된 명언을 랜덤으로 출력합니다.</li>
-                        <li>Specificity</li>
                     </ul>
                 </li>
                 <li>
                     <details open>
-        <summary>JavaScript</summary>
-        <ul>
-            <li>Avoid at all costs</li>
-            <li>
-            <details>
-                <summary>Unless</summary>
-                <ul>
-                <li>Avoid</li>
-                <li>
-                    <details>
-                    <summary>At</summary>
-                    <ul>
-                        <li>Avoid</li>
-                        <li>At</li>
-                        <li>All</li>
-                        <li>Cost</li>
-                    </ul>
+                        <summary>Quote List</summary>
+                        <ul>
+                            <details>
+                                <summary>개요</summary>   
+                                <ul>
+                                    <li>등록된 명언들을 확인할 수 있습니다.</li>
+                                    <li>명언 10자 이하, 작가 6자 이하까지만 표시합니다.</li>
+                                </ul>
+                            </details>
+                        </ul>
+                        <ul>
+                            <details>
+                                <summary>수정, 삭제</summary>   
+                                <ul>
+                                    <li>먼저 수정/삭제할 열을 클릭합니다.</li>
+                                    <li>이후 마우스 우클릭을 하면 수정/삭제할 수 있습니다.</li>
+                                </ul>
+                            </details>
+                        </ul>
                     </details>
                 </li>
-                <li>All</li>
-                <li>Cost</li>
-                </ul>
-            </details>
-            </li>
-        </ul>
-        </details>
-    </li>
-    <li>Special Thanks</li>
-    </ul>
-            </div>
+                <li>
+                    Edit
+                    <ul>
+                        <li>명언을 추가/수정할 수 있습니다.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     `;
 };
 

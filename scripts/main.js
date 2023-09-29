@@ -10,6 +10,8 @@ const desktop = document.querySelector('#desktop');
 const sayingWordsLabel = document.querySelector('#life-quote');
 const clockLabel = document.querySelector('#clock');
 
+const OPENELS = new Set();
+
 // Elements will be created by click label
 let clockEl = null;
 let quoteEl = null;
@@ -21,9 +23,10 @@ const clickQuoteLabel = () => {
     // 여기 체이닝으로 구현해도 될것같다
     quoteEl = createlifeQuoteEl();
     clickCloseBtn(quoteEl);
-    clickWindowEl(quoteEl);
     createDraggable(quoteEl);
     desktop.append(quoteEl);
+    OPENELS.add(quoteEl);
+    clickWindowEl(quoteEl);
 };
 
 const clickClockLabel = () => {
@@ -34,7 +37,15 @@ const clickClockLabel = () => {
     createDraggable(clockEl);
     clickCloseBtn(clockEl, TIMERID);
     desktop.append(clockEl);
+    OPENELS.add(clockEl);
+    clickWindowEl(clockEl);
 };
 
 sayingWordsLabel.addEventListener('click', clickQuoteLabel);
 clockLabel.addEventListener('click', clickClockLabel);
+
+desktop.addEventListener('drop', dragEnd);
+desktop.addEventListener('dragover', drag);
+//desktop.addEventListener('click', clickWindowEl);
+
+export { OPENELS };
