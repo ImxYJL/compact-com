@@ -5,8 +5,8 @@ const desktop = document.querySelector('#desktop');
 let tabListItems = null;
 let contentBody = null;
 let lifeQuoteEl = null; // Life quote element (Root Element)
-
 let contextMenu = null;
+
 let counter = 1;
 const lifeQuoteMap = new Map();
 
@@ -73,7 +73,6 @@ const clickRemoveContextMenu = () => {
 };
 
 const clickLifeQuoteElWithContextMenu = () => {
-    console.log('위');
     if (contextMenu !== null) contextMenu.remove();
 };
 
@@ -135,9 +134,8 @@ const setTableEventListeners = () => {
     //테이블에도 id 달아줘야하남..
 
     const rightClickRow = (e) => {
-        console.log('asdf' + e.target);
         const tr = contentBody.querySelector('tr');
-        //if (e.target == tr.firstChild) return; // 안되무
+        if (tr.contains(e.target)) return;
         setContextMenu(e);
     };
     const clickRow = (e) => {
@@ -206,8 +204,6 @@ const setFileListContent = () => {
     contentBody.innerHTML = getInnerHtmlOfFileListEl();
 
     lifeQuoteMap.forEach((item, key) => {
-        // 순서주의.. 바꾸면 안됨
-        //console.log(`키: ${key}, 객체: ${item}`);
         printQuoteMap(key, item);
     });
     setTableEventListeners();
@@ -267,12 +263,9 @@ const setInputContent = (clickedKey) => {
     );
 
     clearBtn.addEventListener('click', () => {
-        console.log('cb'); // 와 이건 정상ㅋㅋㅋ
+        textEl.value = authorEl.value = '';
     });
-    // clearBtn.addEventListener(
-    //     'click',
-    //     () => (textEl.value = authorEl.value = ''),
-    // );
+
     // 입력 있는 채로 나가면 확인 모달 뜨는 것도 좋을듯
 };
 
@@ -290,9 +283,9 @@ const clickTab = (e) => {
     clickedTab.setAttribute('aria-selected', 'true');
 
     // 탭에 해당하는 내용을 가져와서 window-body에 표시
-    const tabContent = clickedTab.querySelector('a').textContent;
+    const tabContent = clickedTab.querySelector('a').textContent.trim();
     switch (tabContent) {
-        case "Today's Wise Saying":
+        case "Today's Life Quote":
             setLifeQuoteContent();
             break;
         case 'Edit':
@@ -319,7 +312,7 @@ const createlifeQuoteEl = () => {
 
     // HTML 요소 선택
     tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
-    contentBody = lifeQuoteEl.querySelector('#window-wisesaying .window-body');
+    contentBody = lifeQuoteEl.querySelector('#window-lifequote .window-body');
 
     // 각 탭에 이벤트 리스너 추가
     tabListItems.forEach((item) => {
@@ -341,10 +334,10 @@ const getInnerHtmlOfLifeQuoteEl = () => {
                 <button id ="close-btn" aria-label="Close"></button>
             </div>
         </div>
-        <div id="window-wisesaying" class="window-body">
+        <div id="window-lifequote" class="window-body">
             <ul id="lifequote-tablist" role="tablist">
                 <li id="lifequote-main" role="tab" aria-selected="true">
-                    <a href="#tabs">Today's Wise Saying</a>
+                    <a href="#tabs">Today's Life Quote </a>
                 </li>
                 <li id="lifequote-list" role="tab"><a href="#tabs">Quote List</a></li>
                 <li id="lifequote-edit" role="tab"><a href="#tabs">Edit</a></li>

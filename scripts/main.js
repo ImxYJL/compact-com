@@ -7,10 +7,10 @@ import { createClockEl, TIMERID } from './clock.js';
 const desktop = document.querySelector('#desktop');
 
 // Get Desktop Items
-const sayingWordsLabel = document.querySelector('#life-quote');
+const lifequoteLabel = document.querySelector('#life-quote');
 const clockLabel = document.querySelector('#clock');
 
-const OPENELS = new Set();
+const OPEN_EL_LIST = new Set();
 
 // Elements will be created by click label
 let clockEl = null;
@@ -25,7 +25,7 @@ const clickQuoteLabel = () => {
     clickCloseBtn(quoteEl);
     createDraggable(quoteEl);
     desktop.append(quoteEl);
-    OPENELS.add(quoteEl);
+    OPEN_EL_LIST.add(quoteEl);
     clickWindowEl(quoteEl);
 };
 
@@ -37,11 +37,11 @@ const clickClockLabel = () => {
     createDraggable(clockEl);
     clickCloseBtn(clockEl, TIMERID);
     desktop.append(clockEl);
-    OPENELS.add(clockEl);
+    OPEN_EL_LIST.add(clockEl);
     clickWindowEl(clockEl);
 };
 
-sayingWordsLabel.addEventListener('click', clickQuoteLabel);
+lifequoteLabel.addEventListener('click', clickQuoteLabel);
 clockLabel.addEventListener('click', clickClockLabel);
 
-export { OPENELS };
+export { OPEN_EL_LIST };

@@ -1,9 +1,9 @@
-import { OPENELS } from '../main.js';
+import { OPEN_EL_LIST } from '../main.js';
 
 const clickWindowEl = (elem) => {
     elem.addEventListener('click', () => {
         // console.log('중복체크');
-        OPENELS.forEach((elem) => {
+        OPEN_EL_LIST.forEach((elem) => {
             elem.style.zIndex = '0';
         });
         //console.log(e.target);
@@ -15,7 +15,7 @@ const clickCloseBtn = (elem, timerId) => {
     elem.querySelector('#close-btn').addEventListener('click', () => {
         if (!!timerId) clearInterval(timerId);
 
-        OPENELS.delete(elem);
+        OPEN_EL_LIST.delete(elem);
         elem.remove();
     });
 };

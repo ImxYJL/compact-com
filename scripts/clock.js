@@ -28,6 +28,7 @@ const initClock = (printClockEl, printDateEl) => {
 const attachFullTimer = (clockEl) => {
     const printTimeEl = clockEl.querySelector('#clock-print');
     const printDateEl = clockEl.querySelector('#date-container'); //#date-print로 하니까 컨테이너 무시됨
+
     //덮어쓰기 때문인듯?
     initClock(printTimeEl, printDateEl);
 };
@@ -46,7 +47,9 @@ const createClockEl = () => {
         <div id="clock-window">
             <div class="window-body">
                 <div id="clock-print">0</div>
-                <div id ="date-container">0</div>
+                <div id ="date-container">
+                    <p id="date-print"></p>
+                </div>
             </div>
         </div>
     `;
