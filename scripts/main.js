@@ -44,8 +44,4 @@ const clickClockLabel = () => {
 sayingWordsLabel.addEventListener('click', clickQuoteLabel);
 clockLabel.addEventListener('click', clickClockLabel);
 
-desktop.addEventListener('drop', dragEnd);
-desktop.addEventListener('dragover', drag);
-//desktop.addEventListener('click', clickWindowEl);
-
 export { OPENELS };

@@ -6,6 +6,7 @@ let tabListItems = null;
 let contentBody = null;
 let lifeQuoteEl = null; // Life quote element (Root Element)
 
+let contextMenu = null;
 let counter = 1;
 const lifeQuoteMap = new Map();
 
@@ -71,17 +72,12 @@ const clickRemoveContextMenu = () => {
     //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
 };
 
-const clickLifeQuoteEl = (contextMenu) => {
+const clickLifeQuoteElWithContextMenu = () => {
     console.log('위');
-    // console.log(contextMenu);
-    contextMenu.remove();
-
-    // lifeQuoteEl.removeEventListener('click', (contextMenu) => {
-    //     clickLifeQuoteEl(contextMenu);
-    // });
+    if (contextMenu !== null) contextMenu.remove();
 };
 
-const setContextMenuItem = (contextMenu) => {
+const setContextMenuItem = () => {
     contextMenu.innerHTML = getInnerHtmlOfContextMenuEl();
 
     contextMenu.querySelector('#edit-li').addEventListener('click', () => {
@@ -93,24 +89,14 @@ const setContextMenuItem = (contextMenu) => {
         contextMenu.remove();
     });
 
-    // 물론 이것도 중복~
-    lifeQuoteEl.addEventListener('click', () => {
-        clickLifeQuoteEl(contextMenu);
-    });
-
     return contextMenu;
 };
-// const test = () => {
-//     console.log('testListener');
-//     lifeQuoteEl.removeEventListener('click', test);
-// };
 
-const getContextMenuPos = (contextMenu) => {
+const getContextMenuPos = () => {
     contextMenu.classList.add('hidden');
     const quoteTable = contentBody.querySelector('.sunken-panel');
     const clickedRow = contentBody.querySelector('.highlighted');
-    console.log(quoteTable);
-    console.log(clickedRow);
+
     contextMenu.style.left = quoteTable.getBoundingClientRect().left + 'px';
     contextMenu.style.top = clickedRow.getBoundingClientRect().bottom + 'px';
     contextMenu.classList.remove('hidden');
@@ -123,41 +109,21 @@ const setContextMenu = (e) => {
     const clickedRow = e.target.parentElement;
     if (document.querySelector('#context-menu') || !clickedRow) return;
 
-    // 새 context menu 제작
-    const contextMenu = document.createElement('div');
+    // context menu 제작
+    contextMenu = document.createElement('div');
     contextMenu.id = 'context-menu';
-    getContextMenuPos(contextMenu);
+    getContextMenuPos();
 
     //contentBody.append(setContextMenuItem(contextMenu)); // 안됨
-    desktop.append(setContextMenuItem(contextMenu));
-
-    // 드래그될 때 contextMenu 위치 재조정될 수 있게
-    // 추측컨대 따로 위치설정 안하면 자동조정이고 하면 리스너 필요함
-
-    // 이벤트 리스너 중첩은 안되는데 이제 위치가 안먹음
-    // if (lifeQuoteEl.classList.contains('hasListener')) return;
-    // lifeQuoteEl.classList.add('hasListener');
-
-    lifeQuoteEl.addEventListener('dragend', () => {
-        // document에 다는게 좋긴 한데 그럼 창 닫을 때 지워줘야 함
-        // (나중에 고치자)
-
-        console.log('아래');
-        const clickedRow = contentBody.querySelector('.highlighted');
-        // Quotelist가 아닌 다른 탭에 있거나 선택된 열이 없으면 contextMenu 좌표 재조정하지 않음
-        if (!isListTab() || !clickedRow) return;
-        console.log(contextMenu);
-        getContextMenuPos(contextMenu);
-    });
-
-    // lifeQuoteEl.addEventListener('dragend', test);
+    desktop.append(setContextMenuItem());
 };
 
-const test = () => {
+const dragLifeQuoteElWithContextMenu = () => {
+    console.log('ㅇ래');
     const clickedRow = contentBody.querySelector('.highlighted');
     // Quotelist가 아닌 다른 탭에 있거나 선택된 열이 없으면 contextMenu 좌표 재조정하지 않음
     if (!isListTab() || !clickedRow) return;
-    getContextMenuPos(contextMenu);
+    getContextMenuPos();
 };
 
 const setTableEventListeners = () => {
@@ -171,7 +137,7 @@ const setTableEventListeners = () => {
     const rightClickRow = (e) => {
         console.log('asdf' + e.target);
         const tr = contentBody.querySelector('tr');
-        if (e.target == tr.firstChild) return;
+        //if (e.target == tr.firstChild) return; // 안되무
         setContextMenu(e);
     };
     const clickRow = (e) => {
@@ -199,6 +165,10 @@ const setTableEventListeners = () => {
     fileListEl.addEventListener('click', clickQuoteListEl);
     //마지막은 처음에 desktop, El에 달았는데 얘네는 초기화가 따로 안돼서 계속 리스너 중첩됨
     //얘랑 드래그 이벤트랑 아예 createElement할 때 리스너 붙여주고 변수들은 외부로 빼야하나
+
+    // context menu가 존재할 경우 필요한 이벤트 리스너들 등록
+    lifeQuoteEl.addEventListener('dragend', dragLifeQuoteElWithContextMenu);
+    lifeQuoteEl.addEventListener('click', clickLifeQuoteElWithContextMenu);
 };
 
 // 텍스트가 지정한 길이를 넘는지 체크

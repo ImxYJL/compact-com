@@ -17,7 +17,6 @@ const createDraggable = (dragItem) => {
     };
 
     const dragEnd = () => {
-        console.log('check');
         initialX = currentX;
         initialY = currentY;
         active = false;
@@ -25,7 +24,6 @@ const createDraggable = (dragItem) => {
 
     const drag = (e) => {
         if (active) {
-            //console.log('check');
             e.preventDefault();
 
             currentX = e.clientX - initialX;
@@ -41,13 +39,6 @@ const createDraggable = (dragItem) => {
     const setTranslate = (xPos, yPos, el) => {
         el.style.transform = 'translate3d(' + xPos + 'px, ' + yPos + 'px, 0)';
     };
-
-    // 드래그 아이템에 대한 이벤트 리스너를 추가하기 전에 이전 이벤트 리스너를 제거합니다.
-    //무반응..ㅋㅋ
-
-    dragItem.removeEventListener('dragstart', dragStart);
-    desktop.removeEventListener('drop', dragEnd);
-    desktop.removeEventListener('dragover', drag);
 
     dragItem.addEventListener('dragstart', dragStart);
     desktop.addEventListener('drop', dragEnd);
