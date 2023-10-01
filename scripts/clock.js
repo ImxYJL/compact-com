@@ -26,8 +26,8 @@ const initClock = (printClockEl, printDateEl) => {
 };
 
 const attachFullTimer = (clockEl) => {
-    const printTimeEl = clockEl.querySelector('#clock-print');
-    const printDateEl = clockEl.querySelector('#date-container'); //#date-print로 하니까 컨테이너 무시됨
+    const printTimeEl = clockEl.querySelector('#clock-time-print');
+    const printDateEl = clockEl.querySelector('#clock-date-print'); //#date-print로 하니까 컨테이너 무시됨
 
     //덮어쓰기 때문인듯?
     initClock(printTimeEl, printDateEl);
@@ -35,6 +35,7 @@ const attachFullTimer = (clockEl) => {
 
 const createClockEl = () => {
     const clockEl = document.createElement('div');
+    clockEl.id = 'clock-window';
     clockEl.className = 'window';
     clockEl.draggable = true;
     clockEl.innerHTML = `
@@ -44,12 +45,10 @@ const createClockEl = () => {
                         <button id ="close-btn" aria-label="Close"></button>
                 </div>
             </div>
-        <div id="clock-window">
-            <div class="window-body">
-                <div id="clock-print">0</div>
-                <div id ="date-container">
-                    <p id="date-print"></p>
-                </div>
+        <div id="clock-body">
+            <div id = "clock-content-body"class="window-body">
+                <div id="clock-time-print">0</div>
+                <div id ="clock-date-print">0</div>
             </div>
         </div>
     `;

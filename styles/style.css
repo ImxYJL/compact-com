@@ -1120,7 +1120,7 @@ button:hover {
 }
 
 /* clock */
-#clock-window {
+#clock-body {
     width: 100%;
     height: 70%;
     /* width: 25vw;
@@ -1131,7 +1131,7 @@ button:hover {
     overflow: auto;
 }
 
-#clock-print {
+#clock-time-print {
     width: 100%;
     font-size: 1.8rem;
     font-weight: bold;
@@ -1146,11 +1146,11 @@ button:hover {
     justify-content: center; /* 가로 중앙 정렬 */
 }
 
-#date-container {
+#clock-date-print {
     background-color: whitesmoke;
     text-align: center;
     margin: 0.5em;
-    padding: 0 0.5em 0.8em 0.5em;
+    padding: 0 1.2em 0.8em 1.2em;
 
     /* box-sizing: border-box; */
     font-size: 0.8rem;
@@ -1182,7 +1182,7 @@ button:hover {
     /* margin-bottom: 10em; */
 }
 
-#print-lifequote {
+#lifequote-print {
     max-width: 10em;
     max-height: 2em;
     padding: 1em 0.8em 1.5em 0.5em;

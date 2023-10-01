@@ -25,7 +25,7 @@ const setLifeQuoteContent = () => {
     const randomIndex = Math.floor(Math.random() * keysArray.length);
     const randomKey = keysArray[randomIndex];
 
-    const printTextEl = contentBody.querySelector('#print-lifequote');
+    const printTextEl = contentBody.querySelector('#lifequote-print');
     const textToPrint = lifeQuoteMap.get(randomKey).text;
     const authorToPrint = lifeQuoteMap.get(randomKey).author;
 
@@ -41,7 +41,7 @@ const clickContextMenuItem = (e) => {
     const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
     //console.log(clickedKey);
 
-    if (e.target.id === 'edit-li') {
+    if (e.target.id === 'contextmenu-edit-li') {
         // 리스트 탭의 선택 상태를 초기화하고 edit 탭으로 넘어감
         tabListItems[1].setAttribute('aria-selected', 'false');
         tabListItems[2].setAttribute('aria-selected', 'true');
@@ -79,14 +79,18 @@ const clickLifeQuoteElWithContextMenu = () => {
 const setContextMenuItem = () => {
     contextMenu.innerHTML = getInnerHtmlOfContextMenuEl();
 
-    contextMenu.querySelector('#edit-li').addEventListener('click', () => {
-        clickEditContextMenu();
-        contextMenu.remove();
-    });
-    contextMenu.querySelector('#remove-li').addEventListener('click', () => {
-        clickRemoveContextMenu();
-        contextMenu.remove();
-    });
+    contextMenu
+        .querySelector('#contextmenu-edit-li')
+        .addEventListener('click', () => {
+            clickEditContextMenu();
+            contextMenu.remove();
+        });
+    contextMenu
+        .querySelector('#contextmenu-remove-li')
+        .addEventListener('click', () => {
+            clickRemoveContextMenu();
+            contextMenu.remove();
+        });
 
     return contextMenu;
 };
@@ -305,6 +309,7 @@ const clickTab = (e) => {
 const createlifeQuoteEl = () => {
     // 이 생성 부분도 유틸로 빼면 좋을듯 다 똑같아서
     lifeQuoteEl = document.createElement('div');
+    lifeQuoteEl.id = 'lifequote-window';
     lifeQuoteEl.className = 'window';
     // lifeQuoteEl.className = 'lifequote-element';
     lifeQuoteEl.draggable = true;
@@ -312,7 +317,7 @@ const createlifeQuoteEl = () => {
 
     // HTML 요소 선택
     tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
-    contentBody = lifeQuoteEl.querySelector('#window-lifequote .window-body');
+    contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
 
     // 각 탭에 이벤트 리스너 추가
     tabListItems.forEach((item) => {
@@ -334,19 +339,19 @@ const getInnerHtmlOfLifeQuoteEl = () => {
                 <button id ="close-btn" aria-label="Close"></button>
             </div>
         </div>
-        <div id="window-lifequote" class="window-body">
+        <div id="lifequote-body" class="window-body">
             <ul id="lifequote-tablist" role="tablist">
-                <li id="lifequote-main" role="tab" aria-selected="true">
+                <li id="lifequote-main-tab" role="tab" aria-selected="true">
                     <a href="#tabs">Today's Life Quote </a>
                 </li>
-                <li id="lifequote-list" role="tab"><a href="#tabs">Quote List</a></li>
-                <li id="lifequote-edit" role="tab"><a href="#tabs">Edit</a></li>
-                <li id="lifequote-help" role="tab"><a href="#tabs">Help</a></li>
+                <li id="lifequote-list-tab" role="tab"><a href="#tabs">Quote List</a></li>
+                <li id="lifequote-edit-tab" role="tab"><a href="#tabs">Edit</a></li>
+                <li id="lifequote-help-tab" role="tab"><a href="#tabs">Help</a></li>
             </ul>
             <div id="lifequote-content-body" class="window" role="tabpanel">
                 <div class="window-body">
                     <div id="content-container">
-                        <p id="print-lifequote">Please add a new quote.</p>
+                        <p id="lifequote-print">Please add a new quote.</p>
                     </div>
                 </div>
             </div>
@@ -358,7 +363,7 @@ const getInnerHtmlOfLifeQuoteEl = () => {
 const getInnerHtmlOfContentEl = () => {
     return `
         <div id="content-container">
-            <p id="print-lifequote">Please add a new quote.</p>
+            <p id="lifequote-print">Please add a new quote.</p>
         </div>
     `;
 };
@@ -366,8 +371,8 @@ const getInnerHtmlOfContentEl = () => {
 const getInnerHtmlOfContextMenuEl = () => {
     return `
         <ul>
-            <li id ='edit-li'>Edit</li>
-            <li id ='remove-li'>Remove</li>
+            <li id ='contextmenu-edit-li'>Edit</li>
+            <li id ='contextmenu-remove-li'>Remove</li>
         </ul>
     `;
 };
@@ -397,8 +402,8 @@ const getInnerHtmlOfInputEl = () => {
 
 const getInnerHtmlOfFileListEl = () => {
     return `
-        <div id = "lifequote-filelist" class="sunken-panel">
-            <table class="interactive">
+        <div id ="lifequote-filelist" class="sunken-panel">
+            <table id="lifequote-filelist-table" class="interactive">
                 <thead>
                     <tr>
                         <th>Life Quote</th>
@@ -420,7 +425,7 @@ const getInnerHtmlOfFileListEl = () => {
 
 const getInnerHtmlOfHelpEl = () => {
     return `
-        <div id="lifequote-help-body">
+        <div id="lifequote-help">
             <p>도움말 페이지입니다.</p>
             <ul class="tree-view">
                 <li>
