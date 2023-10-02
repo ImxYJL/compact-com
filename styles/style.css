@@ -1127,7 +1127,6 @@ button:hover {
     height: 15vh; */
     text-align: center;
     align-items: center;
-    cursor: grab;
     overflow: auto;
 }
 
@@ -1161,6 +1160,7 @@ button:hover {
 #window-lifequote {
     width: 95%;
     height: 100%;
+
     /* width: 45vw;
     height: 30vh; */
     display: flex;
@@ -1169,24 +1169,28 @@ button:hover {
 
 #content-container {
     box-sizing: border-box;
+
     color: transparent;
     background: var(--surface);
     background-color: #b2c2e5;
     display: block;
     align-content: center;
     font-size: 1.5rem;
+    /* padding-bottom: 20px; */
 
     box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
     text-shadow: 1px 1px var(--text-color);
     overflow: auto;
+    text-overflow: ellipsis;
     /* margin-bottom: 10em; */
 }
 
 #lifequote-print {
+    display: block;
+    padding: 0 0.8em 2.5em 0.8em;
+    margin-bottom: 2em;
     max-width: 10em;
-    max-height: 2em;
-    padding: 1em 0.8em 1.5em 0.5em;
-    /* margin-bottom: 10em; */
+    max-height: 1.5em;
 }
 
 table {
@@ -1194,7 +1198,7 @@ table {
 }
 
 #lifequote-filelist {
-    height: 12em;
+    height: 10em;
     width: 100%;
     /* height: 120px;
     width: 240px; */

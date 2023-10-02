@@ -1,4 +1,4 @@
-import { getDate } from './utility/date.js';
+import { getDate } from '../utility/date.js';
 
 // HTML 요소 선택
 const desktop = document.querySelector('#desktop');
@@ -30,8 +30,12 @@ const setLifeQuoteContent = () => {
     const authorToPrint = lifeQuoteMap.get(randomKey).author;
 
     // 줄바꿈 문자(\n)을 HTML 줄바꿈 태그(<br>)로 변환하여 출력합니다.
-    printTextEl.innerHTML =
-        textToPrint.replace(/\n/g, '<br>') + ` - ${authorToPrint} -`;
+    printTextEl.innerHTML = textToPrint.replace(/\n/g, '<br>');
+    printTextEl.insertAdjacentHTML(
+        'beforeend',
+        `<br><br> - ${authorToPrint} -`,
+    );
+    printTextEl.insertAdjacentHTML('afterend', `<br>`);
     // printTextEl.textContent = `${textToPrint}`;
 };
 
@@ -133,7 +137,7 @@ const setTableEventListeners = () => {
     // 요소마다 핸들러를 할당하지 않고, 요소의 공통 조상에
     // 이벤트 핸들러를 하나만 할당해도 여러 요소를 한꺼번에 다룰 수 있다.
     const fileListEl = contentBody.querySelector('#lifequote-filelist');
-    const table = contentBody.querySelector('.interactive');
+    const table = contentBody.querySelector('#lifequote-filelist-table');
     let highlighted = table.querySelector('.highlighted');
     //테이블에도 id 달아줘야하남..
 
@@ -174,13 +178,10 @@ const setTableEventListeners = () => {
 };
 
 // 텍스트가 지정한 길이를 넘는지 체크
-// 함수이름 맘에안들어..
-const checkTextMaxLen = (text, max) => {
+const resizeTextLen = (text, max) => {
     const check = text.length > max ? true : false;
     if (check) return text.slice(0, max) + '...';
     else return text;
-
-    // ... <- 처리를 이 함수에서 할까말까
 };
 
 const getCuttedText = () => {};
@@ -191,10 +192,10 @@ const printQuoteMap = (key, item) => {
     const row = tBody.insertRow();
 
     const lifeQuoteCell = row.insertCell(0);
-    lifeQuoteCell.textContent = checkTextMaxLen(item.text, 10);
+    lifeQuoteCell.textContent = resizeTextLen(item.text, 12);
 
     const authorCell = row.insertCell(1);
-    authorCell.textContent = checkTextMaxLen(item.author, 6);
+    authorCell.textContent = resizeTextLen(item.author, 6);
 
     const dateCell = row.insertCell(2);
     dateCell.textContent = item.date;
@@ -382,7 +383,7 @@ const getInnerHtmlOfInputEl = () => {
         <div>
             <div class="status-bar">
                 <button id="lifequote-save-btn">🖫 SAVE</button> 
-                <button id="lifequote-clear-btn"> CLEAR</button>
+                <button id="lifequote-clear-btn">☒ CLEAR</button>
             </div>
             <div class="field-row">
                 <label for="author">Author</label>
@@ -412,11 +413,6 @@ const getInnerHtmlOfFileListEl = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr data-key='0'>
-                        <td>test Quote </td>
-                        <td>test</td>
-                        <td>test</td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -435,16 +431,14 @@ const getInnerHtmlOfHelpEl = () => {
                     </ul>
                 </li>
                 <li>
-                    <details open>
-                        <summary>Quote List</summary>
+                    Quote List
                         <ul>
-                            <details>
-                                <summary>개요</summary>   
-                                <ul>
-                                    <li>등록된 명언들을 확인할 수 있습니다.</li>
-                                    <li>명언 10자 이하, 작가 6자 이하까지만 표시합니다.</li>
-                                </ul>
-                            </details>
+                        <details>
+                            <summary>개요</summary>   
+                            <ul>
+                                <li>등록된 명언들을 확인할 수 있습니다.</li>
+                                <li>명언 12자 이하, 작가 6자 이하까지만 표시합니다.</li>
+                            </ul>
                         </ul>
                         <ul>
                             <details>

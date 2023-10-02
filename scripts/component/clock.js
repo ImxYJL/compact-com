@@ -1,13 +1,16 @@
-import { getDate, getTime } from './utility/date.js';
+import { getDate, getTime } from '../utility/date.js';
 
 let TIMERID = null; // for clearInterval()
+let clockEl = null;
+let printTimeEl = null;
+let printDateEl = null;
 
 // Get and set real-time datas and display it on the screen
-const setTime = (printClockEl) => {
-    printClockEl.innerText = getTime();
+const setTime = () => {
+    printTimeEl.innerText = getTime();
 };
 
-const setDate = (printDateEl) => {
+const setDate = () => {
     const dateInfo = getDate();
     printDateEl.innerText = `
         ${dateInfo.day}, ${dateInfo.month} ${dateInfo.date}
@@ -15,30 +18,38 @@ const setDate = (printDateEl) => {
 };
 
 // Set the timer and call it by setInterval (every sec)
-const initClock = (printClockEl, printDateEl) => {
-    setTime(printClockEl);
-    setDate(printDateEl);
+const initClock = () => {
+    setTime();
+    setDate();
 
     TIMERID = setInterval(() => {
-        setTime(printClockEl);
-        setDate(printDateEl);
+        setTime();
+        setDate();
     }, 1000);
 };
 
-const attachFullTimer = (clockEl) => {
-    const printTimeEl = clockEl.querySelector('#clock-time-print');
-    const printDateEl = clockEl.querySelector('#clock-date-print'); //#date-print로 하니까 컨테이너 무시됨
+const attachFullTimer = () => {
+    printTimeEl = clockEl.querySelector('#clock-time-print');
+    printDateEl = clockEl.querySelector('#clock-date-print'); //#date-print로 하니까 컨테이너 무시됨
 
     //덮어쓰기 때문인듯?
-    initClock(printTimeEl, printDateEl);
+    initClock();
 };
 
 const createClockEl = () => {
-    const clockEl = document.createElement('div');
+    clockEl = document.createElement('div');
     clockEl.id = 'clock-window';
     clockEl.className = 'window';
     clockEl.draggable = true;
-    clockEl.innerHTML = `
+    clockEl.innerHTML = getInnerHtmlOfClockEl();
+
+    attachFullTimer();
+
+    return clockEl;
+};
+
+const getInnerHtmlOfClockEl = () => {
+    return `
         <div class="title-bar">
                 <div class="title-bar-text">Clock</div>
                     <div class="title-bar-controls">
@@ -52,10 +63,6 @@ const createClockEl = () => {
             </div>
         </div>
     `;
-
-    attachFullTimer(clockEl);
-
-    return clockEl;
 };
 
-export { createClockEl, initClock, TIMERID };
+export { createClockEl, TIMERID };
