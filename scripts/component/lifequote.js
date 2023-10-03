@@ -1,6 +1,5 @@
 import { getDate } from '../utility/date.js';
 
-// HTML 요소 선택
 const desktop = document.querySelector('#desktop');
 let tabListItems = null;
 let contentBody = null;
@@ -36,23 +35,19 @@ const setLifeQuoteContent = () => {
         `<br><br> - ${authorToPrint} -`,
     );
     printTextEl.insertAdjacentHTML('afterend', `<br>`);
-    // printTextEl.textContent = `${textToPrint}`;
 };
 
 const clickContextMenuItem = (e) => {
     const clickedRow = contentBody.querySelector('.highlighted');
-    //console.log(clickedRow);
-    const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
-    //console.log(clickedKey);
+    const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
 
     if (e.target.id === 'contextmenu-edit-li') {
         // 리스트 탭의 선택 상태를 초기화하고 edit 탭으로 넘어감
         tabListItems[1].setAttribute('aria-selected', 'false');
         tabListItems[2].setAttribute('aria-selected', 'true');
-        setInputContent(clickedKey);
+        setInputContent(selectedKey);
     } else {
-        //if (clickedKey !== -1)
-        lifeQuoteMap.delete(clickedKey);
+        lifeQuoteMap.delete(selectedKey);
         clickedRow.remove(); // 표에서 클릭된 행을 삭제
         //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
     }
@@ -62,16 +57,16 @@ const clickContextMenuItem = (e) => {
 
 const clickEditContextMenu = () => {
     const clickedRow = contentBody.querySelector('.highlighted');
-    const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
+    const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
     tabListItems[1].setAttribute('aria-selected', 'false');
     tabListItems[2].setAttribute('aria-selected', 'true');
-    setInputContent(clickedKey);
+    setInputContent(selectedKey);
 };
 
 const clickRemoveContextMenu = () => {
     const clickedRow = contentBody.querySelector('.highlighted');
-    const clickedKey = parseInt(clickedRow.getAttribute('data-key'));
-    lifeQuoteMap.delete(clickedKey);
+    const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
+    lifeQuoteMap.delete(selectedKey);
     clickedRow.remove(); // 표에서 클릭된 행을 삭제
     //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
 };
@@ -112,11 +107,11 @@ const getContextMenuPos = () => {
 const setContextMenu = (e) => {
     e.preventDefault();
 
-    // 이미 메뉴가 존재하거나 선택된 열이 없으면 종료
+    // Exit if contextMenu already exists or no column is selected
     const clickedRow = e.target.parentElement;
     if (document.querySelector('#context-menu') || !clickedRow) return;
 
-    // context menu 제작
+    // Create context menu
     contextMenu = document.createElement('div');
     contextMenu.id = 'context-menu';
     getContextMenuPos();
@@ -126,9 +121,9 @@ const setContextMenu = (e) => {
 };
 
 const dragLifeQuoteElWithContextMenu = () => {
-    console.log('ㅇ래');
     const clickedRow = contentBody.querySelector('.highlighted');
-    // Quotelist가 아닌 다른 탭에 있거나 선택된 열이 없으면 contextMenu 좌표 재조정하지 않음
+    // Not re-adjust contextMenu coordinates
+    // if current tab is not quotelist or if no columns are selected
     if (!isListTab() || !clickedRow) return;
     getContextMenuPos();
 };
@@ -139,7 +134,6 @@ const setTableEventListeners = () => {
     const fileListEl = contentBody.querySelector('#lifequote-filelist');
     const table = contentBody.querySelector('#lifequote-filelist-table');
     let highlighted = table.querySelector('.highlighted');
-    //테이블에도 id 달아줘야하남..
 
     const rightClickRow = (e) => {
         const tr = contentBody.querySelector('tr');
@@ -147,21 +141,18 @@ const setTableEventListeners = () => {
         setContextMenu(e);
     };
     const clickRow = (e) => {
-        // 선택됐던 열 있는지 확인한 뒤 있다면 하이라이트 제거
+        // Check if there is already selected row
         if (highlighted) highlighted.classList.remove('highlighted');
-        console.log('clickedRow');
 
-        // 새로 선택된 요소에 하이라이트
         const clickedRow = e.target.parentElement;
         clickedRow.classList.add('highlighted');
 
-        // 클릭 이벤트가 일어났을 때 우측 클릭 이벤트 달기
+        // Add right click event when normal click event occurs
         clickedRow.addEventListener('contextmenu', rightClickRow);
     };
 
     const clickQuoteListEl = (e) => {
-        highlighted = table.querySelector('.highlighted');
-        // 있을 때도 있고 없을 때도 있으므로 실시간으로 가져와야 함!
+        highlighted = table.querySelector('.highlighted'); // have to get it in real time
 
         if (highlighted && !table.contains(e.target))
             highlighted.classList.remove('highlighted');
@@ -172,12 +163,12 @@ const setTableEventListeners = () => {
     //마지막은 처음에 desktop, El에 달았는데 얘네는 초기화가 따로 안돼서 계속 리스너 중첩됨
     //얘랑 드래그 이벤트랑 아예 createElement할 때 리스너 붙여주고 변수들은 외부로 빼야하나
 
-    // context menu가 존재할 경우 필요한 이벤트 리스너들 등록
+    // Add event listeners required when a context menu exists
     lifeQuoteEl.addEventListener('dragend', dragLifeQuoteElWithContextMenu);
     lifeQuoteEl.addEventListener('click', clickLifeQuoteElWithContextMenu);
 };
 
-// 텍스트가 지정한 길이를 넘는지 체크
+// Check length of the text and readjust it if it exceeds the limit
 const resizeTextLen = (text, max) => {
     const check = text.length > max ? true : false;
     if (check) return text.slice(0, max) + '...';
@@ -187,7 +178,6 @@ const resizeTextLen = (text, max) => {
 const getCuttedText = () => {};
 
 const printQuoteMap = (key, item) => {
-    //console.log(`키: ${key}, 객체: ${item}`);
     const tBody = contentBody.querySelector('tbody');
     const row = tBody.insertRow();
 
@@ -214,8 +204,8 @@ const setFileListContent = () => {
     setTableEventListeners();
 };
 
-// create a new word item
-const createQuote = (clickedKey, textEl, authorEl) => {
+// Create a new word item
+const createQuote = (selectedKey, textEl, authorEl) => {
     // 입력창 비었는지 확인하는거 유틸로 빼도 될듯
     if (
         textEl.value.trim().length === 0 ||
@@ -226,7 +216,7 @@ const createQuote = (clickedKey, textEl, authorEl) => {
         return;
     }
 
-    const key = clickedKey ? clickedKey : counter++;
+    const key = selectedKey ? selectedKey : counter++;
     const today = getDate();
     const newQuote = {
         text: textEl.value,
@@ -239,7 +229,6 @@ const createQuote = (clickedKey, textEl, authorEl) => {
     } catch (err) {
         alert(`${err.name}: ${err.message}`);
         setInputContent();
-        //console.log(err.message);
     }
 
     alert('It has been saved.');
@@ -247,24 +236,22 @@ const createQuote = (clickedKey, textEl, authorEl) => {
 };
 
 // 입력창 세팅
-const setInputContent = (clickedKey) => {
-    //폰트 크기 조절 있으면 좋을듯
+const setInputContent = (selectedKey) => {
     contentBody.innerHTML = getInnerHtmlOfInputEl();
 
-    //console.log(clickedKey); // undefined or 1~
     const textEl = contentBody.querySelector('#lifequote-textarea');
     const authorEl = contentBody.querySelector('input');
 
-    // FileList에서 선택한 요소가 있다면 해당 요소를 출력
-    if (clickedKey) {
-        textEl.value = lifeQuoteMap.get(clickedKey).text;
-        authorEl.value = lifeQuoteMap.get(clickedKey).author;
+    // Setting the contents of the row selected from fileList
+    if (selectedKey) {
+        textEl.value = lifeQuoteMap.get(selectedKey).text;
+        authorEl.value = lifeQuoteMap.get(selectedKey).author;
     }
 
     const saveBtn = contentBody.querySelector('#lifequote-save-btn');
     const clearBtn = contentBody.querySelector('#lifequote-clear-btn');
     saveBtn.addEventListener('click', () =>
-        createQuote(clickedKey, textEl, authorEl),
+        createQuote(selectedKey, textEl, authorEl),
     );
 
     clearBtn.addEventListener('click', () => {
@@ -280,14 +267,13 @@ const setHelpContent = () => {
 
 // 각 탭을 클릭할 때 실행될 함수
 const clickTab = (e) => {
-    // 모든 탭의 선택 상태를 초기화
+    // Initialize the status of the all opened tabs
     tabListItems.forEach((item) => item.setAttribute('aria-selected', 'false'));
 
-    // 클릭한 탭을 선택 상태로 변경
+    // Change the clicked tab to selected state
     const clickedTab = e.currentTarget;
     clickedTab.setAttribute('aria-selected', 'true');
 
-    // 탭에 해당하는 내용을 가져와서 window-body에 표시
     const tabContent = clickedTab.querySelector('a').textContent.trim();
     switch (tabContent) {
         case "Today's Life Quote":
@@ -312,24 +298,21 @@ const createlifeQuoteEl = () => {
     lifeQuoteEl = document.createElement('div');
     lifeQuoteEl.id = 'lifequote-window';
     lifeQuoteEl.className = 'window';
-    // lifeQuoteEl.className = 'lifequote-element';
     lifeQuoteEl.draggable = true;
     lifeQuoteEl.innerHTML = getInnerHtmlOfLifeQuoteEl();
 
-    // HTML 요소 선택
+    // Initialize some of the global variables
     tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
     contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
 
-    // 각 탭에 이벤트 리스너 추가
+    // 각 탭에 이벤트 리스너 추가 ... 근데 리스트 상위요소에 달아도될듯ㅋㅋ
     tabListItems.forEach((item) => {
         item.addEventListener('click', clickTab);
     });
-
-    //console.log(desktop.querySelector('.window-element'));
     return lifeQuoteEl;
 };
 
-/* innerHtml 모음 */
+/* Functions to get each innerHtml  */
 
 // 전체 엘리먼트
 const getInnerHtmlOfLifeQuoteEl = () => {
@@ -360,7 +343,6 @@ const getInnerHtmlOfLifeQuoteEl = () => {
     `;
 };
 
-// 메인 화면에 띄우는 엘리먼트
 const getInnerHtmlOfContentEl = () => {
     return `
         <div id="content-container">

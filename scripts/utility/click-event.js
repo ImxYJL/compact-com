@@ -13,7 +13,7 @@ const clickWindowEl = (elem) => {
 
 const clickCloseBtn = (elem, timerId) => {
     elem.querySelector('#close-btn').addEventListener('click', () => {
-        if (!!timerId) clearInterval(timerId);
+        if (timerId) clearInterval(timerId);
 
         OPEN_EL_LIST.delete(elem);
         elem.remove();
