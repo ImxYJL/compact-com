@@ -43,7 +43,7 @@ const createDraggable = (dragItem) => {
     dragItem.addEventListener('dragstart', dragStart);
     desktop.addEventListener('drop', dragEnd);
     desktop.addEventListener('dragover', drag);
-    //return dragItem;
+    return dragItem;
 };
 
 export { createDraggable };

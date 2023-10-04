@@ -21,36 +21,37 @@ let timetableEl = null;
 
 // Handlers for content (label) click
 const clickQuoteLabel = () => {
+    // Make sure only one window is open
     if (desktop.contains(quoteEl)) return;
 
-    // 여기 체이닝으로 구현해도 될것같다
     quoteEl = createlifeQuoteEl();
-    clickCloseBtn(quoteEl);
-    createDraggable(quoteEl);
-    desktop.append(quoteEl);
-    OPEN_EL_LIST.add(quoteEl);
-    clickWindowEl(quoteEl);
+    setAllListenerForWindowEl(quoteEl);
+    addWindowElToDesktop(quoteEl);
 };
 
 const clickClockLabel = () => {
-    // Make sure only one window is open
     if (desktop.contains(clockEl)) return;
 
     clockEl = createClockEl();
-    createDraggable(clockEl);
-    clickCloseBtn(clockEl, TIMERID);
-    desktop.append(clockEl);
-    OPEN_EL_LIST.add(clockEl);
-    clickWindowEl(clockEl);
+    setAllListenerForWindowEl(clockEl);
+    addWindowElToDesktop(clockEl);
 };
 
 const clickTimetableLabel = () => {
     timetableEl = createClockEl();
-    createDraggable(timetableEl);
-    clickCloseBtn(timetableEl);
-    desktop.append(timetableEl);
-    OPEN_EL_LIST.add(timetableEl);
-    clickWindowEl(timetableEl);
+    setAllListenerForWindowEl(timetableEl);
+    addWindowElToDesktop(timetableEl);
+};
+
+const setAllListenerForWindowEl = (elem) => {
+    clickWindowEl(elem);
+    clickCloseBtn(elem, TIMERID);
+    createDraggable(elem);
+};
+
+const addWindowElToDesktop = (elem) => {
+    desktop.append(elem);
+    OPEN_EL_LIST.add(elem);
 };
 
 lifequoteLabel.addEventListener('click', clickQuoteLabel);
