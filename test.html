@@ -1,85 +1,99 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Context Menu Example</title>
-        <style>
-            #context-menu {
-                /* position: absolute; */
-                background-color: #fff;
-                border: 1px solid #ccc;
-                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-                list-style: none;
-                padding: 0;
-                margin: 0;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+
+
+/* 전체 페이지 스타일 */
+
+
+/* .wrapper 스타일 */
+.wrapper {
+    margin: 50px auto;
+    width: 1000px;
+}
+
+/* 테이블 스타일 */
+table {
+    table-layout: fixed;
+    width: 100%;
+    font-weight: 300;
+    border-collapse: collapse;
+}
+
+/* 테이블 캡션 스타일 */
+caption {
+    text-align: center;
+    font-size: 1.5em;
+    padding: 0.35em;
+}
+
+/* 테이블 행 스타일 */
+tr {
+    height: 1.85em;
+    
+}
+
+/* 테이블 셀 스타일 */
+td, th {
+    border: 1px solid #444444;
+    text-align: center;
+}
+
+/* 테이블 헤더 셀 스타일 */
+th {
+    font-weight: 400;
+}
+</style>
+<body>
+    <div class="wrapper">
+        <table>
+            <!-- <caption>Timetable</caption> -->
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+            </thead>
+            <tbody id="timetable-body"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // 시간대 목록
+        const timeSlots = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+
+        // 표 생성 함수
+        function generateTimetable() {
+            const tbody = document.getElementById("timetable-body");
+
+            for (const time of timeSlots) {
+                const row = document.createElement("tr");
+                const timeCell = document.createElement("td");
+                timeCell.textContent = time + ":00";
+                row.appendChild(timeCell);
+
+                for (let i = 0; i < 6; i++) {
+                    const cell = document.createElement("td");
+                    row.appendChild(cell);
+                }
+
+                tbody.appendChild(row);
             }
+        }
 
-            #context-menu ul {
-                padding: 0;
-                margin: 0;
-            }
-
-            #context-menu li {
-                padding: 10px;
-                cursor: pointer;
-            }
-
-            #context-menu li:hover {
-                background-color: #f0f0f0;
-            }
-
-            .hidden {
-                display: none;
-            }
-        </style>
-        <!-- <link rel="stylesheet" href="styles.css" /> -->
-    </head>
-    <body>
-        <ul>
-            <li>Item 1</li>
-            <li>Item 2</li>
-            <li>Item 3</li>
-        </ul>
-        <div id="context-menu" class="hidden">
-            <ul>
-                <li>Edit</li>
-                <li>Delete</li>
-            </ul>
-        </div>
-        <script>
-            const contextMenu = document.getElementById('context-menu');
-            const menuItems = contextMenu.querySelectorAll('li');
-            const itemList = document.querySelectorAll('li');
-
-            // Show the context menu
-            function showContextMenu(e) {
-                e.preventDefault();
-                contextMenu.style.left = e.pageX + 'px';
-                contextMenu.style.top = e.pageY + 'px';
-                contextMenu.classList.remove('hidden');
-            }
-
-            // Hide the context menu
-            function hideContextMenu() {
-                contextMenu.classList.add('hidden');
-            }
-
-            // Handle context menu item click
-            menuItems.forEach((item) => {
-                item.addEventListener('click', (e) => {
-                    hideContextMenu();
-                    alert(`You clicked on: ${e.target.textContent}`);
-                });
-            });
-
-            // Attach context menu to each list item
-            itemList.forEach((item) => {
-                item.addEventListener('contextmenu', showContextMenu);
-            });
-
-            // Hide context menu when clicking outside
-            document.addEventListener('click', hideContextMenu);
-        </script>
-    </body>
+        // 페이지 로드 시 표 생성
+        window.addEventListener("load", generateTimetable);
+    </script>
+</body>
 </html>

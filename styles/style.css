@@ -1240,3 +1240,41 @@ textarea {
 .hidden {
     display: none;
 }
+
+/* Timetable */
+#timetable-window{
+    width: 80%;
+    height: 45%;
+}
+
+#timetable-content-body{
+    display:flex;
+    flex-direction:row;
+    column-gap:0.2rem;
+    overflow: auto;
+}
+
+#timetable-container{
+    color: transparent;
+    background: whitesmoke;
+    align-content: center;
+    font-size: 1rem;
+    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+    text-shadow: 1px 1px var(--text-color);
+    /* overflow: auto; */
+    width: 80%;
+    height: 100%;
+    /* display: inline-flex; */
+}
+
+#timetable-side-container{
+    color: transparent;
+    align-content: center;
+    font-size: 1rem;
+    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+    text-shadow: 1px 1px var(--text-color);
+    overflow: auto;
+    width: 20%;
+    display: flex;
+}
+

@@ -38,7 +38,9 @@ const clickClockLabel = () => {
 };
 
 const clickTimetableLabel = () => {
-    timetableEl = createClockEl();
+    if (desktop.contains(timetableEl)) return;
+
+    timetableEl = createTimetableEl();
     setAllListenerForWindowEl(timetableEl);
     addWindowElToDesktop(timetableEl);
 };
