@@ -1,11 +1,35 @@
 let timetableEl = null;
 
+const getTable = () => {
+    // 시간대 목록
+    const timeSlots = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+
+    // 표 생성 함수
+
+    const tbody = timetableEl.querySelector('tbody');
+
+    for (const time of timeSlots) {
+        const row = document.createElement('tr');
+        const timeCell = document.createElement('td');
+        timeCell.textContent = time + ':00';
+        row.appendChild(timeCell);
+
+        for (let i = 0; i < 5; i++) {
+            const cell = document.createElement('td');
+            row.appendChild(cell);
+        }
+
+        tbody.appendChild(row);
+    }
+};
+
 const createTimetableEl = () => {
     timetableEl = document.createElement('div');
     timetableEl.id = 'timetable-window';
     timetableEl.className = 'window';
     timetableEl.draggable = true;
     timetableEl.innerHTML = getInnerHtmlOfTimetableEl();
+    getTable();
 
     return timetableEl;
 };
@@ -20,117 +44,40 @@ const getInnerHtmlOfTimetableEl = () => {
         </div>
         <div id="timetable-body" class="window-body">
             <div id="timetable-content-body" class="window" role="tabpanel">
-                    <div id="timetable-container">
-
-                        <div id = 'table'></div>
-                        <div class="wrapper">
-                        <table>
-                            <caption>Timetable</caption>
-                            <tr>
-                                <th>Time</th>
-                                <th>Monday</th>
-                                <th>Tuesday</th>
-                                <th>Wednesday</th>
-                                <th>Thursday</th>
-                                <th>Friday</th>
-                                <th>Saturday</th>
-
-                            </tr>
-                            <tr>
-                                <td>9:00</td>
-                                <td></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>10:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>11:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>12:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>13:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>14:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>15:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>16:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
-                            <tr>
-                                <td>17:00</td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                                <td contenteditable=""></td>
-                            </tr>
+                    <div id="timetable-container">          
+                        <table id = "timetable-table">
+                            <!-- <caption>Timetable</caption> -->
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timetable-body"></tbody>
                         </table>
                     </div>
-                    </div>
                     <div id="timetable-side-container">
-                        <div>hello</div>
+                            <fieldset>
+                                <legend>Today's mood</legend>
+                                <div class="field-row">
+                                    <input id="radio13" type="radio" name="fieldset-example2">
+                                    <label for="radio13">Claire Saffitz</label>
+                                </div>
+                                <div class="field-row">
+                                    <input id="radio14" type="radio" name="fieldset-example2">
+                                    <label for="radio14">Brad Leone</label>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Today's mood</legend>
+                                <div id ="start-menu" class="window-box-shadow">
+                                    <label for="">hello</label>
+                                </div>
+                            </fieldset>
                     </div>
             </div>
         </div>
