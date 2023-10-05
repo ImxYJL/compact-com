@@ -3,93 +3,77 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Timetable</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
-    <style>
-        /* 전체 페이지 스타일 */
-
-        /* .wrapper 스타일 */
-        .wrapper {
-            margin: 50px auto;
-            width: 1000px;
-        }
-
-        /* 테이블 스타일 */
-        table {
-            table-layout: fixed;
-            width: 100%;
-            font-weight: 300;
-            border-collapse: collapse;
-        }
-
-        /* 테이블 캡션 스타일 */
-        caption {
-            text-align: center;
-            font-size: 1.5em;
-            padding: 0.35em;
-        }
-
-        /* 테이블 행 스타일 */
-        tr {
-            height: 1.85em;
-        }
-
-        /* 테이블 셀 스타일 */
-        td,
-        th {
-            border: 1px solid #444444;
-            text-align: center;
-        }
-
-        /* 테이블 헤더 셀 스타일 */
-        th {
-            font-weight: 400;
-        }
-    </style>
-    <body>
-        <div class="wrapper">
-            <table>
-                <!-- <caption>Timetable</caption> -->
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                    </tr>
-                </thead>
-                <tbody id="timetable-body"></tbody>
-            </table>
-        </div>
-
-        <script>
-            // 시간대 목록
-            const timeSlots = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-
-            // 표 생성 함수
-            function generateTimetable() {
-                const tbody = document.getElementById('timetable-body');
-
-                for (const time of timeSlots) {
-                    const row = document.createElement('tr');
-                    const timeCell = document.createElement('td');
-                    timeCell.textContent = time + ':00';
-                    row.appendChild(timeCell);
-
-                    for (let i = 0; i < 5; i++) {
-                        const cell = document.createElement('td');
-                        row.appendChild(cell);
-                    }
-
-                    tbody.appendChild(row);
-                }
+        <title>색상 선택기</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f0f0f0;
             }
 
-            // 페이지 로드 시 표 생성
-            window.addEventListener('load', generateTimetable);
+            .color-picker {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .color-grid {
+                display: grid;
+                grid-template-columns: repeat(
+                    8,
+                    30px
+                ); /* 8x8 그리드, 그리드 크기 조절 가능 */
+                gap: 2px;
+                margin-bottom: 10px;
+            }
+
+            .color {
+                width: 30px;
+                height: 30px;
+                cursor: pointer;
+            }
+
+            .selected-color {
+                width: 100px;
+                height: 100px;
+                background-color: #fff; /* 초기 선택된 색상 (흰색) */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="color-picker">
+            <div class="color-grid"></div>
+            <div class="selected-color"></div>
+        </div>
+        <script>
+            const colorGrid = document.querySelector('.color-grid');
+            const selectedColor = document.querySelector('.selected-color');
+
+            const colors = [
+                '#FF0000',
+                '#FF7F00',
+                '#FFFF00',
+                '#00FF00',
+                '#0000FF',
+                '#8B00FF',
+                '#FF00FF',
+                '#000000',
+                // 다른 원하는 색상을 추가할 수 있습니다.
+            ];
+
+            // 색상 그리드 생성
+            colors.forEach((color) => {
+                const colorDiv = document.createElement('div');
+                colorDiv.classList.add('color');
+                colorDiv.style.backgroundColor = color;
+                colorDiv.addEventListener('click', () => {
+                    selectedColor.style.backgroundColor = color;
+                });
+                colorGrid.appendChild(colorDiv);
+            });
         </script>
     </body>
 </html>

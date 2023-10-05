@@ -62,22 +62,71 @@ const getInnerHtmlOfTimetableEl = () => {
                     </div>
                     <div id="timetable-side-container">
                             <fieldset>
-                                <legend>Today's mood</legend>
+                                <legend>Select Function</legend>
                                 <div class="field-row">
                                     <input id="radio13" type="radio" name="fieldset-example2">
-                                    <label for="radio13">Claire Saffitz</label>
+                                    <label for="radio13">Today's Lecture</label>
                                 </div>
                                 <div class="field-row">
                                     <input id="radio14" type="radio" name="fieldset-example2">
-                                    <label for="radio14">Brad Leone</label>
+                                    <label for="radio14">Edit Timetable</label>
                                 </div>
                             </fieldset>
-                            <fieldset>
-                                <legend>Today's mood</legend>
-                                <div id ="start-menu" class="window-box-shadow">
-                                    <label for="">hello</label>
+                            <div id="side-content-container">
+                                <div id="side-content-1" class="hidden">
+                                    <label class="sdie-content-title">Today's Lectures</label>
+                                    <div id ="lecture-list">
+                                        <label class="divider"></label>
+                                        <div class="lecture-item">
+
+                                            <label class="lecture-item-title">Javascript</label>
+                                            <label class="lecture-item-time">2:00~3:15</label>
+                                            <label class="lecture-item-place">본관</label>
+                                        </div>
+                                        <label class="divider"></label>
+                                        <div class="lecture-item">
+
+                                            <label class="lecture-item-title">Javascript</label>
+                                            <label class="lecture-item-time">2:00~3:15</label>
+                                            <label class="lecture-item-place">본관</label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </fieldset>
+                                <div id="side-content-2" class="visible">
+                                <label class="sdie-content-title">Edit Timetable</label>
+                                    <div id ="lecture-edit-container" >
+                                        <label for="lecture-name">Name</label>
+                                        <input id ="lecture-name" type="text"/>
+                                        <label for="lecture-professor">Professor</label>
+                                        <input id ="lecture-professor" type="text"/>
+                                        <label for="lecture-location">Location</label>
+                                        <input id ="lecture-location" type="text"/>
+                                        <label for="lecture-week">Week</label>
+                                            <select>
+                                                <option>5 - Incredible!</option>
+                                                <option>4 - Great!</option>
+                                                <option>3 - Pretty good</option>
+                                                <option>2 - Not so great</option>
+                                                <option>1 - Unfortunate</option>
+                                            </select>
+                                        <label for="lecture-time">Time</label>
+                                        <div class="time-row">
+                                            <select>
+                                                <option>5 - Incredible!</option>
+                                                <option>4 - Great!</option>
+                                            </select>
+                                            <div>:</div>
+                                            <select>
+                                                <option>5 - Incredible!</option>
+                                                <option>4 - Great!</option>
+                                            </select>
+                                        </div>
+                                        <label for="lecture-color">Color</label>
+                                        <div class="color-picker"></div>
+                                    </div>
+                            </div>
+                            </div>
+                                
                     </div>
             </div>
         </div>
