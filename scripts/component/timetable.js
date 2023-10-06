@@ -1,14 +1,53 @@
 let timetableEl = null;
+//6시반 예외처리
 
-const getTable = () => {
-    // 시간대 목록
-    const timeSlots = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
-    // 표 생성 함수
+const setTimeSelector = () => {
+    const hourSelector = timetableEl.querySelector('#time-h');
+    //const minuteSelector = timetableEl.querySelector('#time-m');
+    //const minuteList = ['00', '30'];
 
+    for (const time of hourList) {
+        const row = document.createElement('option');
+        row.textContent = time;
+        hourSelector.appendChild(row);
+    }
+};
+
+const setColorPicker = () => {
+    const colorGrid = timetableEl.querySelector('.color-grid');
+    const selectedColor = timetableEl.querySelector('.selected-color');
+
+    const colors = [
+        '#FF0000',
+        '#FF7F00',
+        '#FFFF00',
+        '#00FF00',
+        '#0000FF',
+        '#8B00FF',
+        '#FF00FF',
+        '#000000',
+        // 다른 원하는 색상을 추가할 수 있습니다.
+    ];
+
+    // 색상 그리드 생성
+    colors.forEach((color) => {
+        const colorDiv = document.createElement('div');
+        colorDiv.classList.add('color');
+        colorDiv.style.backgroundColor = color;
+        colorDiv.addEventListener('click', () => {
+            //e.target.style.border = '0.1em solid #000000';
+            selectedColor.style.backgroundColor = color;
+        });
+        colorGrid.appendChild(colorDiv);
+    });
+};
+
+const setTable = () => {
     const tbody = timetableEl.querySelector('tbody');
 
-    for (const time of timeSlots) {
+    for (const time of hourList) {
         const row = document.createElement('tr');
         const timeCell = document.createElement('td');
         timeCell.textContent = time + ':00';
@@ -29,7 +68,9 @@ const createTimetableEl = () => {
     timetableEl.className = 'window';
     timetableEl.draggable = true;
     timetableEl.innerHTML = getInnerHtmlOfTimetableEl();
-    getTable();
+    setTable();
+    setColorPicker();
+    setTimeSelector();
 
     return timetableEl;
 };
@@ -103,26 +144,28 @@ const getInnerHtmlOfTimetableEl = () => {
                                         <input id ="lecture-location" type="text"/>
                                         <label for="lecture-week">Week</label>
                                             <select>
-                                                <option>5 - Incredible!</option>
-                                                <option>4 - Great!</option>
-                                                <option>3 - Pretty good</option>
-                                                <option>2 - Not so great</option>
-                                                <option>1 - Unfortunate</option>
+                                                <option>Monday</option>
+                                                <option>Tuesday</option>
+                                                <option>Wednesday</option>
+                                                <option>Thursday</option>
+                                                <option>Friday</option>
                                             </select>
                                         <label for="lecture-time">Time</label>
                                         <div class="time-row">
-                                            <select>
-                                                <option>5 - Incredible!</option>
-                                                <option>4 - Great!</option>
+                                            <select id ="time-h">
                                             </select>
-                                            <div>:</div>
-                                            <select>
-                                                <option>5 - Incredible!</option>
-                                                <option>4 - Great!</option>
+                                            
+                                            <select id="time-m">
+                                                <option>00</option>
+                                                <option>30</option>
                                             </select>
                                         </div>
                                         <label for="lecture-color">Color</label>
-                                        <div class="color-picker"></div>
+                                        <div class="color-picker">
+                                            <div class="color-grid"></div>
+                                            <div class="selected-color"></div>
+                                        </div>
+                                        <button>Save</button>
                                     </div>
                             </div>
                             </div>

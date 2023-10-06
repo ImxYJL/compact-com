@@ -1351,7 +1351,7 @@ fieldset {
 .lecture-item-title {
     font-size: 0.8rem;
     font-weight: bold;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.5em;
 }
 
 #lecture-edit-container {
@@ -1363,15 +1363,12 @@ fieldset {
 
 #lecture-edit-container label {
     font-weight: bold;
-    margin: 0.5rem 0.2em 0.1em 0.4em;
+    margin: 0.3rem 0.2em 0.7em 0.6em;
 }
 
-#lecture-edit-container input {
-    margin-left: 0.4em;
-}
-
+#lecture-edit-container input,
 select {
-    margin-left: 0.4em;
+    margin-left: 0.6em;
 }
 
 .time-row {
@@ -1379,6 +1376,36 @@ select {
     align-items: row;
 }
 
-.time-row p {
-    display: inline-block;
+.color-picker {
+    margin: 0.5em 0.6em;
+    display: flex;
+    flex-direction: row;
+    align-items: normal;
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 0.5em);
+    grid-template-rows: repeat(2, 0.5em);
+    gap: 1.5em;
+    margin-bottom: 0.5em;
+    margin-right: 0.5em;
+}
+
+.color {
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+
+.selected-color {
+    margin-left: 1em;
+    width: 3.2em;
+    height: 3.2em;
+    background-color: #fff; /* 초기 선택된 색상 (흰색) */
+}
+
+#lecture-edit-container button {
+    width: 90%;
+    margin: 1em 0.5em;
 }

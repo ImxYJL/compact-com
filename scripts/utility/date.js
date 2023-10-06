@@ -1,4 +1,4 @@
-const dayOfWeeks = [
+const DAYOFWEEKS = [
     'Sunday',
     'Monday',
     'Tuesday',
@@ -23,7 +23,7 @@ const months = [
 ];
 
 // Convert numeric data into easy-to-read word
-const getDay = (dayNum) => dayOfWeeks[dayNum];
+const getDay = (dayNum) => DAYOFWEEKS[dayNum];
 const getMonth = (monthNum) => months[monthNum];
 
 const getTime = () => {
@@ -50,4 +50,4 @@ const getDate = () => {
     };
 };
 
-export { getTime, getDate };
+export { DAYOFWEEKS, getTime, getDate };
