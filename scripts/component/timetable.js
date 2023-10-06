@@ -4,14 +4,14 @@ let timetableEl = null;
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
 const setTimeSelector = () => {
-    const hourSelector = timetableEl.querySelector('#time-h');
-    //const minuteSelector = timetableEl.querySelector('#time-m');
-    //const minuteList = ['00', '30'];
+    const hourSelectorList = timetableEl.querySelectorAll('.time-h');
 
-    for (const time of hourList) {
-        const row = document.createElement('option');
-        row.textContent = time;
-        hourSelector.appendChild(row);
+    for (const hourSelector of hourSelectorList) {
+        for (const time of hourList) {
+            const row = document.createElement('option');
+            row.textContent = time;
+            hourSelector.appendChild(row);
+        }
     }
 };
 
@@ -62,6 +62,21 @@ const setTable = () => {
     }
 };
 
+const clickRadioBtn = () => {
+    const lectureListEl = timetableEl.querySelector('#side-content-1');
+    const editEl = timetableEl.querySelector('#side-content-2');
+    lectureListEl.classList.toggle('hidden');
+    editEl.classList.toggle('hidden');
+};
+
+const setTimetableElListeners = () => {
+    // const lectureListEl = timetableEl.querySelector('#side-content-1');
+    // const editEl = timetableEl.querySelector('#side-content-2');
+    const sideFuncList = timetableEl.querySelectorAll('.field-row input');
+    sideFuncList[0].addEventListener('click', clickRadioBtn);
+    sideFuncList[1].addEventListener('click', clickRadioBtn);
+};
+
 const createTimetableEl = () => {
     timetableEl = document.createElement('div');
     timetableEl.id = 'timetable-window';
@@ -71,6 +86,67 @@ const createTimetableEl = () => {
     setTable();
     setColorPicker();
     setTimeSelector();
+
+    setTimetableElListeners();
+
+    const addTimetableEntry = (
+        day,
+        startHour,
+        startMinute,
+        endHour,
+        endMinute,
+        color,
+    ) => {
+        // // 셀의 높이를 가져옵니다.
+        // const cellHeight = cell.clientHeight;
+
+        // // 셀의 높이를 반으로 나눕니다.
+        // const halfHeight = cellHeight / 2;
+
+        const timetableBody = timetableEl.querySelector('#timetable-body');
+        const rows = timetableBody.querySelectorAll('tr');
+
+        const rowStart = startHour - 9; // 시간 정보 -> 셀 위치로 치환
+        const rowEnd = endHour - 9;
+
+        // 분 정보
+        const startRow = rowStart + (startMinute === 30 ? 0.5 : 0); // 시작 시간이 30분인 경우 반으로 나눔
+        const endRow = rowEnd + (endMinute === 30 ? 0.5 : 0); // 종료 시간이 30분인 경우 반으로 나눔
+
+        console.log(rowStart, rowEnd, startRow, endRow);
+
+        // 그러고보니 색상 채워나가는 단위를 0.5로 잡으면 되겠군...
+        for (let i = startRow; i < endRow; i += 0.5) {
+            const rowIndex = Math.floor(i); // 장난해?!!?
+            const fraction = i - rowIndex;
+
+            const row = rows[rowIndex + 1]; // 첫 번째 행은 시간 정보 행이므로 1을 더해줍니다.
+            const cells = row.querySelectorAll('td');
+
+            if (fraction === 0) {
+                // 정시 시간 칸
+                const cell = cells[day + 1]; // 첫 번째 열은 시간 정보 열이므로 day + 1을 사용합니다.
+                cell.style.backgroundColor = color;
+            } else {
+                // 중간 시간 칸
+                const cell = cells[day + 1];
+                cell.style.backgroundColor = color;
+                cell.style.borderTop = 'none'; // 상단 가로줄 제거
+            }
+
+            if (fraction === 0.5) {
+                // 30분 칸
+                const cell = cells[day + 1];
+                cell.style.borderBottom = 'none'; // 하단 가로줄 제거
+            }
+        }
+    };
+
+    // 월요일 9시~10시 반 추가
+    addTimetableEntry(0, 9, 0, 10, 30, '#FF0000');
+
+    // 화요일 15시~18시 추가
+    addTimetableEntry(1, 15, 0, 18, 0, '#FFFF00');
 
     return timetableEl;
 };
@@ -105,7 +181,7 @@ const getInnerHtmlOfTimetableEl = () => {
                             <fieldset>
                                 <legend>Select Function</legend>
                                 <div class="field-row">
-                                    <input id="radio13" type="radio" name="fieldset-example2">
+                                    <input id="radio13" type="radio" checked>
                                     <label for="radio13">Today's Lecture</label>
                                 </div>
                                 <div class="field-row">
@@ -114,7 +190,7 @@ const getInnerHtmlOfTimetableEl = () => {
                                 </div>
                             </fieldset>
                             <div id="side-content-container">
-                                <div id="side-content-1" class="hidden">
+                                <div id="side-content-1" class="visible">
                                     <label class="sdie-content-title">Today's Lectures</label>
                                     <div id ="lecture-list">
                                         <label class="divider"></label>
@@ -126,14 +202,13 @@ const getInnerHtmlOfTimetableEl = () => {
                                         </div>
                                         <label class="divider"></label>
                                         <div class="lecture-item">
-
                                             <label class="lecture-item-title">Javascript</label>
                                             <label class="lecture-item-time">2:00~3:15</label>
                                             <label class="lecture-item-place">본관</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="side-content-2" class="visible">
+                                <div id="side-content-2" class="hidden">
                                 <label class="sdie-content-title">Edit Timetable</label>
                                     <div id ="lecture-edit-container" >
                                         <label for="lecture-name">Name</label>
@@ -151,11 +226,16 @@ const getInnerHtmlOfTimetableEl = () => {
                                                 <option>Friday</option>
                                             </select>
                                         <label for="lecture-time">Time</label>
-                                        <div class="time-row">
-                                            <select id ="time-h">
+                                        <div id="start-time"class="time-row">
+                                            <select class ="time-h"></select>
+                                            <select class="time-m">
+                                                <option>00</option>
+                                                <option>30</option>
                                             </select>
-                                            
-                                            <select id="time-m">
+                                        </div>
+                                        <div id="end-time" class="time-row">
+                                            <select class ="time-h"></select>
+                                            <select class="time-m">
                                                 <option>00</option>
                                                 <option>30</option>
                                             </select>
