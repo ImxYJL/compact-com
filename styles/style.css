@@ -1286,6 +1286,7 @@ textarea {
     width: 100%;
     height: 100%;
     table-layout: fixed;
+    background-color: white;
 }
 #timetable-table th {
     width: 6em;
@@ -1408,4 +1409,31 @@ select {
 #lecture-edit-container button {
     width: 90%;
     margin: 1em 0.5em;
+}
+
+/* ㅁㄴㅇㄹ  */
+#timetable-table td {
+    position: relative;
+}
+
+.first-half::before {
+    border-top: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%; /* 셀 높이의 반만 칠합니다. */
+    background-color: #ede0de; /* 원하는 배경색으로 변경하세요. */
+}
+
+.second-half::after {
+    border-bottom: none;
+    content: '';
+    position: absolute;
+    top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
+    left: 0;
+    width: 100%;
+    height: 50%; /* 셀 높이의 반만 칠합니다. */
+    background-color: #444b45; /* 원하는 배경색으로 변경하세요. */
 }
