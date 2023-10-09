@@ -90,6 +90,14 @@ const addTimetableEntry = (
     const startCell = timetableEl.querySelector(`#td${day}-${startHour - 9}`);
     const endCell = timetableEl.querySelector(`#td${day}-${endHour - 9}`);
 
+    const cellRect = endCell.getBoundingClientRect();
+
+    const relativeX = cellRect.left; // X 좌표
+    const relativeY = cellRect.top; // Y 좌표
+    console.log(relativeX, relativeY);
+
+    const absoluteY = cellRect.top + window.scrollY;
+    console.log(absoluteY);
     startMinute == 30
         ? startCell.classList.add('second-half')
         : startCell.classList.add('first-half');
@@ -109,8 +117,8 @@ const addTimetableEntry = (
     for (let i = startRowIndex + 1; i < endRowIndex; i++) {
         const cell = timetableEl.querySelector(`#td${day}-${i}`);
         cell.classList.add('first-half', 'second-half');
-        cell.style.borderTop = 'hidden';
-        cell.style.borderBottom = 'hidden';
+        cell.style.borderTopColor = color;
+        cell.style.borderBottomColor = color;
         //cell.classList.add('second-half');
     }
 

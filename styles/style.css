@@ -1417,7 +1417,6 @@ select {
 }
 
 .first-half::before {
-    border-top: none;
     content: '';
     position: absolute;
     top: 0;
@@ -1428,12 +1427,11 @@ select {
 }
 
 .second-half::after {
-    border-bottom: none;
     content: '';
     position: absolute;
     top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
     left: 0;
     width: 100%;
     height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #444b45; /* 원하는 배경색으로 변경하세요. */
+    background-color: #cdd7cf; /* 원하는 배경색으로 변경하세요. */
 }
