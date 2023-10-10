@@ -1416,21 +1416,33 @@ select {
     position: relative;
 }
 
+.time-cell {
+    font-weight: bold;
+}
+
+.table-entry {
+    position: absolute;
+    white-space: normal;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    color: white;
+    text-align: left;
+}
+
 #timetable-lecture-title,
 #timetable-lecture-room {
     color: white;
     left: 0;
     display: block;
     margin: 0.2rem;
+    font-weight: bold;
+    /* overflow: hidden;
+    text-overflow: ellipsis; */
 }
 
 #timetable-lecture-room {
-    font-size: 0.1rem;
+    font-size: 0.01em;
+    white-space: nowrap;
 }
-
-/* '',
-'',
-'#B0A2C8',
-'#8977AD',
-'#5A4E70',
- */

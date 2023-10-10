@@ -1,4 +1,5 @@
 let timetableEl = null;
+let radioButtonList = null;
 //6시반 예외처리
 
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17];
@@ -51,6 +52,7 @@ const setTable = () => {
         const row = document.createElement('tr');
         const timeCell = document.createElement('td');
         timeCell.textContent = time + ':00';
+        timeCell.classList.add('time-cell');
         row.appendChild(timeCell);
 
         for (let i = 0; i < 5; i++) {
@@ -64,19 +66,31 @@ const setTable = () => {
     }
 };
 
-const clickRadioBtn = () => {
+const clickRadioBtn = (e) => {
     const lectureListEl = timetableEl.querySelector('#side-content-1');
     const editEl = timetableEl.querySelector('#side-content-2');
+
     lectureListEl.classList.toggle('hidden');
     editEl.classList.toggle('hidden');
 };
 
 const setTimetableElListeners = () => {
-    // const lectureListEl = timetableEl.querySelector('#side-content-1');
-    // const editEl = timetableEl.querySelector('#side-content-2');
-    const sideFuncList = timetableEl.querySelectorAll('.field-row input');
-    sideFuncList[0].addEventListener('click', clickRadioBtn);
-    sideFuncList[1].addEventListener('click', clickRadioBtn);
+    const lectureListEl = timetableEl.querySelector('#side-content-1');
+    const editEl = timetableEl.querySelector('#side-content-2');
+    //const sideFuncList = timetableEl.querySelectorAll('.field-row input');
+
+    radioButtonList[0].addEventListener('click', () => {
+        //lectureListEl.classList.toggle('hidden'); //하자임
+        editEl.classList.add('hidden');
+        lectureListEl.classList.remove('hidden');
+        radioButtonList[1].checked = false;
+    });
+    radioButtonList[1].addEventListener('click', () => {
+        //editEl.classList.toggle('hidden');
+        lectureListEl.classList.add('hidden');
+        editEl.classList.remove('hidden');
+        radioButtonList[0].checked = false;
+    });
 };
 
 const addTimetableEntry = (
@@ -99,24 +113,20 @@ const addTimetableEntry = (
     tableEntry.style.backgroundColor = color; // 원하는 배경색으로 변경
 
     const cellRect = startCell.getBoundingClientRect();
-
     tableEntry.style.top = cellRect.top; // px 없어도 동작
     tableEntry.style.left = cellRect.left;
 
-    if (startMinute === 30) {
-        tableEntry.style.top = '50%';
-    }
-    // Add styling for the end cell if end time is 30 minutes
-    if (endMinute === 30) {
-        endCell.style.borderBottom = 'display';
-    }
+    if (startMinute === 30) tableEntry.style.top = '50%';
 
-    const M = endHour * 60 + endMinute - (startHour * 60 + startMinute);
-    const a = M / 30;
-    tableEntry.style.height = `${50 * a}%`;
+    // Add styling for the end cell if end time is 30 minutes
+    if (endMinute === 30) endCell.style.borderBottom = 'display';
+
+    const lectureMinutes =
+        endHour * 60 + endMinute - (startHour * 60 + startMinute);
+    const magnification = lectureMinutes / 30;
+    tableEntry.style.height = `${50 * magnification}%`; // 여기서 height만 시간에 맞게 *n%배 해주면 됨
 
     startCell.appendChild(tableEntry);
-    // 여기서 height만 시간에 맞게 *n%배 해주면 됨
 
     const lectureTitle = document.createElement('p');
     lectureTitle.id = 'timetable-lecture-title';
@@ -140,6 +150,8 @@ const createTimetableEl = () => {
     setColorPicker();
     setTimeSelector();
 
+    radioButtonList = timetableEl.querySelectorAll('.radiobtn');
+    //console.log(radioButtonList);
     setTimetableElListeners();
 
     // 월요일 9시~10시 반 추가
@@ -189,11 +201,11 @@ const getInnerHtmlOfTimetableEl = () => {
                             <fieldset>
                                 <legend>Select Function</legend>
                                 <div class="field-row">
-                                    <input id="radio13" type="radio" checked>
+                                    <input id="radio13" class="radiobtn" type="radio" checked>
                                     <label for="radio13">Today's Lecture</label>
                                 </div>
                                 <div class="field-row">
-                                    <input id="radio14" type="radio" name="fieldset-example2">
+                                    <input id="radio14" class="radiobtn" type="radio" name="fieldset-example2">
                                     <label for="radio14">Edit Timetable</label>
                                 </div>
                             </fieldset>
