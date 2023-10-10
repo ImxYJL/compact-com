@@ -1,7 +1,7 @@
 let timetableEl = null;
 //6시반 예외처리
 
-const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17];
 
 const setTimeSelector = () => {
     const hourSelectorList = timetableEl.querySelectorAll('.time-h');
@@ -91,79 +91,43 @@ const addTimetableEntry = (
 
     const startCell = timetableEl.querySelector(`#td${day}-${startHour - 9}`);
     const endCell = timetableEl.querySelector(`#td${day}-${endHour - 9}`);
-    const colorId = color.substr(1, 6); // # 제거
 
     // Create a div element for the entry
-    const entry = document.createElement('div');
-    entry.textContent = 'Your Entry Text'; // 원하는 텍스트 추가
-    entry.style.position = 'absolute';
-    // entry.style.top = '0';
-    // entry.style.left = '0';
-    entry.style.width = '100%';
-    entry.style.height = '50%'; // 셀 높이와 너비를 가득 채우도록 조절
-    //100퍼로 바꾸면 한칸이네
-
-    entry.style.backgroundColor = color; // 원하는 배경색으로 변경
-    entry.style.color = 'white'; // 텍스트 색상
-    // entry.style.overflow = 'hidden';
-    // entry.style.textOverflow = 'ellipsis';
-    entry.style.whiteSpace = 'nowrap';
-    //entry.style.display = ''; // ㅎ나마나 상관없는듯
+    const tableEntry = document.createElement('div');
+    // tableEntry.id= ''; // 이벤트리스너때문에 신중하게//
+    tableEntry.classList.add('table-entry');
+    tableEntry.style.backgroundColor = color; // 원하는 배경색으로 변경
 
     const cellRect = startCell.getBoundingClientRect();
-    // setTimeout(() => { // 시간 지나도 0임
-    //     console.log(cellRect);
-    // }, 5000);
 
-    entry.style.top = `${cellRect.top}px`; // px 없어도 동작
-    //console.log(entry.style.top);
-    entry.style.left = `${cellRect.left}px`;
-    // console.log(`${cellRect.left}px`);
+    tableEntry.style.top = cellRect.top; // px 없어도 동작
+    tableEntry.style.left = cellRect.left;
 
     if (startMinute === 30) {
-        entry.style.top = '50%';
+        tableEntry.style.top = '50%';
     }
-
-    const M = endHour * 60 + endMinute - (startHour * 60 + startMinute);
-    const a = M / 30;
-    entry.style.height = `${50 * a}%`;
-    // 여기서 height만 시간에 맞게 *n%배 해주면 됨
-
-    // const endCellRect = endCell.getBoundingClientRect();
-    // entry.style.bottom = `${endCellRect.top}px`;
-    // // console.log(entry.style.top);
-    // // console.log(endCellRect.top);
-    // // console.log(endCell);
-    // const height = `${entry.style.top - endCellRect.top}px`;
-    // entry.style.height = height;
-
-    // console.log(entry.style.top); //50퍼 ㅋㅋㅋㅋ
-
-    // // Calculate the height of the cell based on start and end minutes
-    // const cellHeight = (endHour - startHour) * 60 + (endMinute - startMinute);
-    // entry.style.height = `${cellHeight}px`;
-
-    // // Calculate the top offset for the entry based on start time
-    // const topOffset =
-    //     (startHour - 9) * 60 + startMinute + (startMinute === 30 ? 15 : 0);
-    // entry.style.top = `${topOffset}px`;
-    // console.log(topOffset);
-
-    // // Calculate the bottom offset for the entry based on end time
-    // const bottomOffset =
-    //     (endHour - 9) * 60 + endMinute + (endMinute === 30 ? 15 : 0);
-    // entry.style.bottom = `${cellHeight - bottomOffset}px`;
-
-    // Append the entry to the startCell
-    startCell.appendChild(entry);
-
-    // Add a class for additional styling if needed
-    entry.classList.add(`c${colorId}-entry`);
-
     // Add styling for the end cell if end time is 30 minutes
     if (endMinute === 30) {
         endCell.style.borderBottom = 'display';
     }
+
+    const M = endHour * 60 + endMinute - (startHour * 60 + startMinute);
+    const a = M / 30;
+    tableEntry.style.height = `${50 * a}%`;
+
+    startCell.appendChild(tableEntry);
+    // 여기서 height만 시간에 맞게 *n%배 해주면 됨
+
+    const lectureTitle = document.createElement('p');
+    lectureTitle.id = 'timetable-lecture-title';
+    lectureTitle.textContent = '객체지향프로그래밍';
+    tableEntry.appendChild(lectureTitle);
+
+    const lectureRoom = document.createElement('p');
+    lectureRoom.id = 'timetable-lecture-room';
+    lectureRoom.textContent = `어떤건물`;
+
+    tableEntry.appendChild(lectureRoom);
 };
 
 const createTimetableEl = () => {
@@ -186,6 +150,8 @@ const createTimetableEl = () => {
     // 화요일 15시~18시 추가
     addTimetableEntry(1, 16, 30, 18, 0, '#443B53');
     //    addTimetableEntry(0, 12, 30, 14, 0, '#3C4458');
+
+    addTimetableEntry(2, 10, 0, 10, 30, '#3C4458');
 
     addTimetableEntry(3, 10, 0, 12, 0, '#443B53');
     addTimetableEntry(4, 10, 0, 18, 0, '#443B53');

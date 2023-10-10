@@ -1416,113 +1416,16 @@ select {
     position: relative;
 }
 
-.c768AB7-content {
+#timetable-lecture-title,
+#timetable-lecture-room {
     color: white;
-    position: absolute;
-    top: 0;
     left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
+    display: block;
+    margin: 0.2rem;
 }
 
-.c768AB7-first-half::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #768ab7; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c768AB7-second-half::after {
-    content: '';
-    position: absolute;
-    top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #768ab7; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c657BAE-first-half::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #657bae; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c657BAE-second-half::after {
-    content: '';
-    position: absolute;
-    top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #657bae; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c443B53-first-half::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #443b53; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c443B53-second-half::after {
-    content: '';
-    position: absolute;
-    top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #443b53; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c3A4C74-first-half::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #3a4c74; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c3A4C74-second-half::after {
-    content: '';
-    position: absolute;
-    top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #3a4c74; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c3C4458-first-half::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #3c4458; /* 원하는 배경색으로 변경하세요. */
-}
-
-.c3C4458-second-half::after {
-    content: '';
-    position: absolute;
-    top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
-    left: 0;
-    width: 100%;
-    height: 50%; /* 셀 높이의 반만 칠합니다. */
-    background-color: #3c4458; /* 원하는 배경색으로 변경하세요. */
+#timetable-lecture-room {
+    font-size: 0.1rem;
 }
 
 /* '',
