@@ -1199,6 +1199,10 @@ table {
     width: 240px; */
 }
 
+#lifequote-filelist-table td {
+    border: none;
+}
+
 #context-menu {
     position: fixed;
     font-family: 'Pixelated MS Sans Serif', Arial;
@@ -1255,7 +1259,7 @@ textarea {
     flex-direction: row;
     column-gap: 0.2rem;
     overflow: auto;
-    min-height: 90%;
+    height: 100%;
 }
 
 #timetable-container {
@@ -1310,6 +1314,7 @@ td {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-y: scroll;
 }
 
 fieldset {
@@ -1359,7 +1364,12 @@ fieldset {
     border: 1px solid black;
 }
 
+#side-content-1 {
+    width: 100%;
+}
+
 #side-content-2 {
+    width: 100%;
 }
 
 #lecture-edit-container label {
@@ -1431,8 +1441,8 @@ select {
     text-align: left;
 }
 
-#timetable-lecture-title,
-#timetable-lecture-room {
+.timetable-lecture-title,
+.timetable-lecture-room {
     color: white;
     left: 0;
     display: block;
@@ -1442,7 +1452,7 @@ select {
     text-overflow: ellipsis; */
 }
 
-#timetable-lecture-room {
+.timetable-lecture-room {
     font-size: 0.01em;
     white-space: nowrap;
 }

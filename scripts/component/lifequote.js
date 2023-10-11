@@ -95,7 +95,7 @@ const setContextMenuItem = () => {
 };
 
 const getContextMenuPos = () => {
-    contextMenu.classList.add('hidden');
+    //contextMenu.classList.add('hidden');
     const quoteTable = contentBody.querySelector('.sunken-panel');
     const clickedRow = contentBody.querySelector('.highlighted');
 

@@ -1,7 +1,9 @@
 let timetableEl = null;
 let radioButtonList = null;
+let tableBodyEl = null;
 //6시반 예외처리
 
+let entryIdCounter = 1;
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17];
 
 const setTimeSelector = () => {
@@ -75,9 +77,19 @@ const clickRadioBtn = (e) => {
 };
 
 const setTimetableElListeners = () => {
+    const tableBodyEl = timetableEl.querySelector('tbody');
     const lectureListEl = timetableEl.querySelector('#side-content-1');
     const editEl = timetableEl.querySelector('#side-content-2');
     //const sideFuncList = timetableEl.querySelectorAll('.field-row input');
+
+    //console.log(tableBodyEl);
+    // tableBodyEl.addEventListener('click', (e) => {
+    //     console.log(e.target);
+    //     //console.log(e.target.parentNode);
+    //     // if (tableBodyEl.contains()) {
+    //     //     consoe;
+    //     // }
+    // });
 
     radioButtonList[0].addEventListener('click', () => {
         //lectureListEl.classList.toggle('hidden'); //하자임
@@ -108,7 +120,7 @@ const addTimetableEntry = (
 
     // Create a div element for the entry
     const tableEntry = document.createElement('div');
-    // tableEntry.id= ''; // 이벤트리스너때문에 신중하게//
+    // 이벤트리스너때문에 신중하게//
     tableEntry.classList.add('table-entry');
     tableEntry.style.backgroundColor = color; // 원하는 배경색으로 변경
 
@@ -129,15 +141,23 @@ const addTimetableEntry = (
     startCell.appendChild(tableEntry);
 
     const lectureTitle = document.createElement('p');
-    lectureTitle.id = 'timetable-lecture-title';
-    lectureTitle.textContent = '객체지향프로그래밍';
+    lectureTitle.classList.add('timetable-lecture-title');
+    lectureTitle.textContent = 'Programming';
+    lectureTitle.id = `${entryIdCounter++};`; // 임시 아이디
     tableEntry.appendChild(lectureTitle);
 
     const lectureRoom = document.createElement('p');
-    lectureRoom.id = 'timetable-lecture-room';
-    lectureRoom.textContent = `어떤건물`;
+    lectureRoom.classList.add('timetable-lecture-room');
+    lectureRoom.textContent = `RRRRROOM`;
 
     tableEntry.appendChild(lectureRoom);
+
+    lectureTitle.addEventListener('click', (e) => {
+        console.log(e.target);
+        console.log(e.target.parentNode);
+        e.target.parentNode.remove();
+        //tableBodyEl.remove(e.target.parentNode); // 대참사
+    });
 };
 
 const createTimetableEl = () => {
@@ -151,6 +171,7 @@ const createTimetableEl = () => {
     setTimeSelector();
 
     radioButtonList = timetableEl.querySelectorAll('.radiobtn');
+    tableBodyEl = timetableEl.querySelector('tbody');
     //console.log(radioButtonList);
     setTimetableElListeners();
 
