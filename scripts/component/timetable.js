@@ -4,6 +4,7 @@ let tableBodyEl = null;
 //6시반 예외처리
 
 let entryIdCounter = 1;
+const timetableMap = new Map();
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17];
 
 const setTimeSelector = () => {
@@ -76,6 +77,48 @@ const clickRadioBtn = (e) => {
     editEl.classList.toggle('hidden');
 };
 
+const createNewEntry = () =>{
+    const lectureNameEl = timetableEl.querySelector('#lecture-name');
+    const professorEl = timetableEl.querySelector('#lecture-professor');
+    const lectureRoomEl = timetableEl.querySelector('#lecture-room');
+    const weekEl = timetableEl.querySelector('#lecture-week');
+    const startHourEl = timetableEl.querySelector('#start-time .time-h');
+    const starMinuteEl = timetableEl.querySelector('#start-time .time-m');
+    const endHourEl = timetableEl.querySelector('#end-time .time-h');
+    const endMinuteEl = timetableEl.querySelector('#end-time .time-m');
+    const selectedColorEl = timetableEl.querySelector('#selected-color');
+
+    // 시간 유효성 체크
+    //const startTime = startHourEl.options[startHourEl.selectedIndex].value * 60 + 
+    const key =  entryIdCounter++; // 이거 밑에서 어케썼는지 확인
+    const newEntry = {
+        lectureName: lectureNameEl.value,
+        professor: professorEl.value,
+        lectureRoom: lectureRoomEl.value,
+        week: weekEl.options[weekEl.selectedIndex].value,
+        startTime: [], // H, M
+        endTime: [],
+        color:selectedColorEl.value,
+    };
+
+    try {
+        timetableMap.set(key, newEntry); // 백엔드에서는 시간 겹치면 실패 띄우기, 아니면 기존내용 지운다던가..
+    } catch (err) {
+        alert(`${err.name}: ${err.message}`);
+        //alert(); // 겹치는 시간이 있어서 실패했다고 띄우기
+        
+    }
+
+    alert('It has been saved.');
+    lectureNameEl.value = professorEl.value = lectureRoomEl.value = professorEl.value = '';
+
+
+};
+
+const clickSaveBtn = () =>{
+   createNewEntry(); 
+   // 여기서 백엔드 요청
+};
 const setTimetableElListeners = () => {
     const tableBodyEl = timetableEl.querySelector('tbody');
     const lectureListEl = timetableEl.querySelector('#side-content-1');
@@ -103,6 +146,11 @@ const setTimetableElListeners = () => {
         editEl.classList.remove('hidden');
         radioButtonList[0].checked = false;
     });
+
+
+    
+    const saveBtn = timetableEl.querySelector('#timetable-save-btn');
+    saveBtn.addEventListener('click', clickSaveBtn);
 };
 
 const addTimetableEntry = (
@@ -252,14 +300,14 @@ const getInnerHtmlOfTimetableEl = () => {
                                 <div id="side-content-2" class="hidden">
                                 <label class="sdie-content-title">Edit Timetable</label>
                                     <div id ="lecture-edit-container" >
-                                        <label for="lecture-name">Name</label>
+                                        <label for="lecture-name">Lecture Name</label>
                                         <input id ="lecture-name" type="text"/>
                                         <label for="lecture-professor">Professor</label>
                                         <input id ="lecture-professor" type="text"/>
-                                        <label for="lecture-location">Location</label>
-                                        <input id ="lecture-location" type="text"/>
+                                        <label for="lecture-room">Lecture Room</label>
+                                        <input id ="lecture-room" type="text"/>
                                         <label for="lecture-week">Week</label>
-                                            <select>
+                                            <select id="lecture-week">
                                                 <option>Monday</option>
                                                 <option>Tuesday</option>
                                                 <option>Wednesday</option>
@@ -284,9 +332,9 @@ const getInnerHtmlOfTimetableEl = () => {
                                         <label for="lecture-color">Color</label>
                                         <div class="color-picker">
                                             <div class="color-grid"></div>
-                                            <div class="selected-color"></div>
+                                            <div id="selected-color" class="selected-color"></div>
                                         </div>
-                                        <button>Save</button>
+                                        <button id ="timetable-save-btn">Save</button>
                                     </div>
                             </div>
                             </div>
