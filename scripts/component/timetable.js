@@ -5,18 +5,26 @@ let tableBodyEl = null;
 
 let entryIdCounter = 1;
 const timetableMap = new Map();
-const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+const dayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
 const setTimeSelector = () => {
     const hourSelectorList = timetableEl.querySelectorAll('.time-h');
 
-    for (const hourSelector of hourSelectorList) {
-        for (const time of hourList) {
+    hourSelectorList.forEach((hourSelector) => {
+        hourList.forEach((hour) => {
             const row = document.createElement('option');
-            row.textContent = time;
+            row.textContent = hour;
             hourSelector.appendChild(row);
-        }
-    }
+        });
+    });
+    // for (const hourSelector of hourSelectorList) {
+    //     for (const time of hourList) {
+    //         const row = document.createElement('option');
+    //         row.textContent = time;
+    //         hourSelector.appendChild(row);
+    //     }
+    // }
 };
 
 const setColorPicker = () => {
@@ -51,22 +59,45 @@ const setColorPicker = () => {
 const setTable = () => {
     const tbody = timetableEl.querySelector('tbody');
 
-    for (const time of hourList) {
+    hourList.forEach((hour) => {
+        if (hour === 18) return;
         const row = document.createElement('tr');
         const timeCell = document.createElement('td');
-        timeCell.textContent = time + ':00';
+        timeCell.textContent = hour + ':00';
         timeCell.classList.add('time-cell');
         row.appendChild(timeCell);
 
-        for (let i = 0; i < 5; i++) {
+        dayList.forEach((day) => {
             const cell = document.createElement('td');
-            cell.id = `td${i}-${time - 9}`;
+            cell.id = `${day}-${hour - 9}`;
 
             row.appendChild(cell);
-        }
+        });
 
         tbody.appendChild(row);
-    }
+    });
+
+    // for (const time of hourList) {
+    //     const row = document.createElement('tr');
+    //     const timeCell = document.createElement('td');
+    //     timeCell.textContent = time + ':00';
+    //     timeCell.classList.add('time-cell');
+    //     row.appendChild(timeCell);
+
+    //     dayList.forEach((day) => {
+    //         const cell = document.createElement('td');
+    //         cell.id = `td${day}-${time - 9}`;
+
+    //         row.appendChild(cell);
+    //     });
+
+    // for (let i = 0; i < 5; i++) {
+    //     const cell = document.createElement('td');
+    //     cell.id = `td${i}-${time - 9}`;
+
+    //     row.appendChild(cell);
+    // }
+    //}
 };
 
 const clickRadioBtn = (e) => {
@@ -77,47 +108,103 @@ const clickRadioBtn = (e) => {
     editEl.classList.toggle('hidden');
 };
 
-const createNewEntry = () =>{
+const isInputsEmpty = (
+    lectureNameEl,
+    professorEl,
+    lectureRoomEl,
+    selectedColorEl,
+) => {
+    return !(
+        lectureNameEl.value.trim() === 0 ||
+        professorEl.value.trim() === 0 ||
+        lectureRoomEl.value.trim() === 0 ||
+        selectedColorEl.style.backgroundColor === ''
+    );
+};
+
+const isTimeValid = (startHour, startMinute, endHour, endMinute) => {
+    //console.log(startHour);
+    console.log(typeof startHour); // string
+    if (startHour === '18' || (endHour === '18' && endMinute === '30'))
+        return false;
+    // 시작 시간이 6시거나, 종료 시간이 6시 반인 경우 시간표에 표시 불가능
+    // 그 외는 아래 조건에서 걸러짐
+
+    //명시적 형변환 해주기 vs 태초에 숫자로 넣기
+    const startTime = startHour * 60 + startMinute;
+    const endTime = endHour * 60 + endMinute;
+    console.log(startTime, endTime);
+    return startTime < endTime;
+};
+
+const createNewEntry = () => {
     const lectureNameEl = timetableEl.querySelector('#lecture-name');
     const professorEl = timetableEl.querySelector('#lecture-professor');
     const lectureRoomEl = timetableEl.querySelector('#lecture-room');
     const weekEl = timetableEl.querySelector('#lecture-week');
     const startHourEl = timetableEl.querySelector('#start-time .time-h');
-    const starMinuteEl = timetableEl.querySelector('#start-time .time-m');
+    const startMinuteEl = timetableEl.querySelector('#start-time .time-m');
     const endHourEl = timetableEl.querySelector('#end-time .time-h');
     const endMinuteEl = timetableEl.querySelector('#end-time .time-m');
     const selectedColorEl = timetableEl.querySelector('#selected-color');
 
+    const startHour = startHourEl.options[startHourEl.selectedIndex].value;
+    const startMinute =
+        startMinuteEl.options[startMinuteEl.selectedIndex].value;
+    const endHour = endHourEl.options[endHourEl.selectedIndex].value;
+    const endMinute = endMinuteEl.options[endMinuteEl.selectedIndex].value;
+
+    // 입력 공백 체크
+    if (
+        !isInputsEmpty(
+            lectureNameEl,
+            professorEl,
+            lectureRoomEl,
+            selectedColorEl,
+        )
+    ) {
+        alert('Please enter texts.');
+        return;
+    }
+
     // 시간 유효성 체크
-    //const startTime = startHourEl.options[startHourEl.selectedIndex].value * 60 + 
-    const key =  entryIdCounter++; // 이거 밑에서 어케썼는지 확인
+    if (!isTimeValid(startHour, startMinute, endHour, endMinute)) {
+        alert('Time selection is incorrect.');
+        return;
+    }
+
+    const key = entryIdCounter++; // 이거 밑에서 어케썼는지 확인
     const newEntry = {
         lectureName: lectureNameEl.value,
         professor: professorEl.value,
         lectureRoom: lectureRoomEl.value,
         week: weekEl.options[weekEl.selectedIndex].value,
-        startTime: [], // H, M
-        endTime: [],
-        color:selectedColorEl.value,
+        startTime: [startHour, startMinute], // H, M
+        endTime: [endHour, endMinute],
+        color: selectedColorEl.style.backgroundColor,
     };
 
     try {
         timetableMap.set(key, newEntry); // 백엔드에서는 시간 겹치면 실패 띄우기, 아니면 기존내용 지운다던가..
     } catch (err) {
         alert(`${err.name}: ${err.message}`);
+        console.log(err);
         //alert(); // 겹치는 시간이 있어서 실패했다고 띄우기
-        
     }
 
     alert('It has been saved.');
-    lectureNameEl.value = professorEl.value = lectureRoomEl.value = professorEl.value = '';
-
-
+    lectureNameEl.value =
+        professorEl.value =
+        lectureRoomEl.value =
+        professorEl.value =
+            '';
+    return key;
 };
 
-const clickSaveBtn = () =>{
-   createNewEntry(); 
-   // 여기서 백엔드 요청
+const clickSaveBtn = () => {
+    //createNewEntry();
+    addTimetableEntry(createNewEntry());
+    // 여기서 백엔드 요청
 };
 const setTimetableElListeners = () => {
     const tableBodyEl = timetableEl.querySelector('tbody');
@@ -147,24 +234,36 @@ const setTimetableElListeners = () => {
         radioButtonList[0].checked = false;
     });
 
-
-    
     const saveBtn = timetableEl.querySelector('#timetable-save-btn');
     saveBtn.addEventListener('click', clickSaveBtn);
 };
 
-const addTimetableEntry = (
-    day,
-    startHour,
-    startMinute,
-    endHour,
-    endMinute,
-    color,
-) => {
+const addTimetableEntry = (key) => {
+    // 맵에서 꺼내옴
+    let entryObj = null;
+    if (timetableMap.has(key)) {
+        entryObj = timetableMap.get(key);
+        console.log(entryObj);
+    } else {
+        alert('error');
+        return;
+    }
+
+    // 그냥 저장할때 int 형변환해버릴까
+    const day = entryObj['week'];
+    const startHour = parseInt(entryObj['startTime'][0]);
+    const startMinute = parseInt(entryObj['startTime'][1]);
+    const endHour = parseInt(entryObj['endTime'][0]);
+    const endMinute = parseInt(entryObj['endTime'][1]);
+    const color = entryObj['color'];
+
+    //console.log(day, startHour, startMinute, endHour, endMinute);
+
     //한 셀 넓이 구하는거 안먹힘 ㅋㅋ 아래 코드 바탕으로 구해야ㅗ함
 
-    const startCell = timetableEl.querySelector(`#td${day}-${startHour - 9}`);
-    const endCell = timetableEl.querySelector(`#td${day}-${endHour - 9}`);
+    console.log(`#${day}-${endHour - 9}`);
+    const startCell = timetableEl.querySelector(`#${day}-${startHour - 9}`);
+    const endCell = timetableEl.querySelector(`#${day}-${endHour - 9}`);
 
     // Create a div element for the entry
     const tableEntry = document.createElement('div');
@@ -184,23 +283,24 @@ const addTimetableEntry = (
     const lectureMinutes =
         endHour * 60 + endMinute - (startHour * 60 + startMinute);
     const magnification = lectureMinutes / 30;
+    console.log(magnification);
     tableEntry.style.height = `${50 * magnification}%`; // 여기서 height만 시간에 맞게 *n%배 해주면 됨
 
     startCell.appendChild(tableEntry);
 
-    const lectureTitle = document.createElement('p');
-    lectureTitle.classList.add('timetable-lecture-title');
-    lectureTitle.textContent = 'Programming';
-    lectureTitle.id = `${entryIdCounter++};`; // 임시 아이디
-    tableEntry.appendChild(lectureTitle);
+    const lectureNameP = document.createElement('p');
+    lectureNameP.classList.add('timetable-lecture-title');
+    lectureNameP.textContent = entryObj['lectureName'];
+    //lectureNameP.id = `${entryIdCounter++};`; // 임시 아이디
+    tableEntry.appendChild(lectureNameP);
 
-    const lectureRoom = document.createElement('p');
-    lectureRoom.classList.add('timetable-lecture-room');
-    lectureRoom.textContent = `RRRRROOM`;
+    const lectureRoomP = document.createElement('p');
+    lectureRoomP.classList.add('timetable-lecture-room');
+    lectureRoomP.textContent = entryObj['lectureRoom'];
 
-    tableEntry.appendChild(lectureRoom);
+    tableEntry.appendChild(lectureRoomP);
 
-    lectureTitle.addEventListener('click', (e) => {
+    lectureNameP.addEventListener('click', (e) => {
         console.log(e.target);
         console.log(e.target.parentNode);
         e.target.parentNode.remove();
@@ -224,18 +324,18 @@ const createTimetableEl = () => {
     setTimetableElListeners();
 
     // 월요일 9시~10시 반 추가
-    addTimetableEntry(0, 9, 30, 12, 30, '#768AB7');
+    // addTimetableEntry(0, 9, 30, 12, 30, '#768AB7');
 
-    addTimetableEntry(0, 13, 0, 14, 30, '#768AB7');
+    // addTimetableEntry(0, 13, 0, 14, 30, '#768AB7');
 
-    // 화요일 15시~18시 추가
-    addTimetableEntry(1, 16, 30, 18, 0, '#443B53');
-    //    addTimetableEntry(0, 12, 30, 14, 0, '#3C4458');
+    // // 화요일 15시~18시 추가
+    // addTimetableEntry(1, 16, 30, 18, 0, '#443B53');
+    // //    addTimetableEntry(0, 12, 30, 14, 0, '#3C4458');
 
-    addTimetableEntry(2, 10, 0, 10, 30, '#3C4458');
+    //addTimetableEntry(2, 10, 0, 10, 30, '#3C4458');
 
-    addTimetableEntry(3, 10, 0, 12, 0, '#443B53');
-    addTimetableEntry(4, 10, 0, 18, 0, '#443B53');
+    // addTimetableEntry(3, 10, 0, 12, 0, '#443B53');
+    // addTimetableEntry(4, 10, 0, 18, 0, '#443B53');
 
     return timetableEl;
 };
