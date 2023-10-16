@@ -1,12 +1,21 @@
+import { getDate } from '../utility/date.js';
+
 let timetableEl = null;
 let radioButtonList = null;
+let lectureItemsEl = null;
 let tableBodyEl = null;
+let today = getDate()['day'];
 //6시반 예외처리
 
 let entryIdCounter = 1;
 const timetableMap = new Map();
+const lectureItemList = [];
 const dayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+
+const convertTimeToMinutes = (hour, minute) => {
+    return parseInt(hour) * 60 + parseInt(minute);
+};
 
 const setTimeSelector = () => {
     const hourSelectorList = timetableEl.querySelectorAll('.time-h');
@@ -100,12 +109,50 @@ const setTable = () => {
     //}
 };
 
+const setLectureItemList = () => {
+    // 처음에만 호출하기 (create에서)
+    timetableMap.forEach((entry) => {
+        if (entry.week === today) lectureItemList.push(entry);
+    });
+    //console.log(lectureItemList);
+    lectureItemList.forEach((entry) => {
+        createLectureItem(entry);
+    });
+};
+
 const clickRadioBtn = (e) => {
     const lectureListEl = timetableEl.querySelector('#side-content-1');
     const editEl = timetableEl.querySelector('#side-content-2');
 
     lectureListEl.classList.toggle('hidden');
     editEl.classList.toggle('hidden');
+};
+
+const isTimeOverlapping = (day, startHour, startMinute, endHour, endMinute) => {
+    const newStartMinutes = convertTimeToMinutes(startHour, startMinute);
+    const newEndMinutes = convertTimeToMinutes(endHour, endMinute);
+    let isOverlapping = false;
+
+    timetableMap.forEach((entry, key) => {
+        if (entry.week === day) {
+            // 요일이 같은 경우에만 검사
+            const [existingStartHour, existingStartMinute] = entry.startTime;
+            const [existingEndHour, existingEndMinute] = entry.endTime;
+            const existingStart = convertTimeToMinutes(
+                existingStartHour,
+                existingStartMinute,
+            );
+            const existingEnd = convertTimeToMinutes(
+                existingEndHour,
+                existingEndMinute,
+            );
+
+            // 새로운 요소의 시작 시간과 종료 시간이 기존 요소와 겹치는지 확인
+            if (existingStart < newEndMinutes && newStartMinutes < existingEnd)
+                isOverlapping = true;
+        }
+    });
+    return isOverlapping; //forEach쓰면 리턴 안먹힘ㄷ
 };
 
 const isInputsEmpty = (
@@ -124,7 +171,7 @@ const isInputsEmpty = (
 
 const isTimeValid = (startHour, startMinute, endHour, endMinute) => {
     //console.log(startHour);
-    console.log(typeof startHour); // string
+    //console.log(typeof startHour); // string
     if (startHour === '18' || (endHour === '18' && endMinute === '30'))
         return false;
     // 시작 시간이 6시거나, 종료 시간이 6시 반인 경우 시간표에 표시 불가능
@@ -137,7 +184,46 @@ const isTimeValid = (startHour, startMinute, endHour, endMinute) => {
     return startTime < endTime;
 };
 
-const createNewEntry = () => {
+const createLectureItem = (
+    entryObj,
+    // lectureName,
+    // lectureRoom,
+    // startHour,
+    // startMinute,
+    // endHour,
+    // endMinute,
+) => {
+    //console.log(typeof endHour);
+    const divider = document.createElement('label');
+    divider.classList.add('divider');
+    lectureItemsEl.appendChild(divider);
+
+    const lectureItemEl = document.createElement('div');
+    lectureItemEl.class = 'lecture-item';
+    lectureItemEl.innerHTML = getInnerHtmlOfLectureItem();
+
+    lectureItemEl.querySelector('.lecture-item-title').textContent =
+        entryObj['lectureName'];
+    lectureItemEl.querySelector('.lecture-item-time').textContent = `${
+        entryObj['startTime'][0]
+    }
+        : ${entryObj['startTime'][1] === '0' ? '00' : entryObj['startTime'][1]} 
+        ~${entryObj['endTime'][0]} : ${
+            entryObj['endTime'][1] === '0' ? '00' : entryObj['endTime'][1]
+        }`;
+    lectureItemEl.querySelector('.lecture-item-place').textContent =
+        entryObj['lectureRoom'];
+    lectureItemsEl.appendChild(lectureItemEl);
+    lectureItemsEl.appendChild(divider);
+};
+
+{
+    /* <label class="lecture-item-title"></label>
+            <label class="lecture-item-time"></label>
+            <label class="lecture-item-place"></label> */
+}
+
+const createTableEntry = () => {
     const lectureNameEl = timetableEl.querySelector('#lecture-name');
     const professorEl = timetableEl.querySelector('#lecture-professor');
     const lectureRoomEl = timetableEl.querySelector('#lecture-room');
@@ -148,6 +234,7 @@ const createNewEntry = () => {
     const endMinuteEl = timetableEl.querySelector('#end-time .time-m');
     const selectedColorEl = timetableEl.querySelector('#selected-color');
 
+    const day = weekEl.options[weekEl.selectedIndex].value;
     const startHour = startHourEl.options[startHourEl.selectedIndex].value;
     const startMinute =
         startMinuteEl.options[startMinuteEl.selectedIndex].value;
@@ -169,6 +256,11 @@ const createNewEntry = () => {
 
     // 시간 유효성 체크
     if (!isTimeValid(startHour, startMinute, endHour, endMinute)) {
+        alert('Time selection is incorrect.');
+        return;
+    }
+
+    if (isTimeOverlapping(day, startHour, startMinute, endHour, endMinute)) {
         alert('Time selection is incorrect.');
         return;
     }
@@ -203,7 +295,7 @@ const createNewEntry = () => {
 
 const clickSaveBtn = () => {
     //createNewEntry();
-    addTimetableEntry(createNewEntry());
+    addTimetableEntry(createTableEntry());
     // 여기서 백엔드 요청
 };
 const setTimetableElListeners = () => {
@@ -250,6 +342,8 @@ const addTimetableEntry = (key) => {
     }
 
     // 그냥 저장할때 int 형변환해버릴까
+    const lectureName = entryObj['lectureName'];
+    const lectureRoom = entryObj['lectureRoom'];
     const day = entryObj['week'];
     const startHour = parseInt(entryObj['startTime'][0]);
     const startMinute = parseInt(entryObj['startTime'][1]);
@@ -281,7 +375,10 @@ const addTimetableEntry = (key) => {
     if (endMinute === 30) endCell.style.borderBottom = 'display';
 
     const lectureMinutes =
-        endHour * 60 + endMinute - (startHour * 60 + startMinute);
+        convertTimeToMinutes(endHour, endMinute) -
+        convertTimeToMinutes(startHour, startMinute);
+    // const lectureMinutes =
+    //     endHour * 60 + endMinute - (startHour * 60 + startMinute);
     const magnification = lectureMinutes / 30;
     console.log(magnification);
     tableEntry.style.height = `${50 * magnification}%`; // 여기서 height만 시간에 맞게 *n%배 해주면 됨
@@ -290,15 +387,25 @@ const addTimetableEntry = (key) => {
 
     const lectureNameP = document.createElement('p');
     lectureNameP.classList.add('timetable-lecture-title');
-    lectureNameP.textContent = entryObj['lectureName'];
+    lectureNameP.textContent = lectureName;
     //lectureNameP.id = `${entryIdCounter++};`; // 임시 아이디
     tableEntry.appendChild(lectureNameP);
 
     const lectureRoomP = document.createElement('p');
     lectureRoomP.classList.add('timetable-lecture-room');
-    lectureRoomP.textContent = entryObj['lectureRoom'];
+    lectureRoomP.textContent = lectureRoom;
 
     tableEntry.appendChild(lectureRoomP);
+    // createLectureItem(
+    //     lectureName,
+    //     lectureRoom,
+    //     startHour,
+    //     startMinute,
+    //     endHour,
+    //     endMinute,
+    // );
+
+    if (day === today) createLectureItem(entryObj);
 
     lectureNameP.addEventListener('click', (e) => {
         console.log(e.target);
@@ -317,11 +424,14 @@ const createTimetableEl = () => {
     setTable();
     setColorPicker();
     setTimeSelector();
+    setLectureItemList();
 
     radioButtonList = timetableEl.querySelectorAll('.radiobtn');
     tableBodyEl = timetableEl.querySelector('tbody');
-    //console.log(radioButtonList);
+    lectureItemsEl = timetableEl.querySelector('#lecture-list');
     setTimetableElListeners();
+
+    //console.log(today);
 
     // 월요일 9시~10시 반 추가
     // addTimetableEntry(0, 9, 30, 12, 30, '#768AB7');
@@ -340,6 +450,14 @@ const createTimetableEl = () => {
     return timetableEl;
 };
 
+const getInnerHtmlOfLectureItem = () => {
+    return `
+        <label class="lecture-item-title"></label>
+        <label class="lecture-item-time"></label>
+        <label class="lecture-item-place"></label>
+    `;
+};
+
 const getInnerHtmlOfTimetableEl = () => {
     return `
         <div class="title-bar">
@@ -352,7 +470,6 @@ const getInnerHtmlOfTimetableEl = () => {
             <div id="timetable-content-body" class="window" role="tabpanel">
                     <div id="timetable-container">          
                         <table id = "timetable-table">
-                            <!-- <caption>Timetable</caption> -->
                             <thead>
                                 <tr>
                                     <th>Time</th>
@@ -383,18 +500,6 @@ const getInnerHtmlOfTimetableEl = () => {
                                     <label class="sdie-content-title">Today's Lectures</label>
                                     <div id ="lecture-list">
                                         <label class="divider"></label>
-                                        <div class="lecture-item">
-
-                                            <label class="lecture-item-title">Javascript</label>
-                                            <label class="lecture-item-time">2:00~3:15</label>
-                                            <label class="lecture-item-place">본관</label>
-                                        </div>
-                                        <label class="divider"></label>
-                                        <div class="lecture-item">
-                                            <label class="lecture-item-title">Javascript</label>
-                                            <label class="lecture-item-time">2:00~3:15</label>
-                                            <label class="lecture-item-place">본관</label>
-                                        </div>
                                     </div>
                                 </div>
                                 <div id="side-content-2" class="hidden">
