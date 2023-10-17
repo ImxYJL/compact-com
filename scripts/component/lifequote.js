@@ -166,7 +166,7 @@ const setTableEventListeners = () => {
 };
 
 // Check length of the text and readjust it if it exceeds the limit
-const resizeTextLen = (text, max) => {
+const cutTextToPrint = (text, max) => {
   const check = text.length > max ? true : false;
   if (check) return text.slice(0, max) + '...';
   else return text;
@@ -179,10 +179,10 @@ const printQuoteMap = (key, item) => {
   const row = tBody.insertRow();
 
   const lifeQuoteCell = row.insertCell(0);
-  lifeQuoteCell.textContent = resizeTextLen(item.text, 12);
+  lifeQuoteCell.textContent = cutTextToPrint(item.text, 12);
 
   const authorCell = row.insertCell(1);
-  authorCell.textContent = resizeTextLen(item.author, 6);
+  authorCell.textContent = cutTextToPrint(item.author, 6);
 
   const dateCell = row.insertCell(2);
   dateCell.textContent = item.date;
