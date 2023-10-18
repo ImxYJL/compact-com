@@ -52,15 +52,17 @@ const clickContextMenuItem = (e) => {
   e.target.parentElement.remove();
 };
 
-const clickEditContextMenu = () => {
+const clickEditInContextMenu = () => {
   const clickedRow = contentBody.querySelector('.highlighted');
   const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
+
   tabListItems[1].setAttribute('aria-selected', 'false');
   tabListItems[2].setAttribute('aria-selected', 'true');
+
   setInputContent(selectedKey);
 };
 
-const clickRemoveContextMenu = () => {
+const clickRemoveInContextMenu = () => {
   const clickedRow = contentBody.querySelector('.highlighted');
   const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
   lifeQuoteMap.delete(selectedKey);
@@ -78,13 +80,13 @@ const setContextMenuItem = () => {
   contextMenu
     .querySelector('#contextmenu-edit-li')
     .addEventListener('click', () => {
-      clickEditContextMenu();
+      clickEditInContextMenu();
       contextMenu.remove();
     });
   contextMenu
     .querySelector('#contextmenu-remove-li')
     .addEventListener('click', () => {
-      clickRemoveContextMenu();
+      clickRemoveInContextMenu();
       contextMenu.remove();
     });
 
@@ -92,29 +94,23 @@ const setContextMenuItem = () => {
 };
 
 const getContextMenuPos = () => {
-  //contextMenu.classList.add('hidden');
   const quoteTable = contentBody.querySelector('.sunken-panel');
   const clickedRow = contentBody.querySelector('.highlighted');
 
   contextMenu.style.left = quoteTable.getBoundingClientRect().left + 'px';
   contextMenu.style.top = clickedRow.getBoundingClientRect().bottom + 'px';
-  contextMenu.classList.remove('hidden');
 };
 
 const setContextMenu = (e) => {
   e.preventDefault();
-
-  // Exit if contextMenu already exists or no column is selected
-  const clickedRow = e.target.parentElement;
-  if (document.querySelector('#context-menu') || !clickedRow) return;
 
   // Create context menu
   contextMenu = document.createElement('div');
   contextMenu.id = 'context-menu';
   getContextMenuPos();
 
-  //contentBody.append(setContextMenuItem(contextMenu)); // 안됨
-  desktop.append(setContextMenuItem());
+  //contentBody.append(setContextMenuItem()); // 안됨
+  desktop.appendChild(setContextMenuItem());
 };
 
 const dragLifeQuoteElWithContextMenu = () => {
@@ -133,10 +129,12 @@ const setTableEventListeners = () => {
   let highlighted = table.querySelector('.highlighted');
 
   const rightClickRow = (e) => {
-    const tr = contentBody.querySelector('tr');
-    if (tr.contains(e.target)) return;
+    const clickedRow = e.target.parentElement;
+    // Exit if contextMenu already exists or no column is selected
+    if (document.querySelector('#context-menu') || !clickedRow) return;
     setContextMenu(e);
   };
+  
   const clickRow = (e) => {
     // Check if there is already selected row
     if (highlighted) highlighted.classList.remove('highlighted');
@@ -244,11 +242,13 @@ const setInputContent = (selectedKey) => {
 
   const saveBtn = contentBody.querySelector('#lifequote-save-btn');
   const clearBtn = contentBody.querySelector('#lifequote-clear-btn');
-  saveBtn.addEventListener('click', () =>
-    createQuote(selectedKey, textEl, authorEl),
-  );
+  saveBtn.addEventListener('click', () =>{
+  
+    createQuote(selectedKey, textEl, authorEl);
+});
 
   clearBtn.addEventListener('click', () => {
+    //console.log('입력리스너');
     textEl.value = authorEl.value = '';
   });
 
