@@ -1426,10 +1426,6 @@ select {
   position: relative;
 }
 
-#timetable-save-btn {
-    disable
-}
-
 .table-entry {
   position: absolute;
   white-space: normal;
