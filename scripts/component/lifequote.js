@@ -1,13 +1,14 @@
 import { getDate } from '../utility/date.js';
 
 const desktop = document.querySelector('#desktop');
+const lifeQuoteMap = new Map();
+
+let lifeQuoteEl = null; // Life quote element (Root Element)
 let tabListItems = null;
 let contentBody = null;
-let lifeQuoteEl = null; // Life quote element (Root Element)
 let contextMenu = null;
 
 let counter = 1;
-const lifeQuoteMap = new Map();
 
 const isListTab = () => {
   return tabListItems[1].getAttribute('aria-selected') === 'true'
@@ -32,24 +33,6 @@ const setLifeQuoteContent = () => {
   //printTextEl.innerHTML = textToPrint.replace(/\n/g, '<br>');  // 줄바꿈 문자(\n)를 HTML 줄바꿈 태그(<br>)로 변환
   printTextEl.insertAdjacentHTML('beforeend', `<br><br> - ${authorToPrint} -`);
   printTextEl.insertAdjacentHTML('afterend', `<br>`);
-};
-
-const clickContextMenuItem = (e) => {
-  const clickedRow = contentBody.querySelector('.highlighted');
-  const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
-
-  if (e.target.id === 'contextmenu-edit-li') {
-    // 리스트 탭의 선택 상태를 초기화하고 edit 탭으로 넘어감
-    tabListItems[1].setAttribute('aria-selected', 'false');
-    tabListItems[2].setAttribute('aria-selected', 'true');
-    setInputContent(selectedKey);
-  } else {
-    lifeQuoteMap.delete(selectedKey);
-    clickedRow.remove(); // 표에서 클릭된 행을 삭제
-    //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
-  }
-  console.log(e.target.parentElement.parentElement);
-  e.target.parentElement.remove();
 };
 
 const clickEditInContextMenu = () => {
@@ -114,6 +97,7 @@ const setContextMenu = (e) => {
 };
 
 const dragLifeQuoteElWithContextMenu = () => {
+  console.log('드래그메뉴');
   const clickedRow = contentBody.querySelector('.highlighted');
   // Not re-adjust contextMenu coordinates
   // if current tab is not quotelist or if no columns are selected
@@ -134,7 +118,7 @@ const setTableEventListeners = () => {
     if (document.querySelector('#context-menu') || !clickedRow) return;
     setContextMenu(e);
   };
-  
+
   const clickRow = (e) => {
     // Check if there is already selected row
     if (highlighted) highlighted.classList.remove('highlighted');
@@ -147,18 +131,37 @@ const setTableEventListeners = () => {
   };
 
   const clickQuoteListEl = (e) => {
-    highlighted = table.querySelector('.highlighted'); // have to get it in real time
+    highlighted = table.querySelector('.highlighted'); // have to do this in real time
 
     if (highlighted && !table.contains(e.target))
       highlighted.classList.remove('highlighted');
   };
 
+  // table.addEventListener('click', (e) => {
+  //   console.log('tableclicktest');
+  //   // Check if there is already selected row
+  //   if (highlighted) highlighted.classList.remove('highlighted');
+
+  //   const clickedRow = e.target.parentElement;
+  //   clickedRow.classList.add('highlighted');
+
+  //   // Add right click event when normal click event occurs
+  //   clickedRow.addEventListener('contextmenu', rightClickRow);
+  // });
   table.addEventListener('click', clickRow);
   fileListEl.addEventListener('click', clickQuoteListEl);
   //마지막은 처음에 desktop, El에 달았는데 얘네는 초기화가 따로 안돼서 계속 리스너 중첩됨
   //얘랑 드래그 이벤트랑 아예 createElement할 때 리스너 붙여주고 변수들은 외부로 빼야하나
 
   // Add event listeners required when a context menu exists
+  // lifeQuoteEl.addEventListener('dragend', () => {
+  //   console.log('드래그메뉴');
+  //   const clickedRow = contentBody.querySelector('.highlighted');
+  //   // Not re-adjust contextMenu coordinates
+  //   // if current tab is not quotelist or if no columns are selected
+  //   if (!isListTab() || !clickedRow) return;
+  //   getContextMenuPos();
+  // });
   lifeQuoteEl.addEventListener('dragend', dragLifeQuoteElWithContextMenu);
   lifeQuoteEl.addEventListener('click', clickLifeQuoteElWithContextMenu);
 };
@@ -169,8 +172,6 @@ const cutTextToPrint = (text, max) => {
   if (check) return text.slice(0, max) + '...';
   else return text;
 };
-
-const getCuttedText = () => {};
 
 const printQuoteMap = (key, item) => {
   const tBody = contentBody.querySelector('tbody');
@@ -242,10 +243,9 @@ const setInputContent = (selectedKey) => {
 
   const saveBtn = contentBody.querySelector('#lifequote-save-btn');
   const clearBtn = contentBody.querySelector('#lifequote-clear-btn');
-  saveBtn.addEventListener('click', () =>{
-  
+  saveBtn.addEventListener('click', () => {
     createQuote(selectedKey, textEl, authorEl);
-});
+  });
 
   clearBtn.addEventListener('click', () => {
     //console.log('입력리스너');

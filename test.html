@@ -1,92 +1,10 @@
 <!doctype html>
 <html>
-    <head>
-        <style>
-            table {
-                border-collapse: collapse;
-                width: 50%;
-            }
-
-            table,
-            th,
-            td {
-                border: 1px solid black;
-            }
-
-            th,
-            td {
-                height: 40px; /* 셀의 높이를 설정합니다. */
-                text-align: center;
-            }
-
-            /* 홀수 번째 세로줄의 셀 내부의 반만 칠합니다. */
-            tr td:nth-child(odd) {
-                position: relative;
-            }
-
-            tr td:nth-child(odd)::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 50%; /* 셀 높이의 반만 칠합니다. */
-                background-color: #ff5733; /* 원하는 배경색으로 변경하세요. */
-            }
-
-            /* 짝수 번째 세로줄의 셀 내부의 반만 칠합니다. */
-            tr td:nth-child(even) {
-                position: relative;
-            }
-
-            tr td:nth-child(even)::before {
-                content: '';
-                position: absolute;
-                top: 50%; /* 아래 반만 칠하기 위해 top 값을 조정합니다. */
-                left: 0;
-                width: 100%;
-                height: 50%; /* 셀 높이의 반만 칠합니다. */
-                background-color: #33ff57; /* 원하는 배경색으로 변경하세요. */
-            }
-        </style>
-    </head>
-    <body>
-        <table>
-            <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-            </tr>
-            <tr>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-                <td>15</td>
-            </tr>
-            <tr>
-                <td>16</td>
-                <td>17</td>
-                <td>18</td>
-                <td>19</td>
-                <td>20</td>
-            </tr>
-            <tr>
-                <td>21</td>
-                <td>22</td>
-                <td>23</td>
-                <td>24</td>
-                <td>25</td>
-            </tr>
-        </table>
-    </body>
+  <head>
+    <style></style>
+    <script>
+      const getHtml = () => {};
+    </script>
+  </head>
+  <body></body>
 </html>
