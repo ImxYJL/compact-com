@@ -89,6 +89,7 @@ const setTable = () => {
   });
 };
 
+// 이거 find 등으로 고치기
 const setLectureItemList = () => {
   // 처음에만 호출하기 (create에서)
   timetableMap.forEach((entry) => {
@@ -171,6 +172,11 @@ const createLectureItem = (entryObj) => {
   lectureItemsEl.appendChild(divider);
 
   const lectureItemEl = document.createElement('div');
+  // -key여야 하네
+  //lectureItemEl.id = `${entryObj['week']}-${entryObj['key']}`;
+  lectureItemEl.id = `${entryObj['week']}-${entryObj['lectureName']}`;
+  //console.log(lectureItemEl.id);
+
   lectureItemEl.class = 'lecture-item';
   lectureItemEl.innerHTML = getInnerHtmlOfLectureItem();
 
@@ -186,6 +192,7 @@ const createLectureItem = (entryObj) => {
   lectureItemEl.querySelector('.lecture-item-place').textContent =
     entryObj['lectureRoom'];
 
+  lectureItemList.push(lectureItemEl);
   lectureItemsEl.appendChild(lectureItemEl);
   lectureItemsEl.appendChild(divider);
 };
@@ -217,6 +224,7 @@ const setTableEntry = () => {
 
   const key = entryIdCounter++; // 이거 밑에서 어케썼는지 확인
   const newEntry = {
+    key: key, // 설마 문자열 들어가진
     lectureName: inputElements.lectureName.value,
     professor: inputElements.professor.value,
     lectureRoom: inputElements.lectureRoom.value,
@@ -250,7 +258,12 @@ const clickSaveBtn = () => {
   } catch (error) {
     alert(error.message);
   }
-  addTimetableEntry(key);
+
+  console.log(key);
+  if (key !== undefined) {
+    addTimetableEntry(key);
+  }
+  //addTimetableEntry(key);
 };
 
 const setTimetableElListeners = () => {
@@ -275,6 +288,7 @@ const setTimetableElListeners = () => {
 };
 
 const createTableEntry = (
+  key,
   day,
   backgroundColor,
   startHour,
@@ -283,6 +297,8 @@ const createTableEntry = (
   endMinute,
 ) => {
   const tableEntry = document.createElement('div');
+  tableEntry.id = `${day}-${key}`;
+  // tableEntry.id = `${day}-${lectureName}`;
   tableEntry.classList.add('table-entry');
   tableEntry.style.backgroundColor = backgroundColor;
 
@@ -328,12 +344,15 @@ const createLectureRoomEl = (lectureRoom) => {
 const addTimetableEntry = (key) => {
   // 맵에서 꺼내옴
   let entryObj = null;
+  console.log(timetableMap);
   try {
     entryObj = timetableMap.get(key);
   } catch (error) {
     alert(error.message);
     return;
   }
+
+  console.log(entryObj); // 2회차 undefined
 
   const lectureName = entryObj['lectureName'];
   const lectureRoom = entryObj['lectureRoom'];
@@ -345,6 +364,7 @@ const addTimetableEntry = (key) => {
   const backgroundColor = entryObj['color'];
 
   const tableEntry = createTableEntry(
+    key,
     day,
     backgroundColor,
     startHour,
@@ -368,13 +388,37 @@ const addTimetableEntry = (key) => {
   if (day === today) createLectureItem(entryObj);
 
   // 타이틀 누르면 엔트리 삭제
-  // 근데 걍 부모노드 하면 않됨?
   lectureNameEl.addEventListener('click', (e) => {
-    //console.log(e.target);
-    //console.log(e.target.parentNode);
-    e.target.parentNode.remove();
+    const tableEntryToRemove = e.target.parentNode;
+    const removeId = tableEntryToRemove.id;
+    const keyToRemove = removeId.split('-')[1];
+    timetableMap.delete(Number(keyToRemove));
+
+    tableEntryToRemove.remove();
+
+    if (day === today) {
+      const todayLectureToRemove = lectureItemsEl.querySelector(
+        `#${day}-${lectureName}`,
+      );
+
+      //console.log(todayLectureToRemove);
+      // 배열에서 삭제
+      console.log(lectureItemList);
+      const index = lectureItemList.findIndex(
+        (obj) => JSON.stringify(obj) === JSON.stringify(todayLectureToRemove),
+      );
+      if (index !== -1) lectureItemList.splice(index, 1);
+      console.log(lectureItemList);
+
+      //   if (todayLectureToRemove) {
+      //     todayLectureToRemove.remove();
+      //   }
+      todayLectureToRemove.remove();
+    }
   });
 };
+
+// 아이디 겹치는거 삭제요망
 
 const setInputElements = () => {
   inputElements.lectureName = timetableEl.querySelector('#lecture-name');
