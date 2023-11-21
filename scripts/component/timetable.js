@@ -9,7 +9,7 @@ let today = getDate()['day'];
 
 let entryIdCounter = 1;
 const timetableMap = new Map();
-const lectureItemList = [];
+let lectureItemList = [];
 const dayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
@@ -89,17 +89,23 @@ const setTable = () => {
   });
 };
 
-// 이거 find 등으로 고치기
-const setLectureItemList = () => {
-  // 처음에만 호출하기 (create에서)
-  timetableMap.forEach((entry) => {
-    if (entry.week === today) lectureItemList.push(entry);
-  });
-  //console.log(lectureItemList);
-  lectureItemList.forEach((entry) => {
-    createLectureItem(entry);
-  });
+const setTableEntries = () =>{
+
 };
+
+
+ const setLectureItemList = () => {
+  lectureItemList = Array.from(timetableMap.values()).filter(entry => entry.week === today);
+  lectureItemList.forEach(createLectureItem);
+  // timetableMap.forEach((entry) => {
+  //   if (entry.week === today) lectureItemList.push(entry);
+  // });
+
+  // lectureItemList.forEach((entry) => {
+    
+  //   createLectureItem(entry);
+  // });
+ };
 
 const clickRadioBtn = (e) => {
   const lectureListEl = timetableEl.querySelector('#side-content-1');
@@ -192,9 +198,10 @@ const createLectureItem = (entryObj) => {
   lectureItemEl.querySelector('.lecture-item-place').textContent =
     entryObj['lectureRoom'];
 
-  lectureItemList.push(lectureItemEl);
+  lectureItemEl.appendChild(divider);
+  //console.log('삽입 이후: '+lectureItemList);
+
   lectureItemsEl.appendChild(lectureItemEl);
-  lectureItemsEl.appendChild(divider);
 };
 
 const setTableEntry = () => {
@@ -377,44 +384,42 @@ const addTimetableEntry = (key) => {
   //lectureNameP.id = `${entryIdCounter++};`; // 임시 아이디
   tableEntry.appendChild(lectureNameEl);
 
-  // const lectureRoomP = document.createElement('p');
-  // lectureRoomP.classList.add('timetable-lecture-room');
-  // lectureRoomP.textContent = lectureRoom;
-
   const lectureRoomEl = createLectureRoomEl(lectureRoom);
   tableEntry.appendChild(lectureRoomEl);
 
   //
-  if (day === today) createLectureItem(entryObj);
+  if (day === today) {
+    createLectureItem(entryObj);
+    //lectureItemList.push(entryObj);
+  }
 
   // 타이틀 누르면 엔트리 삭제
   lectureNameEl.addEventListener('click', (e) => {
     const tableEntryToRemove = e.target.parentNode;
     const removeId = tableEntryToRemove.id;
-    const keyToRemove = removeId.split('-')[1];
-    timetableMap.delete(Number(keyToRemove));
-
-    tableEntryToRemove.remove();
+    const keyToRemove = Number(removeId.split('-')[1]);
+    
 
     if (day === today) {
       const todayLectureToRemove = lectureItemsEl.querySelector(
         `#${day}-${lectureName}`,
       );
 
-      //console.log(todayLectureToRemove);
-      // 배열에서 삭제
+      const tmp = timetableMap.get(keyToRemove);
+      console.log('삭제할 객체: '+tmp);
+      
       console.log(lectureItemList);
       const index = lectureItemList.findIndex(
-        (obj) => JSON.stringify(obj) === JSON.stringify(todayLectureToRemove),
+        (obj) => obj === tmp,
       );
       if (index !== -1) lectureItemList.splice(index, 1);
-      console.log(lectureItemList);
 
-      //   if (todayLectureToRemove) {
-      //     todayLectureToRemove.remove();
-      //   }
+      console.log('삭제 후:' + lectureItemList);
+
       todayLectureToRemove.remove();
     }
+    timetableMap.delete(keyToRemove);
+    tableEntryToRemove.remove();
   });
 };
 
@@ -442,7 +447,7 @@ const createTimetableEl = () => {
   setTable();
   setColorPicker();
   setTimeSelector();
-  setLectureItemList();
+  
 
   radioButtonList = timetableEl.querySelectorAll('.radiobtn');
   tableBodyEl = timetableEl.querySelector('tbody');
@@ -450,6 +455,11 @@ const createTimetableEl = () => {
 
   setInputElements();
   setTimetableElListeners();
+  setLectureItemList();
+
+  timetableMap.forEach((value)=> {
+    console.log(value);
+  });
 
   return timetableEl;
 };
