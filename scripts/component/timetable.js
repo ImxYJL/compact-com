@@ -90,22 +90,16 @@ const setTable = () => {
 };
 
 const setTableEntries = () =>{
-
+  timetableMap.forEach((value, key) => {
+    addTimetableEntry(key);
+  });
 };
 
 
- const setLectureItemList = () => {
-  lectureItemList = Array.from(timetableMap.values()).filter(entry => entry.week === today);
-  lectureItemList.forEach(createLectureItem);
-  // timetableMap.forEach((entry) => {
-  //   if (entry.week === today) lectureItemList.push(entry);
-  // });
-
-  // lectureItemList.forEach((entry) => {
-    
-  //   createLectureItem(entry);
-  // });
- };
+//  const setLectureItemList = () => {
+//   lectureItemList = Array.from(timetableMap.values()).filter(entry => entry.week === today);
+//   lectureItemList.forEach(createLectureItem);
+//  };
 
 const clickRadioBtn = (e) => {
   const lectureListEl = timetableEl.querySelector('#side-content-1');
@@ -351,15 +345,13 @@ const createLectureRoomEl = (lectureRoom) => {
 const addTimetableEntry = (key) => {
   // 맵에서 꺼내옴
   let entryObj = null;
-  console.log(timetableMap);
+
   try {
     entryObj = timetableMap.get(key);
   } catch (error) {
     alert(error.message);
     return;
   }
-
-  console.log(entryObj); // 2회차 undefined
 
   const lectureName = entryObj['lectureName'];
   const lectureRoom = entryObj['lectureRoom'];
@@ -406,16 +398,10 @@ const addTimetableEntry = (key) => {
       );
 
       const tmp = timetableMap.get(keyToRemove);
-      console.log('삭제할 객체: '+tmp);
-      
-      console.log(lectureItemList);
       const index = lectureItemList.findIndex(
         (obj) => obj === tmp,
       );
       if (index !== -1) lectureItemList.splice(index, 1);
-
-      console.log('삭제 후:' + lectureItemList);
-
       todayLectureToRemove.remove();
     }
     timetableMap.delete(keyToRemove);
@@ -455,11 +441,9 @@ const createTimetableEl = () => {
 
   setInputElements();
   setTimetableElListeners();
-  setLectureItemList();
-
-  timetableMap.forEach((value)=> {
-    console.log(value);
-  });
+  //setTableEntries();
+  // setLectureItemList(); // setTableEntries에서 호출해서 필요업슨듯?
+  setTableEntries();
 
   return timetableEl;
 };
