@@ -1301,6 +1301,7 @@ textarea {
 #timetable-table tr,
 td {
   border: 0.02rem solid black;
+  box-sizing: border-box;
   text-align: center;
 }
 
@@ -1360,16 +1361,16 @@ fieldset {
   margin-bottom: 0.5em;
 }
 
-#lecture-edit-container {
-  border: 1px solid black;
-}
-
 #side-content-1 {
   width: 100%;
 }
 
 #side-content-2 {
   width: 100%;
+}
+
+#lecture-edit-container {
+  border: 1px solid black;
 }
 
 #lecture-edit-container label {

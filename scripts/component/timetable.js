@@ -441,8 +441,7 @@ const createTimetableEl = () => {
 
   setInputElements();
   setTimetableElListeners();
-  //setTableEntries();
-  // setLectureItemList(); // setTableEntries에서 호출해서 필요업슨듯?
+  // setLectureItemList(); // setTableEntries에서 호출해서 필요x
   setTableEntries();
 
   return timetableEl;
