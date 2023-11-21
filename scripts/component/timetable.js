@@ -89,12 +89,11 @@ const setTable = () => {
   });
 };
 
-const setTableEntries = () =>{
+const setTableEntries = () => {
   timetableMap.forEach((value, key) => {
     addTimetableEntry(key);
   });
 };
-
 
 //  const setLectureItemList = () => {
 //   lectureItemList = Array.from(timetableMap.values()).filter(entry => entry.week === today);
@@ -139,9 +138,9 @@ const isTimeOverlapping = (day, startHour, startMinute, endHour, endMinute) => {
 
 const isInputsEmpty = () => {
   if (
-    inputElements.lectureName.value.trim() === 0 ||
-    inputElements.professor.value.trim() === 0 ||
-    inputElements.lectureRoom.value.trim() === 0 ||
+    inputElements.lectureName.value.trim() === '' ||
+    inputElements.professor.value.trim() === '' ||
+    inputElements.lectureRoom.value.trim() === '' ||
     inputElements.color.style.backgroundColor === ''
   ) {
     throw new Error('Please enter texts.');
@@ -153,8 +152,8 @@ const isTimeValid = (startHour, startMinute, endHour, endMinute) => {
   const endTime = endHour * 60 + endMinute;
 
   if (
-    startHour === '18' ||
-    (endHour === '18' && endMinute === '30') ||
+    startHour === 18 ||
+    (endHour === 18 && endMinute === 30) ||
     startTime >= endTime
   ) {
     throw new Error('Time selection is incorrect.');
@@ -217,7 +216,12 @@ const setTableEntry = () => {
   // 입력 공백 체크
   try {
     isInputsEmpty();
-    isTimeValid(startHour, startMinute, endHour, endMinute);
+    isTimeValid(
+      Number(startHour),
+      Number(startMinute),
+      Number(endHour),
+      Number(endMinute),
+    );
     isTimeOverlapping(day, startHour, startMinute, endHour, endMinute);
   } catch (error) {
     throw error;
@@ -261,6 +265,7 @@ const clickSaveBtn = () => {
   }
 
   console.log(key);
+
   if (key !== undefined) {
     addTimetableEntry(key);
   }
@@ -390,7 +395,6 @@ const addTimetableEntry = (key) => {
     const tableEntryToRemove = e.target.parentNode;
     const removeId = tableEntryToRemove.id;
     const keyToRemove = Number(removeId.split('-')[1]);
-    
 
     if (day === today) {
       const todayLectureToRemove = lectureItemsEl.querySelector(
@@ -398,9 +402,7 @@ const addTimetableEntry = (key) => {
       );
 
       const tmp = timetableMap.get(keyToRemove);
-      const index = lectureItemList.findIndex(
-        (obj) => obj === tmp,
-      );
+      const index = lectureItemList.findIndex((obj) => obj === tmp);
       if (index !== -1) lectureItemList.splice(index, 1);
       todayLectureToRemove.remove();
     }
@@ -433,7 +435,6 @@ const createTimetableEl = () => {
   setTable();
   setColorPicker();
   setTimeSelector();
-  
 
   radioButtonList = timetableEl.querySelectorAll('.radiobtn');
   tableBodyEl = timetableEl.querySelector('tbody');
