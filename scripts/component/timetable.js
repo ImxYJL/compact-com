@@ -517,8 +517,8 @@ const getInnerHtmlOfTimetableEl = () => {
                                                 <option>Thursday</option>
                                                 <option>Friday</option>
                                             </select>
-                                        <label for="lecture-time">Time</label>
                                         <div id="start-time"class="time-row">
+                                            <label>Start Time</label>
                                             <select class ="time-h"></select>
                                             <select class="time-m">
                                                 <option>00</option>
@@ -526,6 +526,7 @@ const getInnerHtmlOfTimetableEl = () => {
                                             </select>
                                         </div>
                                         <div id="end-time" class="time-row">
+                                            <label>End Time</label>
                                             <select class ="time-h"></select>
                                             <select class="time-m">
                                                 <option>00</option>

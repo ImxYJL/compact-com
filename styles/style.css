@@ -1269,7 +1269,6 @@ textarea {
   font-size: 1rem;
   box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
   text-shadow: 1px 1px var(--text-color);
-  /* overflow: auto; */
   width: 70%;
   overflow: auto;
   /* display: inline-flex; */
@@ -1281,7 +1280,7 @@ textarea {
   font-size: 1rem;
   box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
   text-shadow: 1px 1px var(--text-color);
-  overflow: auto;
+
   width: 30%;
   display: flex;
 }
@@ -1371,16 +1370,17 @@ fieldset {
 
 #lecture-edit-container {
   border: 1px solid black;
+  margin-bottom: 0.5em;
 }
 
 #lecture-edit-container label {
   font-weight: bold;
-  margin: 0.3rem 0.2em 0.7em 0.6em;
+  margin: 0.6em 0.2em 0.5em 0.8em;
 }
 
 #lecture-edit-container input,
 select {
-  margin-left: 0.6em;
+  margin-left: 0.7em;
 }
 
 .time-row {
@@ -1452,4 +1452,19 @@ select {
 .timetable-lecture-room {
   font-size: 0.01em;
   white-space: nowrap;
+}
+
+#start-time select {
+  margin-top: 1em;
+}
+
+#start-time label {
+  margin-top: 1.5em;
+  margin-right: 0.5em;
+}
+
+#end-time label {
+  margin-top: 0.5em;
+  margin-right: 1em;
+  margin-bottom: 1em;
 }
