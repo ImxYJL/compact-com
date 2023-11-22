@@ -1445,8 +1445,6 @@ select {
   display: block;
   margin: 0.2rem;
   font-weight: bold;
-  /* overflow: hidden;
-    text-overflow: ellipsis; */
 }
 
 .timetable-lecture-room {
