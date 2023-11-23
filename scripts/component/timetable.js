@@ -5,13 +5,24 @@ let radioButtonList = null;
 let lectureItemsEl = null;
 let tableBodyEl = null;
 let today = getDate()['day'];
-//6시반 예외처리
 
 let entryIdCounter = 1;
+
 const timetableMap = new Map();
 let lectureItemList = [];
+
 const dayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+const colorList = [
+  '#768AB7',
+  '#657BAE',
+  '#3A4C74',
+  '#3C4458',
+  '#B0A2C8',
+  '#8977AD',
+  '#5A4E70',
+  '#443B53',
+];
 
 const inputElements = {
   lectureName: null,
@@ -28,15 +39,51 @@ const convertTimeToMinutes = (hour, minute) => {
   return Number(hour) * 60 + Number(minute);
 };
 
+const createCell = (text, id) => {
+  const cell = document.createElement('td');
+  if (text) cell.textContent = text;
+  if (id) cell.id = id;
+
+  return cell;
+};
+
+const appendCellsToRow = (row, cellList) => {
+  cellList.forEach((cell) => row.appendChild(cell));
+
+  return row;
+};
+
+const setTable = () => {
+  hourList.forEach((hour) => {
+    if (hour === 18) return;
+
+    const row = document.createElement('tr');
+    const timeCell = createCell(`${hour}:00`);
+    timeCell.classList.add('time-cell');
+
+    const dayCellList = dayList.map((day) =>
+      createCell(null, `${day}-${hour - 9}`),
+    );
+    appendCellsToRow(row, [timeCell, ...dayCellList]);
+
+    tableBodyEl.appendChild(row);
+  });
+};
+
+const createOption = (content) => {
+  const option = document.createElement('option');
+  option.textContent = content;
+
+  return option;
+};
+
 const setTimeSelector = () => {
   const hourSelectorList = timetableEl.querySelectorAll('.time-h');
 
   hourSelectorList.forEach((hourSelector) => {
-    hourList.forEach((hour) => {
-      const row = document.createElement('option');
-      row.textContent = hour;
-      hourSelector.appendChild(row);
-    });
+    hourList
+      .map((hour) => createOption(hour))
+      .forEach((option) => hourSelector.appendChild(option));
   });
 };
 
@@ -44,49 +91,20 @@ const setColorPicker = () => {
   const colorGrid = timetableEl.querySelector('.color-grid');
   const selectedColor = timetableEl.querySelector('.selected-color');
 
-  const colors = [
-    '#768AB7',
-    '#657BAE',
-    '#3A4C74',
-    '#3C4458',
-    '#B0A2C8',
-    '#8977AD',
-    '#5A4E70',
-    '#443B53',
-  ];
-
-  // 색상 그리드 생성
-  colors.forEach((color) => {
-    const colorDiv = document.createElement('div');
-    colorDiv.classList.add('color');
-    colorDiv.style.backgroundColor = color;
-    colorDiv.addEventListener('click', () => {
+  const createColorEl = (color) => {
+    const colorEl = document.createElement('div');
+    colorEl.classList.add('color');
+    colorEl.style.backgroundColor = color;
+    colorEl.addEventListener('click', () => {
       selectedColor.style.backgroundColor = color;
     });
-    colorGrid.appendChild(colorDiv);
-  });
-};
 
-const setTable = () => {
-  const tbody = timetableEl.querySelector('tbody');
+    return colorEl;
+  };
 
-  hourList.forEach((hour) => {
-    if (hour === 18) return;
-    const row = document.createElement('tr');
-    const timeCell = document.createElement('td');
-    timeCell.textContent = hour + ':00';
-    timeCell.classList.add('time-cell');
-    row.appendChild(timeCell);
-
-    dayList.forEach((day) => {
-      const cell = document.createElement('td');
-      cell.id = `${day}-${hour - 9}`;
-
-      row.appendChild(cell);
-    });
-
-    tbody.appendChild(row);
-  });
+  colorList
+    .map(createColorEl)
+    .forEach((colorEl) => colorGrid.appendChild(colorEl));
 };
 
 const setTableEntries = () => {
@@ -148,8 +166,6 @@ const isTimeValid = (startHour, startMinute, endHour, endMinute) => {
 
   // 시작 시간이 6시거나, 종료 시간이 6시 반인 경우 시간표에 표시 불가능
   // 그 외는 아래 조건에서 걸러짐
-
-  // return startTime < endTime;
 };
 
 const createLectureItem = (entryObj) => {
@@ -158,10 +174,7 @@ const createLectureItem = (entryObj) => {
   lectureItemsEl.appendChild(divider);
 
   const lectureItemEl = document.createElement('div');
-  // -key여야 하네
-  //lectureItemEl.id = `${entryObj['week']}-${entryObj['key']}`;
   lectureItemEl.id = `${entryObj['week']}-${entryObj['lectureName']}`;
-  //console.log(lectureItemEl.id);
 
   lectureItemEl.class = 'lecture-item';
   lectureItemEl.innerHTML = getInnerHtmlOfLectureItem();
@@ -179,8 +192,6 @@ const createLectureItem = (entryObj) => {
     entryObj['lectureRoom'];
 
   lectureItemEl.appendChild(divider);
-  //console.log('삽입 이후: '+lectureItemList);
-
   lectureItemsEl.appendChild(lectureItemEl);
 };
 
@@ -200,7 +211,6 @@ const setTableEntry = () => {
     inputElements.endMinute.options[inputElements.endMinute.selectedIndex]
       .value;
 
-  // 입력 공백 체크
   try {
     isInputsEmpty();
     isTimeValid(
@@ -214,9 +224,9 @@ const setTableEntry = () => {
     throw error;
   }
 
-  const key = entryIdCounter++; // 이거 밑에서 어케썼는지 확인
+  const key = entryIdCounter++;
   const newEntry = {
-    key: key, // 설마 문자열 들어가진
+    key: key,
     lectureName: inputElements.lectureName.value,
     professor: inputElements.professor.value,
     lectureRoom: inputElements.lectureRoom.value,
@@ -256,16 +266,13 @@ const clickSaveBtn = () => {
   if (key !== undefined) {
     addTimetableEntry(key);
   }
-  //addTimetableEntry(key);
 };
 
 const setTimetableElListeners = () => {
-  const tableBodyEl = timetableEl.querySelector('tbody');
   const lectureListEl = timetableEl.querySelector('#side-content-1');
   const editEl = timetableEl.querySelector('#side-content-2');
 
   radioButtonList[0].addEventListener('click', () => {
-    //lectureListEl.classList.toggle('hidden'); //하자임
     editEl.classList.add('hidden');
     lectureListEl.classList.remove('hidden');
     radioButtonList[1].checked = false;
@@ -291,7 +298,6 @@ const createTableEntry = (
 ) => {
   const tableEntry = document.createElement('div');
   tableEntry.id = `${day}-${key}`;
-  // tableEntry.id = `${day}-${lectureName}`;
   tableEntry.classList.add('table-entry');
   tableEntry.style.backgroundColor = backgroundColor;
 
@@ -308,9 +314,6 @@ const createTableEntry = (
   //tableEntry.style.bottom = `${endCell.getBoundingClientRect().bottom}px`;
   // tableEntry.style.left = `${cellRect.left}px`; // 여기서는 left 없는게 정상작동이네..
 
-  // tableEntry.style.top = cellRect.top; // px 없어도 동작
-  // tableEntry.style.left = cellRect.left;
-
   if (startMinute === 30) tableEntry.style.top = '50%';
   // if (endMinute === 30) endCell.style.borderBottom = 'display';
   // if (startMinute === 30) tableEntry.style.top = '50%';
@@ -321,7 +324,6 @@ const createTableEntry = (
     convertTimeToMinutes(startHour, startMinute);
   const magnification = lectureMinutes / 30;
   tableEntry.style.height = `${50 * magnification + 0.8 * magnification}%`; // 여기서 height만 시간에 맞게 *n%배 해주면 됨
-  //tableEntry.style.height = `${cellRect.height * magnification}%`;
 
   startCell.appendChild(tableEntry);
 
@@ -384,10 +386,7 @@ const addTimetableEntry = (key) => {
   tableEntry.appendChild(lectureRoomEl);
 
   //
-  if (day === today) {
-    createLectureItem(entryObj);
-    //lectureItemList.push(entryObj);
-  }
+  if (day === today) createLectureItem(entryObj);
 
   // 타이틀 누르면 엔트리 삭제
   lectureNameEl.addEventListener('click', (e) => {
@@ -424,30 +423,6 @@ const setInputElements = () => {
   inputElements.color = timetableEl.querySelector('#selected-color');
 };
 
-function getRelativeTop(element, parent) {
-  let top = element.offsetTop;
-  let currentParent = element.offsetParent;
-
-  while (currentParent && currentParent !== parent) {
-    top += currentParent.offsetTop;
-    currentParent = currentParent.offsetParent;
-  }
-
-  return top - parent.offsetTop;
-}
-
-function getRelativeBottom(element, parent) {
-  let top = element.offsetTop;
-  let currentParent = element.offsetParent;
-
-  while (currentParent && currentParent !== parent) {
-    top += currentParent.offsetTop;
-    currentParent = currentParent.offsetParent;
-  }
-
-  return top - parent.offsetTop + element.offsetHeight;
-}
-
 const createTimetableEl = () => {
   timetableEl = document.createElement('div');
   timetableEl.id = 'timetable-window';
@@ -455,35 +430,18 @@ const createTimetableEl = () => {
   timetableEl.draggable = true;
   timetableEl.innerHTML = getInnerHtmlOfTimetableEl();
 
-  setTable();
-  setColorPicker();
-  setTimeSelector();
-
   radioButtonList = timetableEl.querySelectorAll('.radiobtn');
   tableBodyEl = timetableEl.querySelector('tbody');
   lectureItemsEl = timetableEl.querySelector('#lecture-list');
 
+  setTable();
+  setColorPicker();
+  setTimeSelector();
   setInputElements();
   setTimetableElListeners();
   // setLectureItemList(); // setTableEntries에서 호출해서 필요x
   setTableEntries();
 
-  // const tableEntry = document.createElement('div');
-  // tableEntry.style.backgroundColor = 'purple';
-  // tableEntry.style.position = 'absolute';
-
-  // const cell = timetableEl.querySelector('#Monday-1');
-  // tableEntry.style.width = '100%';
-  // tableEntry.style.height = '50%'; // 반이면 50, 풀이면 100
-
-  // const rect = cell.getBoundingClientRect();
-  // console.log(rect.top);
-
-  // tableEntry.style.top = `${rect.top}px`;
-  // tableEntry.style.bottom = `${rect.bottom / 2}px`;
-  // tableEntry.style.left = `${rect.left}px`;
-
-  // cell.appendChild(tableEntry);
   return timetableEl;
 };
 
