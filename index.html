@@ -1,95 +1,80 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <link
-            rel="stylesheet"
-            href="https://unpkg.com/98.css@0.1.4/build/98.css"
-        />
-        <link rel="stylesheet" href="./styles/style.css" />
-        <script src="./scripts/main.js" type="module" defer></script>
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.4/build/98.css" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <script src="./scripts/main.js" type="module" defer></script>
+  </head>
 
-    <body>
-        <div id="desktop">
-            <label for="windows-document-input" class="desktop-item">
-                <div class="icon">
-                    <img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAIVBMVEUAAACAgIDAwMAAAAD///8AgID//wAA//8AAP8AAICAgABjy1kBAAAAAXRSTlMAQObYZgAAAAFiS0dEBI9o2VEAAAAHdElNRQfiBhgXAzSeRYh6AAABI0lEQVQ4y6XUwWrCQBAG4OQRmiy9uwmB3qJbvHcZ3fQBSs/mGYTVaxB6Flr6AHvzKZ3ZTQJJZgvS/6T5+XBmFJPkX0ljRVZHABR8IUDXPIA5SZ8oAosZoUfwBvAxI+m+wgjY2cuUiBZzAPg8niZkBEc7JSOw1hChQUIxAmMNklecpB5EANacaRd87waBA38ZY+03dKC3VeV6geDSoDhDU3oyCEEPfgNoiPQCQQfwHkBHpBdCvmRSyp+rvPpXeuuGA06TFa4/4CxrrfDrbJfJS7zYc7VMXuLFOFFIPHLKiCLTWDDisJE1K1Yb/HBOtGsclx1L0UnYRVxE5DFBt+IX8QW3iIqIlYqIlgp+kSQy1uPC/0q4sULxuLgt44tELRP5i/gzd7p32fYC8TrqAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE4LTA2LTI0VDIzOjAzOjUyLTA0OjAwbzzW+wAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOC0wNi0yNFQyMzowMzo1Mi0wNDowMB5hbkcAAAAASUVORK5CYII="
-                        alt=""
-                    />
-                </div>
-                <div class="text">Documents</div>
-            </label>
-            <label id="clock" for="windows-notepad-input" class="desktop-item">
-                <div class="icon">
-                    <img
-                        src="https://win98icons.alexmeub.com/icons/png/application_hourglass_small_cool-5.png"
-                        alt=""
-                    />
-                </div>
-                <div class="text">Clock</div>
-            </label>
-            <label
-                id="life-quote"
-                for="windows-notepad-input"
-                class="desktop-item"
-            >
-                <div class="icon">
-                    <img
-                        src="https://win98icons.alexmeub.com/icons/png/kodak_imaging-0.png"
-                        alt=""
-                    />
-                </div>
-                <div class="text">Life Quote</div>
-            </label>
-            <label
-                for="windows-minesweeper-input"
-                class="desktop-item"
-                onclick=""
-            >
-                <div class="icon">
-                    <img
-                        src="https://win98icons.alexmeub.com/icons/png/note-0.png"
-                        alt=""
-                    />
-                </div>
-                <div class="text">TodoList</div>
-            </label>
-            <label for="windows-update-input" class="desktop-item update">
-                <div class="icon">
-                    <img
-                        src="https://win98icons.alexmeub.com/icons/png/calendar-1.png"
-                        alt=""
-                    />
-                </div>
-                <div class="text">Calendar</div>
-            </label>
-            <label
-                id="timetable"
-                for="windows-trash-input"
-                class="desktop-item"
-            >
-                <div class="icon">
-                    <img
-                        src="https://win98icons.alexmeub.com/icons/png/template_empty-5.png"
-                        alt=""
-                    />
-                </div>
-                <div class="text">Timetable</div>
-            </label>
+  <body>
+    <div id="desktop">
+      <label for="windows-document-input" class="desktop-item">
+        <div class="icon">
+          <img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAIVBMVEUAAACAgIDAwMAAAAD///8AgID//wAA//8AAP8AAICAgABjy1kBAAAAAXRSTlMAQObYZgAAAAFiS0dEBI9o2VEAAAAHdElNRQfiBhgXAzSeRYh6AAABI0lEQVQ4y6XUwWrCQBAG4OQRmiy9uwmB3qJbvHcZ3fQBSs/mGYTVaxB6Flr6AHvzKZ3ZTQJJZgvS/6T5+XBmFJPkX0ljRVZHABR8IUDXPIA5SZ8oAosZoUfwBvAxI+m+wgjY2cuUiBZzAPg8niZkBEc7JSOw1hChQUIxAmMNklecpB5EANacaRd87waBA38ZY+03dKC3VeV6geDSoDhDU3oyCEEPfgNoiPQCQQfwHkBHpBdCvmRSyp+rvPpXeuuGA06TFa4/4CxrrfDrbJfJS7zYc7VMXuLFOFFIPHLKiCLTWDDisJE1K1Yb/HBOtGsclx1L0UnYRVxE5DFBt+IX8QW3iIqIlYqIlgp+kSQy1uPC/0q4sULxuLgt44tELRP5i/gzd7p32fYC8TrqAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE4LTA2LTI0VDIzOjAzOjUyLTA0OjAwbzzW+wAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOC0wNi0yNFQyMzowMzo1Mi0wNDowMB5hbkcAAAAASUVORK5CYII="
+            alt=""
+          />
         </div>
+        <div class="text">Documents</div>
+      </label>
+      <label id="clock" for="windows-notepad-input" class="desktop-item">
+        <div class="icon">
+          <img
+            src="https://win98icons.alexmeub.com/icons/png/application_hourglass_small_cool-5.png"
+            alt=""
+          />
+        </div>
+        <div class="text">Clock</div>
+      </label>
+      <label id="life-quote" for="windows-notepad-input" class="desktop-item">
+        <div class="icon">
+          <img
+            src="https://win98icons.alexmeub.com/icons/png/kodak_imaging-0.png"
+            alt=""
+          />
+        </div>
+        <div class="text">Life Quote</div>
+      </label>
+      <label for="windows-minesweeper-input" class="desktop-item" onclick="">
+        <div class="icon">
+          <img
+            src="https://win98icons.alexmeub.com/icons/png/note-0.png"
+            alt=""
+          />
+        </div>
+        <div class="text">TodoList</div>
+      </label>
+      <label for="windows-update-input" class="desktop-item update">
+        <div class="icon">
+          <img
+            src="https://win98icons.alexmeub.com/icons/png/calendar-1.png"
+            alt=""
+          />
+        </div>
+        <div class="text">Calendar</div>
+      </label>
+      <label id="timetable" for="windows-trash-input" class="desktop-item">
+        <div class="icon">
+          <img
+            src="https://win98icons.alexmeub.com/icons/png/template_empty-5.png"
+            alt=""
+          />
+        </div>
+        <div class="text">Timetable</div>
+      </label>
+    </div>
 
-        <div id="start-bar">
-            <div id="start-button-items">
-                <label
-                    id="start-button"
-                    class="windows-box-shadow"
-                    for="start-button-input"
-                ></label>
-                <div id="items"></div>
-            </div>
-            <div id="time-options"></div>
-        </div>
-    </body>
+    <div id="start-bar">
+      <div id="start-button-items">
+        <label
+          id="start-button"
+          class="windows-box-shadow"
+          for="start-button-input"
+        ></label>
+        <div id="items"></div>
+      </div>
+      <div id="time-options"></div>
+    </div>
+  </body>
 </html>
