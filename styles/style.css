@@ -1466,3 +1466,63 @@ select {
   margin-right: 1em;
   margin-bottom: 1em;
 }
+
+#start-window {
+  width: 40%;
+  height: 30%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: fit-content;
+  /* min-height: fit-content; */
+  /* min-width: 320px; */
+  min-height: 180px;
+
+  max-width: fit-content;
+  min-width: fit-content;
+  transform: translate(-50%, -50%);
+}
+
+#start-page {
+  display: flex;
+  flex-direction: row;
+}
+
+#start-page .icon {
+  width: 20%;
+  margin-top: 0.8em;
+  margin-right: 2em;
+}
+
+#start-page image {
+  width: 100%;
+}
+
+#start-page .input-group {
+  width: 60%;
+  margin-right: 2em;
+  align-items: center;
+}
+
+#start-page .input-group p {
+  margin-top: 1em;
+  margin-bottom: 2em;
+  font-size: 0.7rem;
+}
+
+#start-page .input-group label {
+  font-weight: bold;
+  margin: 0.1em 0.1em 0.2em 0;
+}
+
+#start-page .input-group input {
+  margin: 0.2em 0em 0.5em 0;
+}
+
+#start-page .button {
+  margin-top: 0.8em;
+}
+
+#start-page button {
+  margin-bottom: 1em;
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.4/build/98.css" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <script src="./scripts/start.js" type="module" defer></script>
+  </head>
+
+  <body>
+    <div id="desktop">
+      <div id="start-window" class="window">
+        <div class="title-bar">
+          <div class="title-bar-text">
+            Enter Your Windows Account Information
+          </div>
+          <div class="title-bar-controls"></div>
+        </div>
+        <div id="login-body" class="window-body">
+          <div id="start-page">
+            <div class="icon">
+              <img
+                src="https://win98icons.alexmeub.com/icons/png/key_win_alt-2.png"
+                alt=""
+              />
+            </div>
+            <div class="input-group">
+              <p>Enter your username and password.</p>
+              <label for="user-name">User name</label>
+              <input type="text" id="input-id" /><br />
+              <label for="password">Password</label>
+              <input type="text" id="input-pwd" /><br />
+            </div>
+            <div class="button">
+              <button id="login-btn">Login</button>
+              <button id="signup-btn">Sign Up</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="signup-body" class="window-body hidden">
+          <div id="signup-window">
+            <div id="start-page">
+              <div class="icon">
+                <img
+                  src="https://win98icons.alexmeub.com/icons/png/computer-5.png"
+                  alt=""
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="user-name">User name</label>
+                <input type="text" /><br />
+                <label for="password">Password</label>
+                <input type="text" /><br />
+                <label for="password">Password (Retry)</label>
+                <input type="text" /><br />
+              </div>
+              <div class="button">
+                <button id="">OK</button>
+                <button id="back-btn">Back</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
