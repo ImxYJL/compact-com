@@ -32,7 +32,7 @@ const inputElements = {
   startHour: null,
   endHour: null,
   endMinute: null,
-  backgroundColor: null,
+  color: null,
 };
 
 const convertTimeToMinutes = (hour, minute) => {
@@ -109,7 +109,7 @@ const setColorPicker = () => {
 
 const setTableEntries = () => {
   timetableMap.forEach((_, key) => {
-    addTimetableEntry(key);
+    setTableEntry(key);
   });
 };
 
@@ -120,7 +120,7 @@ const isTimeOverlapping = (day, startHour, startMinute, endHour, endMinute) => {
 
   timetableMap.forEach((entry) => {
     // Check if the day of the week is same as endtries already exist
-    if (entry.week === day) {
+    if (entry.day === day) {
       const [existingStartHour, existingStartMinute] = entry.startTime;
       const [existingEndHour, existingEndMinute] = entry.endTime;
 
@@ -180,7 +180,7 @@ const createDivider = () => {
 
 const createLectureItemEl = (entry) => {
   const lectureItemEl = document.createElement('div');
-  lectureItemEl.id = `${entry['week']}-${entry['lectureName']}`;
+  lectureItemEl.id = `${entry['day']}-${entry['lectureName']}`;
   lectureItemEl.class = 'lecture-item';
   lectureItemEl.innerHTML = getInnerHtmlOfLectureItem();
 
@@ -262,27 +262,27 @@ const createTableEntryObj = () => {
     getCurrentInputValues();
 
   const key = entryIdCounter++;
-  const newEntry = {
+  const newEntryObj = {
     key: key,
     lectureName: inputElements.lectureName.value,
     professor: inputElements.professor.value,
     lectureRoom: inputElements.lectureRoom.value,
-    week: inputElements.dayOfWeek.options[inputElements.dayOfWeek.selectedIndex]
+    day: inputElements.dayOfWeek.options[inputElements.dayOfWeek.selectedIndex]
       .value,
     startTime: [startHour, startMinute],
     endTime: [endHour, endMinute],
     color: inputElements.color.style.backgroundColor,
   };
 
-  return newEntry;
+  return newEntryObj;
 };
 
-const setTableEntry = () => {
+const addEntryObj = () => {
   isValidateInputs();
 
-  const newEntry = createTableEntryObj();
+  const newEntryObj = createTableEntryObj();
   try {
-    timetableMap.set(newEntry.key, newEntry);
+    timetableMap.set(newEntryObj.key, newEntryObj);
   } catch (error) {
     throw error;
   }
@@ -290,18 +290,18 @@ const setTableEntry = () => {
   alert('It has been saved.');
   initInputValues();
 
-  return newEntry.key;
+  return newEntryObj.key;
 };
 
 const clickSaveBtn = () => {
   let key;
   try {
-    key = setTableEntry();
+    key = addEntryObj();
   } catch (error) {
     alert(error.message);
   }
 
-  if (key !== undefined) addTimetableEntry(key);
+  if (key !== undefined) setTableEntry(key);
 };
 
 const setTimetableElListeners = () => {
@@ -332,50 +332,32 @@ const setTimetableElListeners = () => {
   saveBtn.addEventListener('click', clickSaveBtn);
 };
 
-const createTableEntry = (
-  key,
-  day,
-  backgroundColor,
-  startHour,
-  startMinute,
-  endHour,
-  endMinute,
-) => {
+const createTableEntryDiv = (key, entryObjValues) => {
   const tableEntry = document.createElement('div');
-  tableEntry.id = `${day}-${key}`;
+  tableEntry.id = `${entryObjValues.day}-${key}`;
   tableEntry.classList.add('table-entry');
-  tableEntry.style.backgroundColor = backgroundColor;
+  tableEntry.style.backgroundColor = entryObjValues.color;
 
-  setTableEntryPosition(
-    tableEntry,
-    day,
-    startHour,
-    endHour,
-    startMinute,
-    endMinute,
-  );
+  setTableEntryPosition(tableEntry, entryObjValues);
 
   return tableEntry;
 };
 
-const setTableEntryPosition = (
-  tableEntry,
-  day,
-  startHour,
-  endHour,
-  startMinute,
-  endMinute,
-) => {
-  const startCell = timetableEl.querySelector(`#${day}-${startHour - 9}`);
+const setTableEntryPosition = (tableEntry, entryObjValues) => {
+  console.log(entryObjValues);
+
+  const startCell = timetableEl.querySelector(
+    `#${entryObjValues.day}-${entryObjValues.startHour - 9}`,
+  );
   const lectureMinutes =
-    convertTimeToMinutes(endHour, endMinute) -
-    convertTimeToMinutes(startHour, startMinute);
+    convertTimeToMinutes(entryObjValues.endHour, entryObjValues.endMinute) -
+    convertTimeToMinutes(entryObjValues.startHour, entryObjValues.startMinute);
   const magnification = lectureMinutes / 30;
 
   tableEntry.style.position = 'absolute';
   tableEntry.style.width = '100%';
   tableEntry.style.height = `${50 * magnification + 0.7 * magnification}%`; // 0.8: height correction value
-  tableEntry.style.top = startMinute === 30 ? '50%' : '0px';
+  tableEntry.style.top = entryObjValues.startMinute === 30 ? '50%' : '0px';
 
   startCell.appendChild(tableEntry);
 };
@@ -398,82 +380,7 @@ const createLectureRoomEl = (lectureRoom) => {
   return lectureRoomEl;
 };
 
-// const addTimetableEntry = (key) => {
-//   const entryObj = getEntry(key);
-//   if (!entryObj) return;
-
-//   const {
-//     lectureName,
-//     lectureRoom,
-//     week: day,
-//     startTime,
-//     endTime,
-//     color: backgroundColor,
-//   } = entryObj;
-//   const [startHour, startMinute] = startTime.map(Number);
-//   const [endHour, endMinute] = endTime.map(Number);
-
-//   const tableEntry = createTableEntry(
-//     key,
-//     day,
-//     backgroundColor,
-//     startHour,
-//     startMinute,
-//     endHour,
-//     endMinute,
-//   );
-
-//   appendElementsToEntry(tableEntry, lectureName, lectureRoom);
-
-//   if (day === today) setLectureItem(entryObj);
-
-//   addEntryRemovalListener(tableEntry, day, lectureName, key);
-// };
-
-// const getEntry = (key) => {
-//   try {
-//     return timetableMap.get(key);
-//   } catch (error) {
-//     alert(error.message);
-//     return null;
-//   }
-// };
-
-// const appendElementsToEntry = (tableEntry, lectureName, lectureRoom) => {
-//   const lectureNameEl = createLectureNameEl(lectureName);
-//   const lectureRoomEl = createLectureRoomEl(lectureRoom);
-
-//   tableEntry.append(lectureNameEl, lectureRoomEl);
-// };
-
-// const addEntryRemovalListener = (tableEntry, day, lectureName, key) => {
-//   console.log(`#${day}-${lectureName}`);
-//   console.log(tableBodyEl.querySelector(`#${day}-${lectureName}`));
-
-//   tableBodyEl
-//     .querySelector(`#${day}-${lectureName}`)
-//     .addEventListener('click', () => {
-//       removeEntry(day, lectureName, key);
-//       tableBodyEl.remove();
-//     });
-// };
-
-// const removeEntry = (day, lectureName, key) => {
-//   if (day === today) {
-//     console.log(`#${day}-${lectureName}`);
-//     const todayLectureToRemove = lectureItemsEl.querySelector(
-//       `#${day}-${lectureName}`,
-//     );
-//     const objToRemove = timetableMap.get(key);
-//     const index = lectureItemList.findIndex((obj) => obj === objToRemove);
-//     if (index !== -1) lectureItemList.splice(index, 1);
-//     todayLectureToRemove.remove();
-//   }
-//   timetableMap.delete(key);
-// };
-
-const addTimetableEntry = (key) => {
-  // 맵에서 꺼내옴
+const getEntryObj = (key) => {
   let entryObj = null;
   try {
     entryObj = timetableMap.get(key);
@@ -482,54 +389,75 @@ const addTimetableEntry = (key) => {
     return;
   }
 
-  const lectureName = entryObj['lectureName'];
-  const lectureRoom = entryObj['lectureRoom'];
-  const day = entryObj['week'];
-  const startHour = Number(entryObj['startTime'][0]);
-  const startMinute = Number(entryObj['startTime'][1]);
-  const endHour = Number(entryObj['endTime'][0]);
-  const endMinute = Number(entryObj['endTime'][1]);
-  const backgroundColor = entryObj['color'];
+  console.log(entryObj);
+  return entryObj;
+};
 
-  const tableEntry = createTableEntry(
-    key,
+const getEntryObjValues = (entryObj) => {
+  const { lectureName, lectureRoom, day, color } = entryObj;
+  const [startHour, startMinute] = entryObj.startTime.map(Number);
+  const [endHour, endMinute] = entryObj.endTime.map(Number);
+
+  return {
+    lectureName,
+    lectureRoom,
     day,
-    backgroundColor,
     startHour,
     startMinute,
     endHour,
     endMinute,
+    color,
+  };
+};
+
+const removeTodayLecture = (entryObj, keyToRemove) => {
+  const todayLectureToRemove = lectureItemsEl.querySelector(
+    `#${entryObj.day}-${entryObj.lectureName}`,
+  );
+  const entryObjToRemove = timetableMap.get(keyToRemove);
+  const indexToRemove = lectureItemList.findIndex(
+    (obj) => obj === entryObjToRemove,
   );
 
-  const lectureNameEl = createLectureNameEl(lectureName);
-  //lectureNameP.id = `${entryIdCounter++};`; // 임시 아이디
-  tableEntry.appendChild(lectureNameEl);
+  if (indexToRemove !== -1) lectureItemList.splice(indexToRemove, 1);
+  todayLectureToRemove.remove();
+};
 
-  const lectureRoomEl = createLectureRoomEl(lectureRoom);
-  tableEntry.appendChild(lectureRoomEl);
-
-  //
-  if (day === today) setLectureItem(entryObj);
-
-  // 타이틀 누르면 엔트리 삭제
+const setEntryRemoveListener = (lectureNameEl, entryObj) => {
   lectureNameEl.addEventListener('click', (e) => {
     const tableEntryToRemove = e.target.parentNode;
-    const removeId = tableEntryToRemove.id;
-    const keyToRemove = Number(removeId.split('-')[1]);
+    const idToRemove = tableEntryToRemove.id;
+    const keyToRemove = Number(idToRemove.split('-')[1]);
 
-    if (day === today) {
-      const todayLectureToRemove = lectureItemsEl.querySelector(
-        `#${day}-${lectureName}`,
-      );
+    if (entryObj.day === today) removeTodayLecture(entryObj, keyToRemove);
 
-      const tmp = timetableMap.get(keyToRemove);
-      const index = lectureItemList.findIndex((obj) => obj === tmp);
-      if (index !== -1) lectureItemList.splice(index, 1);
-      todayLectureToRemove.remove();
-    }
     timetableMap.delete(keyToRemove);
     tableEntryToRemove.remove();
   });
+};
+
+const createTableEntry = (key, entryObj) => {
+  const entryObjValues = getEntryObjValues({ ...entryObj });
+  const newTableEntry = createTableEntryDiv(key, { ...entryObjValues });
+
+  const lectureNameEl = createLectureNameEl(entryObjValues.lectureName);
+  newTableEntry.appendChild(lectureNameEl);
+
+  const lectureRoomEl = createLectureRoomEl(entryObjValues.lectureRoom);
+  newTableEntry.appendChild(lectureRoomEl);
+
+  setEntryRemoveListener(lectureNameEl, { ...entryObj });
+
+  return newTableEntry;
+};
+
+const setTableEntry = (key) => {
+  const entryObj = getEntryObj(key);
+  if (!entryObj) return;
+
+  createTableEntry(key, { ...entryObj });
+
+  if (entryObj.day === today) setLectureItem({ ...entryObj });
 };
 
 // 아이디 겹치는거 삭제요망
@@ -629,7 +557,7 @@ const getInnerHtmlOfTimetableEl = () => {
                                         <input id ="lecture-professor" type="text"/>
                                         <label for="lecture-room">Lecture Room</label>
                                         <input id ="lecture-room" type="text"/>
-                                        <label for="lecture-week">Week</label>
+                                        <label for="lecture-week">Day Of The Week</label>
                                             <select id="lecture-week">
                                                 <option>Monday</option>
                                                 <option>Tuesday</option>
