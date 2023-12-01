@@ -9,7 +9,7 @@ let today = getDate()['day'];
 let entryIdCounter = 1;
 
 const timetableMap = new Map();
-let lectureItemList = [];
+const lectureItemList = [];
 
 const dayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
