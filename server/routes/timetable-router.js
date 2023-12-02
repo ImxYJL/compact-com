@@ -8,7 +8,7 @@ router.post('/:userId', async (req, res) => {
   const { userId } = req.params;
   const newEntryObj = req.body;
 
-  const userDoc = doc(db, 'users', userId);
+  const userDoc = doc(db, 'user', userId);
   const timetableDoc = doc(db, 'timetable', userId);
 
   const userSnapshot = await getDoc(userDoc);
