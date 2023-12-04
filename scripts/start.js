@@ -12,10 +12,23 @@ const clickLoginBtn = async () => {
   }
 
   try {
-    const response = await axios.post('http://localhost:3000/login', {
-      userId,
-      password,
-    });
+    await axios
+      .post('http://localhost:3000/login', {
+        userId,
+        password,
+      })
+      .then((response) => {
+        const data = response.data;
+        console.log(data);
+
+        // 받은 토큰을 스토리지에 저장
+        sessionStorage.setItem('accessToken', data.accessToken);
+        sessionStorage.setItem('refreshToken', data.refreshToken);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
     alert('로그인 성공');
 
     setInputsEmpty();

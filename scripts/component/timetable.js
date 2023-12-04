@@ -6,7 +6,8 @@ let lectureItemsEl = null;
 let tableBodyEl = null;
 let today = getDate()['day'];
 
-let entryIdCounter = 1;
+let entryIdCounter = null;
+let userId = null;
 
 const timetableMap = new Map();
 const lectureItemList = [];
@@ -277,6 +278,28 @@ const createTableEntryObj = () => {
   return newEntryObj;
 };
 
+const sendEntryObj = async (newEntryObj) => {
+  try {
+    const response = await fetch(`http://localhost:3000/${userId}`, {
+      // 백엔드 엔드포인트를 입력해주세요.
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newEntryObj),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const jsonResponse = await response.json();
+    return jsonResponse;
+  } catch (error) {
+    console.error('There has been a problem with your fetch operation:', error);
+  }
+};
+
 const addEntryObj = () => {
   isValidateInputs();
 
@@ -474,6 +497,33 @@ const setInputElements = () => {
   inputElements.color = timetableEl.querySelector('#selected-color');
 };
 
+// const fetchEntryIdCounter = async (userId) => {
+//   try {
+//     const response = await axios.get(`http://localhost:3000/user/${userId}`);
+//     return response.data.entryIdCounter;
+//   } catch (error) {
+//     alert('Id를 가져오는 데 실패했습니다. ERROR: ' + error);
+//   }
+// };
+
+const fetchTimetableMap = async () => {};
+
+const setTimetableEl = () => {
+  radioButtonList = timetableEl.querySelectorAll('.radiobtn');
+  tableBodyEl = timetableEl.querySelector('tbody');
+  lectureItemsEl = timetableEl.querySelector('#lecture-list');
+
+  //entryIdCounter = fetchEntryIdCounter(); // arqt
+
+  setTable();
+  setColorPicker();
+  setTimeSelector();
+  setInputElements();
+  setTimetableElListeners();
+  // setLectureItemList(); // setTableEntries에서 호출해서 필요x
+  setTableEntries();
+};
+
 const createTimetableEl = () => {
   timetableEl = document.createElement('div');
   timetableEl.id = 'timetable-window';
@@ -485,13 +535,14 @@ const createTimetableEl = () => {
   tableBodyEl = timetableEl.querySelector('tbody');
   lectureItemsEl = timetableEl.querySelector('#lecture-list');
 
-  setTable();
-  setColorPicker();
-  setTimeSelector();
-  setInputElements();
-  setTimetableElListeners();
-  // setLectureItemList(); // setTableEntries에서 호출해서 필요x
-  setTableEntries();
+  setTimetableEl();
+  // setTable();
+  // setColorPicker();
+  // setTimeSelector();
+  // setInputElements();
+  // setTimetableElListeners();
+  // // setLectureItemList(); // setTableEntries에서 호출해서 필요x
+  // setTableEntries();
 
   return timetableEl;
 };

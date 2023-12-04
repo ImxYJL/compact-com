@@ -8,19 +8,20 @@ router.post('/:userId', async (req, res) => {
   const { userId } = req.params;
   const newEntryObj = req.body;
 
-  const userDoc = doc(db, 'user', userId);
-  const timetableDoc = doc(db, 'timetable', userId);
+  //const userDoc = doc(db, 'user', userId);
+  const timetableDoc = doc(db, 'timetable'); // id 명시 없음: 자동생성
 
-  const userSnapshot = await getDoc(userDoc);
-  const entryIdCounter = userSnapshot.data().entryIdCounter;
+  //const userSnapshot = await getDoc(userDoc);
+  //const entryIdCounter = userSnapshot.data().entryIdCounter;
 
-  await updateDoc(userDoc, { entryIdCounter: entryIdCounter + 1 });
+  //newEntryObj.key = entryIdCounter;
 
-  newEntryObj.key = entryIdCounter;
+  // newEntryObj를 timetableMap에 추가
+  await updateDoc(timetableDoc, {
+    [`timetableMap.${newEntryObj.key}`]: newEntryObj,
+  });
 
-  await updateDoc(timetableDoc, { timetable: arrayUnion(newEntryObj) });
-
-  res.status(200).send('timetable이 추가되었습니다.');
+  res.status(200).send('newEntryObj가 추가되었습니다.');
 });
 
 export default router;

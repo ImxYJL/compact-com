@@ -18,42 +18,45 @@ const OPEN_EL_LIST = new Set();
 let clockEl = null;
 let quoteEl = null;
 let timetableEl = null;
+let userId = null;
+
+const fetchUserId = async () => {};
 
 // Handlers for content (label) click
 const clickQuoteLabel = () => {
-    // Make sure only one window is open
-    if (desktop.contains(quoteEl)) return;
+  // Make sure only one window is open
+  if (desktop.contains(quoteEl)) return;
 
-    quoteEl = createlifeQuoteEl();
-    setAllListenerForWindowEl(quoteEl);
-    addWindowElToDesktop(quoteEl);
+  quoteEl = createlifeQuoteEl();
+  setAllListenerForWindowEl(quoteEl);
+  addWindowElToDesktop(quoteEl);
 };
 
 const clickClockLabel = () => {
-    if (desktop.contains(clockEl)) return;
+  if (desktop.contains(clockEl)) return;
 
-    clockEl = createClockEl();
-    setAllListenerForWindowEl(clockEl);
-    addWindowElToDesktop(clockEl);
+  clockEl = createClockEl();
+  setAllListenerForWindowEl(clockEl);
+  addWindowElToDesktop(clockEl);
 };
 
 const clickTimetableLabel = () => {
-    if (desktop.contains(timetableEl)) return;
+  if (desktop.contains(timetableEl)) return;
 
-    timetableEl = createTimetableEl();
-    setAllListenerForWindowEl(timetableEl);
-    addWindowElToDesktop(timetableEl);
+  timetableEl = createTimetableEl();
+  setAllListenerForWindowEl(timetableEl);
+  addWindowElToDesktop(timetableEl);
 };
 
 const setAllListenerForWindowEl = (elem) => {
-    clickWindowEl(elem);
-    clickCloseBtn(elem, TIMERID);
-    createDraggable(elem);
+  clickWindowEl(elem);
+  clickCloseBtn(elem, TIMERID);
+  createDraggable(elem);
 };
 
 const addWindowElToDesktop = (elem) => {
-    desktop.append(elem);
-    OPEN_EL_LIST.add(elem);
+  desktop.append(elem);
+  OPEN_EL_LIST.add(elem);
 };
 
 lifequoteLabel.addEventListener('click', clickQuoteLabel);
