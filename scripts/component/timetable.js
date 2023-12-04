@@ -538,19 +538,19 @@ const getInnerHtmlOfTimetableEl = () => {
                                 </div>
                                 <div class="field-row">
                                     <input id="radio14" class="radiobtn" type="radio" name="fieldset-example2">
-                                    <label for="radio14">Edit Timetable</label>
+                                    <label for="radio14">Add Timetable Entry</label>
                                 </div>
                             </fieldset>
                             <div id="side-content-container">
                                 <div id="side-content-1" class="visible">
-                                    <label class="sdie-content-title">Today's Lectures</label>
+                                    <label class="side-content-title">Today's Lectures</label>
                                     <div id ="lecture-list">
                                         <label class="divider"></label>
                                     </div>
                                 </div>
                                 <div id="side-content-2" class="hidden">
-                                <label class="sdie-content-title">Edit Timetable</label>
-                                    <div id ="lecture-edit-container" >
+                                <label class="side-content-title">Add Timetable Entry</label>
+                                    <div id ="lecture-add-container" >
                                         <label for="lecture-name">Lecture Name</label>
                                         <input id ="lecture-name" type="text"/>
                                         <label for="lecture-professor">Professor</label>

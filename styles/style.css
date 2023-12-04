@@ -4,7 +4,7 @@
  * https://github.com/jdan/98.css/blob/main/LICENSE
  */
 
-:root {
+ :root {
   /* Color */
   --text-color: #222222;
   --surface: #c0c0c0;
@@ -1339,7 +1339,7 @@ fieldset {
   margin: 0.3em 0.5em 0.3em 0.5em;
 }
 
-.sdie-content-title {
+.side-content-title {
   font-size: 0.8rem;
   font-weight: bold;
   margin: 1em;
@@ -1368,17 +1368,17 @@ fieldset {
   width: 100%;
 }
 
-#lecture-edit-container {
+#lecture-add-container {
   border: 1px solid black;
   margin-bottom: 0.5em;
 }
 
-#lecture-edit-container label {
+#lecture-add-container label {
   font-weight: bold;
   margin: 0.6em 0.2em 0.5em 0.8em;
 }
 
-#lecture-edit-container input,
+#lecture-add-container input,
 select {
   margin-left: 0.7em;
 }
@@ -1417,7 +1417,7 @@ select {
   background-color: #fff; /* 초기 선택된 색상 (흰색) */
 }
 
-#lecture-edit-container button {
+#lecture-add-container button {
   width: 90%;
   margin: 1em 0.5em;
 }
