@@ -6,7 +6,7 @@ let lectureItemsEl = null;
 let tableBodyEl = null;
 let today = getDate()['day'];
 
-let entryIdCounter = null;
+let entryIdCounter = 1;
 let userId = null;
 
 const timetableMap = new Map();
@@ -36,10 +36,6 @@ const inputElements = {
   color: null,
 };
 
-const convertTimeToMinutes = (hour, minute) => {
-  return Number(hour) * 60 + Number(minute);
-};
-
 const createCell = (text, id) => {
   const cell = document.createElement('td');
   if (text) cell.textContent = text;
@@ -63,7 +59,7 @@ const setTable = () => {
     timeCell.classList.add('time-cell');
 
     const dayCellList = dayList.map((day) =>
-      createCell(null, `${day}-${hour - 9}`),
+      createCell(null, `td-${day}-${hour - 9}`),
     );
     appendCellsToRow(row, [timeCell, ...dayCellList]);
 
@@ -112,6 +108,10 @@ const setTableEntries = () => {
   timetableMap.forEach((_, key) => {
     setTableEntry(key);
   });
+};
+
+const convertTimeToMinutes = (hour, minute) => {
+  return Number(hour) * 60 + Number(minute);
 };
 
 const isTimeOverlapping = (day, startHour, startMinute, endHour, endMinute) => {
@@ -324,7 +324,7 @@ const clickSaveBtn = () => {
     alert(error.message);
   }
 
-  if (key !== undefined) setTableEntry(key);
+  if (key !== null && key !== undefined) setTableEntry(key);
 };
 
 const setTimetableElListeners = () => {
@@ -361,7 +361,7 @@ const createTableEntryDiv = (key, entryObjValues) => {
   tableEntry.classList.add('table-entry');
   tableEntry.style.backgroundColor = entryObjValues.color;
 
-  setTableEntryPosition(tableEntry, entryObjValues);
+  setTableEntryPosition(tableEntry, {...entryObjValues});
 
   return tableEntry;
 };
@@ -370,17 +370,18 @@ const setTableEntryPosition = (tableEntry, entryObjValues) => {
   console.log(entryObjValues);
 
   const startCell = timetableEl.querySelector(
-    `#${entryObjValues.day}-${entryObjValues.startHour - 9}`,
+    `#td-${entryObjValues.day}-${entryObjValues.startHour - 9}`,
   );
+
   const lectureMinutes =
     convertTimeToMinutes(entryObjValues.endHour, entryObjValues.endMinute) -
     convertTimeToMinutes(entryObjValues.startHour, entryObjValues.startMinute);
   const magnification = lectureMinutes / 30;
 
   tableEntry.style.position = 'absolute';
-  tableEntry.style.width = '100%';
-  tableEntry.style.height = `${50 * magnification + 0.7 * magnification}%`; // 0.8: height correction value
   tableEntry.style.top = entryObjValues.startMinute === 30 ? '50%' : '0px';
+  tableEntry.style.width = '100%';
+  tableEntry.style.height = `${50 * magnification + 0.7 * magnification}%`; // 0.7: height correction value
 
   startCell.appendChild(tableEntry);
 };
@@ -483,8 +484,6 @@ const setTableEntry = (key) => {
   if (entryObj.day === today) setLectureItem({ ...entryObj });
 };
 
-// 아이디 겹치는거 삭제요망
-
 const setInputElements = () => {
   inputElements.lectureName = timetableEl.querySelector('#lecture-name');
   inputElements.professor = timetableEl.querySelector('#lecture-professor');
@@ -531,18 +530,7 @@ const createTimetableEl = () => {
   timetableEl.draggable = true;
   timetableEl.innerHTML = getInnerHtmlOfTimetableEl();
 
-  radioButtonList = timetableEl.querySelectorAll('.radiobtn');
-  tableBodyEl = timetableEl.querySelector('tbody');
-  lectureItemsEl = timetableEl.querySelector('#lecture-list');
-
   setTimetableEl();
-  // setTable();
-  // setColorPicker();
-  // setTimeSelector();
-  // setInputElements();
-  // setTimetableElListeners();
-  // // setLectureItemList(); // setTableEntries에서 호출해서 필요x
-  // setTableEntries();
 
   return timetableEl;
 };
