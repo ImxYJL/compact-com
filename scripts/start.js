@@ -12,35 +12,24 @@ const clickLoginBtn = async () => {
   }
 
   try {
-    await axios
-      .post('http://localhost:3000/login', {
-        userId,
-        password,
-      })
-      .then((response) => {
-        const data = response.data;
-        console.log(data);
+    const response = await axios.post('http://localhost:3000/login', {
+      userId,
+      password,
+    });
 
-        // 받은 토큰을 스토리지에 저장
-        sessionStorage.setItem('accessToken', data.accessToken);
-        sessionStorage.setItem('refreshToken', data.refreshToken);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-
-    alert('로그인 성공');
-
-    setInputsEmpty();
-
-    window.location.href = 'index.html';
+    const { accessToken, refreshToken } = response.data;
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
   } catch (error) {
-    if (error.response && error.response.status === 400) {
-      alert('Id 혹은 비밀번호를 확인해주세요.');
+    if (error.response) {
+      alert('로그인 실패: ' + error.response.data);
       return;
     }
-    console.error('에러:', error);
+    alert('에러:', error);
   }
+
+  setInputsEmpty();
+  window.location.href = 'index.html';
 };
 
 const clickBackBtn = () => {

@@ -4,7 +4,7 @@
  * https://github.com/jdan/98.css/blob/main/LICENSE
  */
 
- :root {
+:root {
   /* Color */
   --text-color: #222222;
   --surface: #c0c0c0;
@@ -1448,7 +1448,7 @@ select {
 }
 
 .timetable-lecture-room {
-  font-size: 0.01em;
+  font-size: 0.7em;
   white-space: nowrap;
 }
 

@@ -1,9 +1,10 @@
 import express from 'express';
 import db from '../firebase.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
-const SECRET_KEY = 'your-secret-key';
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const router = express.Router();
 
@@ -17,16 +18,14 @@ router.post('/signup', async (req, res) => {
     return;
   }
 
-  await setDoc(userDoc, { password });
+  // 비밀번호를 암호화합니다.
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await setDoc(userDoc, { password: hashedPassword });
 
-  // 새로운 timetable 생성하고 entryIdCounter를 1로 초기화
-  const timetableCollection = collection(db, 'timetable');
-  const timetableDocRef = await addDoc(timetableCollection, {
-    userId,
+  const timetableDoc = doc(db, 'timetable', userId);
+  await setDoc(timetableDoc, {
     entryIdCounter: 1,
-    timetableMap: {
-      key: newEntryObj, // Assuming you have a unique identifier for the new entry
-    },
+    timetableMap: {},
   });
 
   res.status(200).send('회원가입이 완료되었습니다.');
@@ -37,24 +36,46 @@ router.post('/login', async (req, res) => {
   const userDoc = doc(db, 'user', userId);
 
   const userSnapshot = await getDoc(userDoc);
-  if (userSnapshot.exists() && userSnapshot.data().password === password) {
-    // 로그인에 성공하면 JWT 토큰을 생성합니다.
-    const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' });
-    const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '7d' });
+  if (userSnapshot.exists()) {
+    const match = await bcrypt.compare(password, userSnapshot.data().password);
 
-    res.status(200).send({
-      message: '로그인에 성공하였습니다.',
-      accessToken,
-      refreshToken,
-    });
-    // res.status(200).send({
-    //   message: '로그인 성공',
-    //   userId: userId, // cut?
-    // });
-    // res.status(200).send('로그인에 성공하였습니다.');
-    return;
+    if (match) {
+      // 로그인에 성공하면 JWT 토큰을 생성
+      const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ userId }, SECRET_KEY, {
+        expiresIn: '7d',
+      });
+
+      res.status(200).send({
+        message: '로그인에 성공하였습니다.',
+        accessToken,
+        refreshToken,
+      });
+
+      return;
+    }
   }
   res.status(401).send('아이디 또는 비밀번호가 잘못되었습니다.');
+});
+
+router.post('/token', (req, res) => {
+  const refreshToken = req.body.token;
+  if (!refreshToken) {
+    return res.status(403).json('Refresh token is required');
+  }
+
+  try {
+    const payload = jwt.verify(refreshToken, SECRET_KEY);
+
+    // Refresh 토큰이 유효하면 새로운 Access 토큰을 발급
+    const accessToken = jwt.sign({ userId: payload.userId }, SECRET_KEY, {
+      expiresIn: '1h',
+    });
+    res.status(200).json({ accessToken });
+  } catch (error) {
+    console.error(error);
+    return res.status(403).json('Invalid refresh token');
+  }
 });
 
 export default router;
