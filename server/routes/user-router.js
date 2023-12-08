@@ -8,6 +8,23 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const router = express.Router();
 
+router.post('/data', (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+
+  try {
+    // 토큰을 검증합니다.
+    jwt.verify(token, SECRET_KEY);
+
+    // 데이터를 처리합니다.
+    console.log(req.body);
+
+    res.send('데이터를 성공적으로 받았습니다.');
+  } catch (error) {
+    // 토큰 검증이 실패한 경우
+    res.status(401).send('Unauthorized');
+  }
+});
+
 router.post('/signup', async (req, res) => {
   const { userId, password } = req.body;
   const userDoc = doc(db, 'user', userId);
