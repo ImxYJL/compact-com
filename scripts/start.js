@@ -18,8 +18,8 @@ const clickLoginBtn = async () => {
     });
 
     const { accessToken, refreshToken } = response.data;
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    sessionStorage.setItem('accessToken', accessToken);
+    sessionStorage.setItem('refreshToken', refreshToken);
   } catch (error) {
     if (error.response) {
       alert('로그인 실패: ' + error.response.data);
@@ -28,6 +28,7 @@ const clickLoginBtn = async () => {
     alert('에러:', error);
   }
 
+  localStorage.setItem('userId', userId); // api 호출을 위해 저장
   setInputsEmpty();
   window.location.href = 'index.html';
 };

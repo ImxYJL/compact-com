@@ -2,11 +2,21 @@ import express from 'express';
 import db from '../firebase.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
 const router = express.Router();
+router.use(
+  session({
+    secret: SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // HTTPS를 사용하지 않는 경우 secure: false로 설정해야 합니다. HTTPS를 사용하는 경우 true로 설정하세요.
+  }),
+);
 
 router.post('/data', (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
@@ -62,6 +72,9 @@ router.post('/login', async (req, res) => {
       const refreshToken = jwt.sign({ userId }, SECRET_KEY, {
         expiresIn: '7d',
       });
+
+      console.log('안녕하세요');
+      req.session.userId = userId; // 사용자 ID를 세션에 저장합니다.
 
       res.status(200).send({
         message: '로그인에 성공하였습니다.',

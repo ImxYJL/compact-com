@@ -1,6 +1,8 @@
 import { getDate } from '../utility/date.js';
 import api from '../utility/intercepter.js';
 
+let userId = '';
+
 let timetableEl = null;
 let radioButtonList = null;
 let lectureItemsEl = null;
@@ -8,9 +10,8 @@ let tableBodyEl = null;
 let today = getDate()['day'];
 
 let entryIdCounter = 1;
-let userId = null;
 
-const timetableMap = new Map();
+let timetableMap = new Map();
 
 const dayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const hourList = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
@@ -305,6 +306,8 @@ const addEntryObj = () => {
   const newEntryObj = createTableEntryObj();
   try {
     timetableMap.set(newEntryObj.key, newEntryObj);
+
+    axios.put(`http://localhost:3000/timetable/${userId}`, newEntryObj);
   } catch (error) {
     throw error;
   }
@@ -486,51 +489,53 @@ const setInputElements = () => {
   inputElements.color = timetableEl.querySelector('#selected-color');
 };
 
-// const fetchEntryIdCounter = async (userId) => {
-//   try {
-//     const response = await axios.get(`http://localhost:3000/user/${userId}`);
-//     return response.data.entryIdCounter;
-//   } catch (error) {
-//     alert('Id를 가져오는 데 실패했습니다. ERROR: ' + error);
-//   }
-// };
+const fetchTimetableData = async (userId) => {
+  let timetableData = null;
+  try {
+    const response = await api.get(`http://localhost:3000/timetable/${userId}`);
+    timetableData = response.data;
+  } catch (error) {
+    alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
+  }
 
-const fetchTimetableMap = async () => {};
+  entryIdCounter = timetableData.entryIdCounter;
+  timetableMap = new Map(Object.entries(timetableData.timetableMap));
 
-const setTimetableEl = () => {
+  return timetableData;
+};
+
+const setTimetableEl = async () => {
   radioButtonList = timetableEl.querySelectorAll('.radiobtn');
   tableBodyEl = timetableEl.querySelector('tbody');
   lectureItemsEl = timetableEl.querySelector('#lecture-list');
 
-  //entryIdCounter = fetchEntryIdCounter(); // arqt
+  userId = localStorage.getItem('userId');
+  await fetchTimetableData(userId);
 
   setTable();
   setColorPicker();
   setTimeSelector();
   setInputElements();
   setTimetableElListeners();
-  // setLectureItemList(); // setTableEntries에서 호출해서 필요x
   setTableEntries();
 
-  (async () => {
-    console.log('start');
-    try {
-      // 로컬 스토리지에서 토큰을 가져옵니다.
-      const accessToken = localStorage.getItem('accessToken');
+  // (async () => {
+  //   try {
+  //     // 로컬 스토리지에서 토큰을 가져옵니다.
+  //     const accessToken = sessionStorage.getItem('accessToken');
+  //     // 토큰을 Authorization 헤더에 포함하여 요청을 보냅니다.
+  //     const response = await api.post('http://localhost:3000/data', 'data', {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
 
-      // 토큰을 Authorization 헤더에 포함하여 요청을 보냅니다.
-      const response = await api.post('http://localhost:3000/data', 'data', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      // 응답을 처리합니다.
-      console.log(response.data);
-    } catch (error) {
-      console.error('에러:', error);
-    }
-  })();
+  //     // 응답을 처리합니다.
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error('에러:', error);
+  //   }
+  // })();
 };
 
 const createTimetableEl = () => {

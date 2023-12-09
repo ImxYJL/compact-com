@@ -1,9 +1,4 @@
 import axios from '../../node_modules/axios/dist/esm/axios.min.js';
-//import jwtDecode from '../../node_modules/jwt-decode/build/cjs/index.js';
-// axios instance 생성
-//import jwtDecode from '../../node_modules/jwt-decode/build/esm/index.js';
-
-//import jsonwebtoken from 'jsonwebtoken';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000', // 서버 주소
