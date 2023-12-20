@@ -1,6 +1,9 @@
 import { getDate } from '../utility/date.js';
 
 const desktop = document.querySelector('#desktop');
+
+let userId = '';
+
 let lifeQuoteEl = null; // Life quote element (Root Element)
 let tabListItems = null;
 let contentBody = null;
@@ -36,7 +39,6 @@ const setLifeQuoteContent = () => {
   const authorToPrint = lifeQuoteMap.get(randomKey).author;
 
   printTextEl.textContent = textToPrint;
-  //printTextEl.innerHTML = textToPrint.replace(/\n/g, '<br>');  // 줄바꿈 문자(\n)를 HTML 줄바꿈 태그(<br>)로 변환
   printTextEl.insertAdjacentHTML('beforeend', `<br><br> - ${authorToPrint} -`);
   printTextEl.insertAdjacentHTML('afterend', `<br>`);
 };
@@ -55,8 +57,7 @@ const clickRemoveInContextMenu = () => {
   const clickedRow = contentBody.querySelector('.highlighted');
   const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
   lifeQuoteMap.delete(selectedKey);
-  clickedRow.remove(); // 표에서 클릭된 행을 삭제
-  //console.log(`키 값 ${keyToDelete}을 가진 항목이 삭제되었습니다.`);
+  clickedRow.remove();
 };
 
 const clickLifeQuoteElWithContextMenu = () => {
@@ -98,7 +99,6 @@ const setContextMenu = (e) => {
   contextMenu.id = 'context-menu';
   getContextMenuPos();
 
-  //contentBody.append(setContextMenuItem()); // 안됨
   desktop.appendChild(setContextMenuItem());
 };
 
@@ -112,8 +112,6 @@ const dragLifeQuoteElWithContextMenu = () => {
 };
 
 const setTableEventListeners = () => {
-  // 요소마다 핸들러를 할당하지 않고, 요소의 공통 조상에
-  // 이벤트 핸들러를 하나만 할당해도 여러 요소를 한꺼번에 다룰 수 있다.
   const fileListEl = contentBody.querySelector('#lifequote-filelist');
   const table = contentBody.querySelector('#lifequote-filelist-table');
   let highlighted = table.querySelector('.highlighted');
@@ -139,35 +137,15 @@ const setTableEventListeners = () => {
   const clickQuoteListEl = (e) => {
     highlighted = table.querySelector('.highlighted'); // have to do this in real time
 
-    if (highlighted && !table.contains(e.target))
+    if (highlighted && !table.contains(e.target)) {
       highlighted.classList.remove('highlighted');
+    }
   };
 
-  // table.addEventListener('click', (e) => {
-  //   console.log('tableclicktest');
-  //   // Check if there is already selected row
-  //   if (highlighted) highlighted.classList.remove('highlighted');
-
-  //   const clickedRow = e.target.parentElement;
-  //   clickedRow.classList.add('highlighted');
-
-  //   // Add right click event when normal click event occurs
-  //   clickedRow.addEventListener('contextmenu', rightClickRow);
-  // });
   table.addEventListener('click', clickRow);
   fileListEl.addEventListener('click', clickQuoteListEl);
-  //마지막은 처음에 desktop, El에 달았는데 얘네는 초기화가 따로 안돼서 계속 리스너 중첩됨
-  //얘랑 드래그 이벤트랑 아예 createElement할 때 리스너 붙여주고 변수들은 외부로 빼야하나
 
   // Add event listeners required when a context menu exists
-  // lifeQuoteEl.addEventListener('dragend', () => {
-  //   console.log('드래그메뉴');
-  //   const clickedRow = contentBody.querySelector('.highlighted');
-  //   // Not re-adjust contextMenu coordinates
-  //   // if current tab is not quotelist or if no columns are selected
-  //   if (!isListTab() || !clickedRow) return;
-  //   getContextMenuPos();
-  // });
   lifeQuoteEl.addEventListener('dragend', dragLifeQuoteElWithContextMenu);
   lifeQuoteEl.addEventListener('click', clickLifeQuoteElWithContextMenu);
 };
@@ -175,6 +153,7 @@ const setTableEventListeners = () => {
 // Check length of the text and readjust it if it exceeds the limit
 const cutTextToPrint = (text, max) => {
   const check = text.length > max ? true : false;
+
   if (check) return text.slice(0, max) + '...';
   else return text;
 };
@@ -206,6 +185,21 @@ const setFileListContent = () => {
   setTableEventListeners();
 };
 
+const fetchLifeQuoteData = async () => {
+  let lifeQuoteData = null;
+  try {
+    const response = await api.get(`http://localhost:3000//${userId}`);
+    lifeQuoteData = response.data;
+  } catch (error) {
+    alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
+  }
+
+  // counter = timetableData.entryIdCounter;
+  // timetableMap = new Map(Object.entries(timetableData.timetableMap));
+
+  return lifeQuoteData;
+};
+
 // Create a new word item
 const createQuote = (selectedKey, textEl, authorEl) => {
   // 입력창 비었는지 확인하는거 유틸로 빼도 될듯
@@ -225,6 +219,7 @@ const createQuote = (selectedKey, textEl, authorEl) => {
 
   try {
     lifeQuoteMap.set(key, newQuote);
+    axios.put(`http://localhost:3000//${userId}`, newQuote);
   } catch (err) {
     alert(`${err.name}: ${err.message}`);
     setInputContent();
@@ -290,7 +285,7 @@ const clickTab = (e) => {
   }
 };
 
-const createlifeQuoteEl = () => {
+const createlifeQuoteEl = async () => {
   // 이 생성 부분도 유틸로 빼면 좋을듯 다 똑같아서
   lifeQuoteEl = document.createElement('div');
   lifeQuoteEl.id = 'lifequote-window';
@@ -299,12 +294,16 @@ const createlifeQuoteEl = () => {
   lifeQuoteEl.innerHTML = getInnerHtmlOfLifeQuoteEl();
 
   // Initialize some of the global variables
+  userId = localStorage.getItem('userId');
+  await fetchLifeQuoteData();
+
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
 
   tabListItems.forEach((item) => {
     item.addEventListener('click', clickTab);
   });
+
   return lifeQuoteEl;
 };
 

@@ -1,24 +1,13 @@
 import express from 'express';
-import {
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteField,
-} from 'firebase/firestore';
 import db from '../firebase.js';
+import { doc, setDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const router = express.Router();
 
-router.get('/timetable/:userId', async (req, res) => {
+router.get('/lifequote/:userId', async (req, res) => {
   const userId = req.params.userId;
 
-  // // 로그인한 사용자만 자신의 시간표를 볼 수 있도록 합니다.
-  // if (req.session.userId !== userId) {
-  //   res.status(401).send('Unauthorized');
-  //   return;
-  // }
-  const timetableDoc = doc(db, 'timetable', userId);
+  const timetableDoc = doc(db, 'lifequote', userId);
   const timetableSnapshot = await getDoc(timetableDoc);
   //const timetableDoc = doc(db, 'timetable'); // id 명시 없음: 자동생성
 
@@ -26,19 +15,6 @@ router.get('/timetable/:userId', async (req, res) => {
   const timetableMap = timetableSnapshot.data().timetableMap;
 
   res.status(200).send({ entryIdCounter, timetableMap });
-});
-
-router.delete('/timetable/:userId/:key', async (req, res) => {
-  const userId = req.params.userId;
-  const key = req.params.key;
-
-  const timetableDoc = doc(db, 'timetable', userId);
-
-  await updateDoc(timetableDoc, {
-    [`timetableMap.${key}`]: deleteField(),
-  });
-
-  res.status(200).send({ message: 'Deleted successfully' });
 });
 
 router.put('/timetable/:userId', async (req, res) => {

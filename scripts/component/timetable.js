@@ -281,7 +281,6 @@ const createTableEntryObj = () => {
 const sendEntryObj = async (newEntryObj) => {
   try {
     const response = await fetch(`http://localhost:3000/${userId}`, {
-      // 백엔드 엔드포인트를 입력해주세요.
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -440,7 +439,18 @@ const removeTodayLecture = (entryObj) => {
   todayLectureToRemove.remove();
 };
 
-const setEntryRemoveListener = (lectureNameEl, entryObj) => {
+const deleteEntry = async (key) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/timetable/${userId}/${key}`,
+    );
+    console.log(response.data); // 서버로부터 온 응답을 출력합니다.
+  } catch (error) {
+    console.error(error); // 에러가 발생한 경우, 에러를 출력합니다.
+  }
+};
+
+const setEntryRemoveListener = async (lectureNameEl, entryObj) => {
   lectureNameEl.addEventListener('click', (e) => {
     if (entryObj.day === today) removeTodayLecture({ ...entryObj });
 
@@ -450,6 +460,7 @@ const setEntryRemoveListener = (lectureNameEl, entryObj) => {
 
     timetableMap.delete(keyToRemove);
     tableEntryToRemove.remove();
+    deleteEntry(keyToRemove);
   });
 };
 
