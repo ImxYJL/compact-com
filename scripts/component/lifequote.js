@@ -1,3 +1,4 @@
+import api from '../utility/intercepter.js';
 import { getDate } from '../utility/date.js';
 
 const desktop = document.querySelector('#desktop');
@@ -185,23 +186,24 @@ const setFileListContent = () => {
   setTableEventListeners();
 };
 
-const fetchLifeQuoteData = async () => {
+const fetchLifeQuoteData = async (userId) => {
   let lifeQuoteData = null;
   try {
-    const response = await api.get(`http://localhost:3000//${userId}`);
+    const response = await api.get(`http://localhost:3000/lifequote/${userId}`);
     lifeQuoteData = response.data;
+    console.log(lifeQuoteData);
   } catch (error) {
     alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
   }
 
-  // counter = timetableData.entryIdCounter;
-  // timetableMap = new Map(Object.entries(timetableData.timetableMap));
+  counter = lifeQuoteData.counter;
+  lifeQuoteMap = new Map(Object.entries(lifeQuoteData.lifeQuoteMap));
 
   return lifeQuoteData;
 };
 
 // Create a new word item
-const createQuote = (selectedKey, textEl, authorEl) => {
+const createQuote = async (selectedKey, textEl, authorEl) => {
   // 입력창 비었는지 확인하는거 유틸로 빼도 될듯
   if (textEl.value.trim().length === 0 || authorEl.value.trim().length === 0) {
     textEl.value = authorEl.value = '';
@@ -219,7 +221,7 @@ const createQuote = (selectedKey, textEl, authorEl) => {
 
   try {
     lifeQuoteMap.set(key, newQuote);
-    axios.put(`http://localhost:3000//${userId}`, newQuote);
+    await axios.put(`http://localhost:3000/lifequote/${userId}`, newQuote);
   } catch (err) {
     alert(`${err.name}: ${err.message}`);
     setInputContent();
@@ -295,7 +297,7 @@ const createlifeQuoteEl = async () => {
 
   // Initialize some of the global variables
   userId = localStorage.getItem('userId');
-  await fetchLifeQuoteData();
+  await fetchLifeQuoteData(userId);
 
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');

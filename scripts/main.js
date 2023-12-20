@@ -18,16 +18,13 @@ const OPEN_EL_LIST = new Set();
 let clockEl = null;
 let quoteEl = null;
 let timetableEl = null;
-let userId = null;
-
-const fetchUserId = async () => {};
 
 // Handlers for content (label) click
-const clickQuoteLabel = () => {
+const clickQuoteLabel = async () => {
   // Make sure only one window is open
   if (desktop.contains(quoteEl)) return;
 
-  quoteEl = createlifeQuoteEl();
+  quoteEl = await createlifeQuoteEl(); // timetable이랑 구조 달라서 그렇다
   setAllListenerForWindowEl(quoteEl);
   addWindowElToDesktop(quoteEl);
 };

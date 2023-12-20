@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import session from 'express-session';
+import lifeQuoteRoutes from './routes/lifequote_router.js';
 import userRoutes from './routes/user-router.js';
 import timetableRoutes from './routes/timetable-router.js';
 
@@ -30,6 +30,7 @@ app.use(bodyParser.json());
 
 app.use('/', userRoutes);
 app.use('/', timetableRoutes);
+app.use('/', lifeQuoteRoutes);
 
 app.listen(3000, async () => {
   console.log('Server is running on port 3000');
