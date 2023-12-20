@@ -1,14 +1,20 @@
 import { getDate } from '../utility/date.js';
 
 const desktop = document.querySelector('#desktop');
-const lifeQuoteMap = new Map();
-
 let lifeQuoteEl = null; // Life quote element (Root Element)
 let tabListItems = null;
 let contentBody = null;
 let contextMenu = null;
 
 let counter = 1;
+
+const lifeQuoteMap = new Map();
+const tabNameList = {
+  todayQuote: "Today's Life Quote",
+  edit: 'Edit',
+  quoteList: 'Quote List',
+  help: 'Help',
+};
 
 const isListTab = () => {
   return tabListItems[1].getAttribute('aria-selected') === 'true'
@@ -248,11 +254,8 @@ const setInputContent = (selectedKey) => {
   });
 
   clearBtn.addEventListener('click', () => {
-    //console.log('입력리스너');
     textEl.value = authorEl.value = '';
   });
-
-  // 입력 있는 채로 나가면 확인 모달 뜨는 것도 좋을듯
 };
 
 const setHelpContent = () => {
@@ -270,16 +273,16 @@ const clickTab = (e) => {
 
   const tabContent = clickedTab.querySelector('a').textContent.trim();
   switch (tabContent) {
-    case "Today's Life Quote":
+    case tabNameList.todayQuote:
       setLifeQuoteContent();
       break;
-    case 'Edit':
+    case tabNameList.edit:
       setInputContent();
       break;
-    case 'Quote List':
+    case tabNameList.quoteList:
       setFileListContent();
       break;
-    case 'Help':
+    case tabNameList.help:
       setHelpContent();
       break;
     default:
