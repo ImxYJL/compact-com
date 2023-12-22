@@ -262,7 +262,7 @@ const createTableEntryObj = () => {
   const { startHour, startMinute, endHour, endMinute } =
     getCurrentInputValues();
 
-  const key = entryIdCounter++;
+  const key = ++entryIdCounter;
   const newEntryObj = {
     key: key,
     lectureName: inputElements.lectureName.value,
