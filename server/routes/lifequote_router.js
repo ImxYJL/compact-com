@@ -26,7 +26,7 @@ router.delete('/lifequote/:userId/:key', async (req, res) => {
   const userId = req.params.userId;
   const key = req.params.key;
 
-  const lifequoteDoc = doc(db, 'timetable', userId);
+  const lifequoteDoc = doc(db, 'lifequote', userId);
 
   await updateDoc(lifequoteDoc, {
     [`lifequoteMap.${key}`]: deleteField(),

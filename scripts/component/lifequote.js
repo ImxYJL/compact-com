@@ -12,7 +12,7 @@ let contextMenu = null;
 
 let counter = 1;
 
-const lifeQuoteMap = new Map();
+let lifeQuoteMap = new Map();
 const tabNameList = {
   todayQuote: "Today's Life Quote",
   edit: 'Edit',
@@ -46,7 +46,7 @@ const setLifeQuoteContent = () => {
 
 const clickEditInContextMenu = () => {
   const clickedRow = contentBody.querySelector('.highlighted');
-  const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
+  const selectedKey = Number(clickedRow.getAttribute('data-key'));
 
   tabListItems[1].setAttribute('aria-selected', 'false');
   tabListItems[2].setAttribute('aria-selected', 'true');
@@ -67,7 +67,7 @@ const deleteEntry = async (key) => {
 
 const clickRemoveInContextMenu = () => {
   const clickedRow = contentBody.querySelector('.highlighted');
-  const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
+  const selectedKey = Number(clickedRow.getAttribute('data-key'));
   lifeQuoteMap.delete(selectedKey);
 
   deleteEntry(selectedKey);
@@ -200,19 +200,19 @@ const setFileListContent = () => {
 };
 
 const fetchLifeQuoteData = async (userId) => {
-  let lifeQuoteData = null;
+  let lifequoteData = null;
   try {
     const response = await api.get(`http://localhost:3000/lifequote/${userId}`);
     lifequoteData = response.data;
-    console.log(lifeQuoteData);
+    console.log(lifequoteData);
   } catch (error) {
     alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
   }
 
-  counter = lifeQuoteData.counter;
-  lifeQuoteMap = new Map(Object.entries(lifeQuoteData.lifequoteMap));
+  counter = lifequoteData.counter;
+  lifeQuoteMap = new Map(Object.entries(lifequoteData.lifequoteMap));
 
-  return lifeQuoteData;
+  return lifeQuoteMap;
 };
 
 // Create a new word item
@@ -224,7 +224,7 @@ const createQuote = async (selectedKey, textEl, authorEl) => {
     return;
   }
 
-  const key = selectedKey ? selectedKey : counter++;
+  const key = selectedKey ? selectedKey : ++counter;
   const today = getDate();
   const newQuote = {
     key: key,
@@ -311,7 +311,7 @@ const createlifeQuoteEl = async () => {
 
   // Initialize some of the global variables
   userId = localStorage.getItem('userId');
-  //await fetchLifeQuoteData(userId);
+  await fetchLifeQuoteData(userId);
 
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
