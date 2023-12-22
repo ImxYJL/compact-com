@@ -13,11 +13,6 @@ const router = express.Router();
 router.get('/timetable/:userId', async (req, res) => {
   const userId = req.params.userId;
 
-  // // 로그인한 사용자만 자신의 시간표를 볼 수 있도록 합니다.
-  // if (req.session.userId !== userId) {
-  //   res.status(401).send('Unauthorized');
-  //   return;
-  // }
   const timetableDoc = doc(db, 'timetable', userId);
   const timetableSnapshot = await getDoc(timetableDoc);
   //const timetableDoc = doc(db, 'timetable'); // id 명시 없음: 자동생성
@@ -45,12 +40,6 @@ router.put('/timetable/:userId', async (req, res) => {
   const userId = req.params.userId;
   const newEntryObj = req.body;
 
-  // // 로그인한 사용자만 자신의 시간표를 수정할 수 있도록 합니다.
-  // if (req.session.userId !== userId) {
-  //   res.status(401).send('Unauthorized');
-  //   return;
-  // }
-
   const timetableDoc = doc(db, 'timetable', userId);
   const timetableSnapshot = await getDoc(timetableDoc);
 
@@ -67,4 +56,5 @@ router.put('/timetable/:userId', async (req, res) => {
 
   res.status(200).send('시간표가 성공적으로 수정되었습니다.');
 });
+
 export default router;

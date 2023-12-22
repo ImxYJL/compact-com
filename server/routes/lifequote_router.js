@@ -1,37 +1,52 @@
 import express from 'express';
 import db from '../firebase.js';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteField,
+} from 'firebase/firestore';
 
 const router = express.Router();
 
 router.get('/lifequote/:userId', async (req, res) => {
   const userId = req.params.userId;
 
-  const lifeQuoteDoc = doc(db, 'lifequote', userId);
-  const lifeQuoteSnapshot = await getDoc(lifeQuoteDoc);
+  const lifequoteDoc = doc(db, 'lifequote', userId);
+  const lifequoteSnapshot = await getDoc(lifequoteDoc);
 
-  const counter = lifeQuoteSnapshot.data().counter;
-  const quoteMap = lifeQuoteSnapshot.data().quoteMap;
+  const counter = lifequoteSnapshot.data().counter;
+  const lifequoteMap = lifequoteSnapshot.data().lifequoteMap;
 
-  res.status(200).send({ counter, quoteMap });
+  res.status(200).send({ counter, lifequoteMap });
+});
+
+router.delete('/lifequote/:userId/:key', async (req, res) => {
+  const userId = req.params.userId;
+  const key = req.params.key;
+
+  const lifequoteDoc = doc(db, 'timetable', userId);
+
+  await updateDoc(lifequoteDoc, {
+    [`lifequoteMap.${key}`]: deleteField(),
+  });
+
+  res.status(200).send({ message: 'Deleted successfully' });
 });
 
 router.put('/lifequote/:userId', async (req, res) => {
   const userId = req.params.userId;
   const newQuoteObj = req.body;
 
-  const lifeQuoteDoc = doc(db, 'lifequote', userId);
-  const lifeQuoteSnapshot = await getDoc(lifeQuoteDoc);
+  const lifequoteDoc = doc(db, 'lifequote', userId);
+  const lifequoteSnapshot = await getDoc(lifequoteDoc);
 
-  if (!lifeQuoteSnapshot.exists()) {
-    res.status(404).send('생명의 명언이 존재하지 않습니다.');
-    return;
-  }
+  const lifequoteData = lifequoteSnapshot.data();
+  lifequoteData.counter = newQuoteObj.key;
+  lifequoteData.lifequoteMap[newQuoteObj.key] = newQuoteObj;
 
-  const lifeQuoteData = lifeQuoteSnapshot.data();
-  lifeQuoteData.counter = newQuoteObj.key;
-  lifeQuoteData.lifeQuoteMap[newQuoteObj.key] = newQuoteObj;
-  await setDoc(lifeQuoteDoc, lifeQuoteData, { merge: true });
+  await setDoc(lifequoteDoc, lifequoteData, { merge: true });
 
   res.status(200).send('생명의 명언이 성공적으로 수정되었습니다.');
 });

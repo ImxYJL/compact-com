@@ -55,6 +55,12 @@ router.post('/signup', async (req, res) => {
     timetableMap: {},
   });
 
+  const lifequoteDoc = doc(db, 'lifequote', userId);
+  await setDoc(lifequoteDoc, {
+    counter: 1,
+    lifequoteMap: {},
+  });
+
   res.status(200).send('회원가입이 완료되었습니다.');
 });
 

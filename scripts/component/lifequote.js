@@ -54,10 +54,23 @@ const clickEditInContextMenu = () => {
   setInputContent(selectedKey);
 };
 
+const deleteEntry = async (key) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/lifequote/${userId}/${key}`,
+    );
+    console.log(response.data); // 서버로부터 온 응답을 출력합니다.
+  } catch (error) {
+    console.error(error); // 에러가 발생한 경우, 에러를 출력합니다.
+  }
+};
+
 const clickRemoveInContextMenu = () => {
   const clickedRow = contentBody.querySelector('.highlighted');
   const selectedKey = parseInt(clickedRow.getAttribute('data-key'));
   lifeQuoteMap.delete(selectedKey);
+
+  deleteEntry(selectedKey);
   clickedRow.remove();
 };
 
@@ -190,14 +203,14 @@ const fetchLifeQuoteData = async (userId) => {
   let lifeQuoteData = null;
   try {
     const response = await api.get(`http://localhost:3000/lifequote/${userId}`);
-    lifeQuoteData = response.data;
+    lifequoteData = response.data;
     console.log(lifeQuoteData);
   } catch (error) {
     alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
   }
 
   counter = lifeQuoteData.counter;
-  lifeQuoteMap = new Map(Object.entries(lifeQuoteData.lifeQuoteMap));
+  lifeQuoteMap = new Map(Object.entries(lifeQuoteData.lifequoteMap));
 
   return lifeQuoteData;
 };
@@ -214,6 +227,7 @@ const createQuote = async (selectedKey, textEl, authorEl) => {
   const key = selectedKey ? selectedKey : counter++;
   const today = getDate();
   const newQuote = {
+    key: key,
     text: textEl.value,
     author: authorEl.value,
     date: `${today.day}, ${today.month}/${today.date}/${today.year}`,
@@ -297,7 +311,7 @@ const createlifeQuoteEl = async () => {
 
   // Initialize some of the global variables
   userId = localStorage.getItem('userId');
-  await fetchLifeQuoteData(userId);
+  //await fetchLifeQuoteData(userId);
 
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
