@@ -7,49 +7,49 @@ let printDateEl = null;
 
 // Get and set real-time datas and display it on the screen
 const setTime = () => {
-    printTimeEl.innerText = getTime();
+  printTimeEl.innerText = getTime();
 };
 
 const setDate = () => {
-    const dateInfo = getDate();
-    printDateEl.innerText = `
+  const dateInfo = getDate();
+  printDateEl.innerText = `
         ${dateInfo.day}, ${dateInfo.month} ${dateInfo.date}
     `;
 };
 
 // Set the timer and call it by setInterval (every sec)
 const initClock = () => {
+  setTime();
+  setDate();
+
+  TIMERID = setInterval(() => {
     setTime();
     setDate();
-
-    TIMERID = setInterval(() => {
-        setTime();
-        setDate();
-    }, 1000);
+  }, 1000);
 };
 
 const attachFullTimer = () => {
-    printTimeEl = clockEl.querySelector('#clock-time-print');
-    printDateEl = clockEl.querySelector('#clock-date-print'); //#date-print로 하니까 컨테이너 무시됨
+  printTimeEl = clockEl.querySelector('#clock-time-print');
+  printDateEl = clockEl.querySelector('#clock-date-print'); //#date-print로 하니까 컨테이너 무시됨
 
-    //덮어쓰기 때문인듯?
-    initClock();
+  //덮어쓰기 때문인듯?
+  initClock();
 };
 
 const createClockEl = () => {
-    clockEl = document.createElement('div');
-    clockEl.id = 'clock-window';
-    clockEl.className = 'window';
-    clockEl.draggable = true;
-    clockEl.innerHTML = getInnerHtmlOfClockEl();
+  clockEl = document.createElement('div');
+  clockEl.id = 'clock-window';
+  clockEl.className = 'window';
+  clockEl.draggable = true;
+  clockEl.innerHTML = getInnerHtmlOfClockEl();
 
-    attachFullTimer();
+  attachFullTimer();
 
-    return clockEl;
+  return clockEl;
 };
 
 const getInnerHtmlOfClockEl = () => {
-    return `
+  return `
         <div class="title-bar">
                 <div class="title-bar-text">Clock</div>
                     <div class="title-bar-controls">

@@ -190,8 +190,10 @@ const printQuoteMap = (key, item) => {
 };
 
 // Set default file list styles
-const setFileListContent = () => {
+const setFileListContent = async () => {
   contentBody.innerHTML = getInnerHtmlOfFileListEl();
+
+  await fetchLifeQuoteData(userId);
 
   lifeQuoteMap.forEach((item, key) => {
     printQuoteMap(key, item);
@@ -311,7 +313,7 @@ const createlifeQuoteEl = async () => {
 
   // Initialize some of the global variables
   userId = localStorage.getItem('userId');
-  await fetchLifeQuoteData(userId);
+  //await fetchLifeQuoteData(userId);
 
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
