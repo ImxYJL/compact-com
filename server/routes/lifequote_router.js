@@ -10,45 +10,42 @@ import {
 
 const router = express.Router();
 
-router.get('/lifequote/:userId', async (req, res) => {
-  const userId = req.params.userId;
-
+const getLifequoteData = async (userId) => {
   const lifequoteDoc = doc(db, 'lifequote', userId);
   const lifequoteSnapshot = await getDoc(lifequoteDoc);
 
-  const counter = lifequoteSnapshot.data().counter;
-  const lifequoteMap = lifequoteSnapshot.data().lifequoteMap;
+  return { doc: lifequoteDoc, data: lifequoteSnapshot.data() };
+};
 
+router.get('/lifequote/:userId', async (req, res) => {
+  const { data } = await getLifequoteData(req.params.userId);
+
+  const { counter, lifequoteMap } = data;
   res.status(200).send({ counter, lifequoteMap });
 });
 
 router.delete('/lifequote/:userId/:key', async (req, res) => {
-  const userId = req.params.userId;
-  const key = req.params.key;
-
-  const lifequoteDoc = doc(db, 'lifequote', userId);
+  const { doc: lifequoteDoc } = await getLifequoteData(req.params.userId);
 
   await updateDoc(lifequoteDoc, {
-    [`lifequoteMap.${key}`]: deleteField(),
+    [`lifequoteMap.${req.params.key}`]: deleteField(),
   });
 
   res.status(200).send({ message: 'Deleted successfully' });
 });
 
 router.put('/lifequote/:userId', async (req, res) => {
-  const userId = req.params.userId;
+  const { doc: lifequoteDoc, data: lifequoteData } = await getLifequoteData(
+    req.params.userId,
+  );
   const newQuoteObj = req.body;
 
-  const lifequoteDoc = doc(db, 'lifequote', userId);
-  const lifequoteSnapshot = await getDoc(lifequoteDoc);
-
-  const lifequoteData = lifequoteSnapshot.data();
   lifequoteData.counter = newQuoteObj.key;
   lifequoteData.lifequoteMap[newQuoteObj.key] = newQuoteObj;
 
   await setDoc(lifequoteDoc, lifequoteData, { merge: true });
 
-  res.status(200).send('생명의 명언이 성공적으로 수정되었습니다.');
+  res.status(200).send('Completed successfylly.');
 });
 
 export default router;

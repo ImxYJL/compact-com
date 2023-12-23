@@ -9,7 +9,7 @@ let lectureItemsEl = null;
 let tableBodyEl = null;
 let today = getDate()['day'];
 
-let entryIdCounter = 1;
+let entryIdCounter = 0;
 
 let timetableMap = new Map();
 

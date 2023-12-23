@@ -1,74 +1,22 @@
 import axios from '../../node_modules/axios/dist/esm/axios.min.js';
 
+const SESSION_STORAGE_KEYS = {
+  ACCESS_TOKEN: 'accessToken',
+  REFRESH_TOKEN: 'refreshToken',
+};
+
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // 서버 주소
+  baseURL: 'http://localhost:3000', // server URL
   timeout: 5000,
 });
 
-// 요청 전에 실행할 인터셉터
-api.interceptors.request.use(
-  async (config) => {
-    try {
-      // ... 기존 코드 ...
-      const accessToken = sessionStorage.getItem('accessToken');
-      const refreshToken = sessionStorage.getItem('refreshToken');
-
-      if (accessToken && refreshToken) {
-        const decoded = decodeJwt(accessToken);
-        const currentTime = Date.now().valueOf() / 1000;
-
-        // access 토큰이 만료되었을 경우
-        if (decoded.exp < currentTime) {
-          // 새로운 액세스 토큰을 요청
-          const response = await api.post('/token', { token: refreshToken });
-          accessToken = response.data.accessToken; // 새로운 액세스 토큰 저장
-
-          sessionStorage.setItem('accessToken', accessToken);
-        }
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return config;
-    } catch (error) {
-      console.error('인터셉터 에러:', error);
-      throw error; // 에러를 다시 던져서 요청을 중단시킵니다.
-    }
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
-// 응답 전에 실행할 인터셉터
-api.interceptors.response.use(
-  (response) => {
-    if (response.data.accessToken) {
-      const newAccessToken = response.data.accessToken;
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.setItem('accessToken', newAccessToken);
-    }
-    return response;
-  },
-  (error) => {
-    // Refresh 토큰이 유효하지 않을 경우
-    if (
-      error.response.status === 403 &&
-      error.response.data === 'Invalid refresh token'
-    ) {
-      // 로그인 페이지로 리다이렉트하거나, 로그인 상태 초기화 등의 조치를 취합니다.
-      // 예: window.location.href = '/login';
-      window.location.href = 'index.html';
-    }
-    return Promise.reject(error);
-  },
-);
-
-function decodeJwt(token) {
+const getDecodedJwt = (token) => {
   try {
-    // 토큰을 "."으로 분리
+    // split token
     const [header, payload, signature] = token.split('.');
-    // 페이로드를 Base64Url에서 Base64로 변환
+    // convert payload : Base64Url -> Base64
     const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    // Base64를 디코딩하여 JSON 문자열로 변환
+    // decode Base64: to JSON string
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
@@ -77,12 +25,64 @@ function decodeJwt(token) {
         })
         .join(''),
     );
-    // JSON 문자열을 객체로 변환
+
+    // JSON string -> Object
     return JSON.parse(jsonPayload);
   } catch (error) {
-    console.error('JWT 디코딩 실패: ', error);
+    console.error(`JWT decoding failed: ${error}`);
     return null;
   }
-}
+};
+
+const handleRequest = async (config) => {
+  try {
+    let accessToken = sessionStorage.getItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN);
+    const refreshToken = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.REFRESH_TOKEN,
+    );
+
+    if (accessToken && refreshToken) {
+      const decoded = getDecodedJwt(accessToken);
+      const currentTime = Date.now().valueOf() / 1000;
+
+      if (decoded.exp < currentTime) {
+        const response = await api.post('/token', { token: refreshToken });
+        accessToken = response.data.accessToken;
+        sessionStorage.setItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      }
+
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  } catch (error) {
+    console.error(`Intercepter Error: ${error}`);
+    throw error;
+  }
+};
+
+const handleResponse = (response) => {
+  if (response.data.accessToken) {
+    const newAccessToken = response.data.accessToken;
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN);
+    sessionStorage.setItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
+  }
+
+  return response;
+};
+
+const handleResponseError = (error) => {
+  if (
+    error.response.status === 403 &&
+    error.response.data === 'Invalid refresh token'
+  ) {
+    window.location.href = 'index.html';
+  }
+
+  return Promise.reject(error);
+};
+
+api.interceptors.request.use(handleRequest, (error) => Promise.reject(error));
+api.interceptors.response.use(handleResponse, handleResponseError);
 
 export default api;

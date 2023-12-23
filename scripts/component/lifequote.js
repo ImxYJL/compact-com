@@ -10,7 +10,7 @@ let tabListItems = null;
 let contentBody = null;
 let contextMenu = null;
 
-let counter = 1;
+let counter = 0;
 
 let lifeQuoteMap = new Map();
 const tabNameList = {
