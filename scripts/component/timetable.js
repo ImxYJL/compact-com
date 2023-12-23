@@ -500,7 +500,7 @@ const setInputElements = () => {
   inputElements.color = timetableEl.querySelector('#selected-color');
 };
 
-const fetchTimetableData = async (userId) => {
+const fetchTimetableData = async () => {
   let timetableData = null;
   try {
     const response = await api.get(`http://localhost:3000/timetable/${userId}`);
@@ -521,7 +521,7 @@ const setTimetableEl = async () => {
   lectureItemsEl = timetableEl.querySelector('#lecture-list');
 
   userId = localStorage.getItem('userId');
-  await fetchTimetableData(userId);
+  await fetchTimetableData();
 
   setTable();
   setColorPicker();

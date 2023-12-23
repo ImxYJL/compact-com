@@ -193,7 +193,7 @@ const printQuoteMap = (key, item) => {
 const setFileListContent = async () => {
   contentBody.innerHTML = getInnerHtmlOfFileListEl();
 
-  await fetchLifeQuoteData(userId);
+  await fetchLifeQuoteData();
 
   lifeQuoteMap.forEach((item, key) => {
     printQuoteMap(key, item);
@@ -201,7 +201,7 @@ const setFileListContent = async () => {
   setTableEventListeners();
 };
 
-const fetchLifeQuoteData = async (userId) => {
+const fetchLifeQuoteData = async () => {
   let lifequoteData = null;
   try {
     const response = await api.get(`http://localhost:3000/lifequote/${userId}`);
