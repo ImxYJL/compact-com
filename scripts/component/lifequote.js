@@ -304,7 +304,6 @@ const clickTab = (e) => {
 };
 
 const createlifeQuoteEl = async () => {
-  // 이 생성 부분도 유틸로 빼면 좋을듯 다 똑같아서
   lifeQuoteEl = document.createElement('div');
   lifeQuoteEl.id = 'lifequote-window';
   lifeQuoteEl.className = 'window';
@@ -313,10 +312,11 @@ const createlifeQuoteEl = async () => {
 
   // Initialize some of the global variables
   userId = localStorage.getItem('userId');
-  //await fetchLifeQuoteData(userId);
-
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
+
+  await fetchLifeQuoteData(userId);
+  if (lifeQuoteMap.size > 0) setLifeQuoteContent();
 
   tabListItems.forEach((item) => {
     item.addEventListener('click', clickTab);
