@@ -30,7 +30,7 @@ router.post('/data', (req, res) => {
 
   try {
     jwt.verify(token, SECRET_KEY);
-    res.send('데이터를 성공적으로 받았습니다.');
+    res.send('Succeed');
   } catch (error) {
     res.status(401).send('Unauthorized');
   }
@@ -41,7 +41,7 @@ router.post('/signup', async (req, res) => {
 
   const userSnap = await getDocFromDb('user', userId);
   if (userSnap.exists()) {
-    return res.status(400).send('이미 존재하는 ID입니다.');
+    return res.status(400).send('This ID already exists.');
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -57,7 +57,7 @@ router.post('/signup', async (req, res) => {
     lifequoteMap: {},
   });
 
-  res.status(200).send('회원가입이 완료되었습니다.');
+  res.status(200).send('Completed sign up.');
 });
 
 router.post('/login', async (req, res) => {
@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
     !userSnap.exists() ||
     !(await bcrypt.compare(password, userSnap.data().password))
   ) {
-    return res.status(401).send('아이디 또는 비밀번호가 잘못되었습니다.');
+    return res.status(401).send('Your ID or password is incorrect.');
   }
 
   const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' });
@@ -77,7 +77,7 @@ router.post('/login', async (req, res) => {
   req.session.userId = userId;
 
   res.status(200).send({
-    message: '로그인에 성공하였습니다.',
+    message: 'succeed login',
     accessToken,
     refreshToken,
   });

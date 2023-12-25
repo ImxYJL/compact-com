@@ -7,7 +7,7 @@ const clickLoginBtn = async () => {
   const password = document.querySelector('#login-password').value;
 
   if (!userId || !password) {
-    alert('모든 필드를 입력해주세요.');
+    alert('Please fill out all fields.');
     return;
   }
 
@@ -22,13 +22,13 @@ const clickLoginBtn = async () => {
     sessionStorage.setItem('refreshToken', refreshToken);
   } catch (error) {
     if (error.response) {
-      alert('로그인 실패: ' + error.response.data);
+      alert(`Login failed: ${error.response.data}`);
       return;
     }
-    alert('에러:', error);
+    alert(error);
   }
 
-  localStorage.setItem('userId', userId); // api 호출을 위해 저장
+  localStorage.setItem('userId', userId); // To call API
   setInputsEmpty();
   window.location.href = 'index.html';
 };
@@ -38,19 +38,19 @@ const clickBackBtn = () => {
   logInEl.classList.remove('hidden');
 };
 
-// 회원가입
+// Sign up
 const clickOKBtn = async () => {
   const userId = document.querySelector('#signup-userid').value;
   const password = document.querySelector('#signup-password').value;
   const passwordRetry = document.querySelector('#signup-password-retry').value;
 
   if (!userId || !password || !passwordRetry) {
-    alert('모든 필드를 입력해주세요.');
+    alert('Please fill out all fields.');
     return;
   }
 
   if (password !== passwordRetry) {
-    alert('비밀번호가 일치하지 않습니다.');
+    alert('Passwords do not match.');
     return;
   }
 
@@ -59,17 +59,17 @@ const clickOKBtn = async () => {
       userId,
       password,
     });
-    alert('회원가입에 성공하였습니다.');
+    alert('You have successfully registered as a member.');
 
     setInputsEmpty();
 
-    clickBackBtn(); // 회원가입 후 로그인 화면으로 돌아가기
+    clickBackBtn(); // Return to login screen
   } catch (error) {
     if (error.response && error.response.status === 400) {
-      alert('이미 존재하는 ID입니다.');
+      alert('This ID already exists.');
       return;
     }
-    console.error('에러:', error);
+    console.error(error);
   }
 };
 
