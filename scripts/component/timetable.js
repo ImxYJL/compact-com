@@ -506,7 +506,7 @@ const fetchTimetableData = async () => {
     const response = await api.get(`http://localhost:3000/timetable/${userId}`);
     timetableData = response.data;
   } catch (error) {
-    alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
+    console.log(error);
   }
 
   entryIdCounter = timetableData.entryIdCounter;
@@ -529,24 +529,6 @@ const setTimetableEl = async () => {
   setInputElements();
   setTimetableElListeners();
   setTableEntries();
-
-  // (async () => {
-  //   try {
-  //     // 로컬 스토리지에서 토큰을 가져옵니다.
-  //     const accessToken = sessionStorage.getItem('accessToken');
-  //     // 토큰을 Authorization 헤더에 포함하여 요청을 보냅니다.
-  //     const response = await api.post('http://localhost:3000/data', 'data', {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     });
-
-  //     // 응답을 처리합니다.
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error('에러:', error);
-  //   }
-  // })();
 };
 
 const createTimetableEl = () => {

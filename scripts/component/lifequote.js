@@ -59,9 +59,9 @@ const deleteEntry = async (key) => {
     const response = await axios.delete(
       `http://localhost:3000/lifequote/${userId}/${key}`,
     );
-    console.log(response.data); // 서버로부터 온 응답을 출력합니다.
+    console.log(response.data);
   } catch (error) {
-    console.error(error); // 에러가 발생한 경우, 에러를 출력합니다.
+    console.error(error);
   }
 };
 
@@ -117,8 +117,8 @@ const setContextMenu = (e) => {
 };
 
 const dragLifeQuoteElWithContextMenu = () => {
-  console.log('드래그메뉴');
   const clickedRow = contentBody.querySelector('.highlighted');
+
   // Not re-adjust contextMenu coordinates
   // if current tab is not quotelist or if no columns are selected
   if (!isListTab() || !clickedRow) return;
@@ -132,6 +132,7 @@ const setTableEventListeners = () => {
 
   const rightClickRow = (e) => {
     const clickedRow = e.target.parentElement;
+
     // Exit if contextMenu already exists or no column is selected
     if (document.querySelector('#context-menu') || !clickedRow) return;
     setContextMenu(e);
@@ -185,7 +186,6 @@ const printQuoteMap = (key, item) => {
   const dateCell = row.insertCell(2);
   dateCell.textContent = item.date;
 
-  //tr에 속성붙여
   lifeQuoteCell.parentElement.setAttribute('data-key', key);
 };
 
@@ -206,9 +206,8 @@ const fetchLifeQuoteData = async () => {
   try {
     const response = await api.get(`http://localhost:3000/lifequote/${userId}`);
     lifequoteData = response.data;
-    console.log(lifequoteData);
   } catch (error) {
-    alert('Data를 가져오는 데 실패했습니다. ERROR: ' + error);
+    console.log(error);
   }
 
   counter = lifequoteData.counter;
@@ -219,7 +218,6 @@ const fetchLifeQuoteData = async () => {
 
 // Create a new word item
 const createQuote = async (selectedKey, textEl, authorEl) => {
-  // 입력창 비었는지 확인하는거 유틸로 빼도 될듯
   if (textEl.value.trim().length === 0 || authorEl.value.trim().length === 0) {
     textEl.value = authorEl.value = '';
     alert('Please enter texts.');
@@ -247,7 +245,6 @@ const createQuote = async (selectedKey, textEl, authorEl) => {
   textEl.value = authorEl.value = '';
 };
 
-// 입력창 세팅
 const setInputContent = (selectedKey) => {
   contentBody.innerHTML = getInnerHtmlOfInputEl();
 
@@ -275,7 +272,6 @@ const setHelpContent = () => {
   contentBody.innerHTML = getInnerHtmlOfHelpEl();
 };
 
-// 각 탭을 클릭할 때 실행될 함수
 const clickTab = (e) => {
   // Initialize the status of the all opened tabs
   tabListItems.forEach((item) => item.setAttribute('aria-selected', 'false'));
@@ -315,7 +311,7 @@ const createlifeQuoteEl = async () => {
   tabListItems = lifeQuoteEl.querySelectorAll('#lifequote-tablist li');
   contentBody = lifeQuoteEl.querySelector('#lifequote-body .window-body');
 
-  await fetchLifeQuoteData(userId);
+  await fetchLifeQuoteData();
   if (lifeQuoteMap.size > 0) setLifeQuoteContent();
 
   tabListItems.forEach((item) => {
@@ -326,8 +322,6 @@ const createlifeQuoteEl = async () => {
 };
 
 /* Functions to get each innerHtml  */
-
-// 전체 엘리먼트
 const getInnerHtmlOfLifeQuoteEl = () => {
   return `
         <div class="title-bar">
@@ -417,30 +411,30 @@ const getInnerHtmlOfFileListEl = () => {
 const getInnerHtmlOfHelpEl = () => {
   return `
         <div id="lifequote-help">
-            <p>도움말 페이지입니다.</p>
+            <p>This is a help page.</p>
             <ul class="tree-view">
                 <li>
                     Today's Life Quote
                     <ul>
-                        <li>등록된 명언을 랜덤으로 출력합니다.</li>
+                        <li>Prints registered sayings randomly.</li>
                     </ul>
                 </li>
                 <li>
                     Quote List
                         <ul>
                         <details>
-                            <summary>개요</summary>   
+                            <summary>Outline</summary>   
                             <ul>
-                                <li>등록된 명언들을 확인할 수 있습니다.</li>
-                                <li>명언 12자 이하, 작가 6자 이하까지만 표시합니다.</li>
+                                <li>You can check registered quotes.</li>
+                                <li>Only quotes of 12 characters or less and author of 6 characters or less are displayed.</li>
                             </ul>
                         </ul>
                         <ul>
                             <details>
-                                <summary>수정, 삭제</summary>   
+                                <summary>Edit, Delete</summary>   
                                 <ul>
-                                    <li>먼저 수정/삭제할 열을 클릭합니다.</li>
-                                    <li>이후 마우스 우클릭을 하면 수정/삭제할 수 있습니다.</li>
+                                    <li>First, click on the column you want to edit/delete.</li>
+                                    <li>You can then right-click to edit/delete.</li>
                                 </ul>
                             </details>
                         </ul>
@@ -449,7 +443,7 @@ const getInnerHtmlOfHelpEl = () => {
                 <li>
                     Edit
                     <ul>
-                        <li>명언을 추가/수정할 수 있습니다.</li>
+                        <li>You can add/edit quotes.</li>
                     </ul>
                 </li>
             </ul>
