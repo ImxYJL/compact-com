@@ -30,7 +30,6 @@ router.post('/data', (req, res) => {
 
   try {
     jwt.verify(token, SECRET_KEY);
-    console.log(req.body);
     res.send('데이터를 성공적으로 받았습니다.');
   } catch (error) {
     res.status(401).send('Unauthorized');

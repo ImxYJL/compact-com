@@ -295,7 +295,7 @@ const sendEntryObj = async (newEntryObj) => {
     const jsonResponse = await response.json();
     return jsonResponse;
   } catch (error) {
-    console.error('There has been a problem with your fetch operation:', error);
+    console.error(error);
   }
 };
 
@@ -444,9 +444,8 @@ const deleteEntry = async (key) => {
     const response = await axios.delete(
       `http://localhost:3000/timetable/${userId}/${key}`,
     );
-    console.log(response.data); // 서버로부터 온 응답을 출력합니다.
   } catch (error) {
-    console.error(error); // 에러가 발생한 경우, 에러를 출력합니다.
+    console.error(error);
   }
 };
 
@@ -506,7 +505,7 @@ const fetchTimetableData = async () => {
     const response = await api.get(`http://localhost:3000/timetable/${userId}`);
     timetableData = response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 
   entryIdCounter = timetableData.entryIdCounter;

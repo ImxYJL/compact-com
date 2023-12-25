@@ -59,7 +59,6 @@ const deleteEntry = async (key) => {
     const response = await axios.delete(
       `http://localhost:3000/lifequote/${userId}/${key}`,
     );
-    console.log(response.data);
   } catch (error) {
     console.error(error);
   }
@@ -207,7 +206,7 @@ const fetchLifeQuoteData = async () => {
     const response = await api.get(`http://localhost:3000/lifequote/${userId}`);
     lifequoteData = response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 
   counter = lifequoteData.counter;
