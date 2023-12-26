@@ -21,7 +21,13 @@ router.get('/lifequote/:userId', async (req, res) => {
   const { data } = await getLifequoteData(req.params.userId);
 
   const { counter, lifequoteMap } = data;
-  res.status(200).json({ counter, lifequoteMap });
+  res
+    .status(200)
+    .json({
+      message: 'Data retrieved successfully.',
+      entryIdCounter,
+      timetableMap,
+    });
 });
 
 router.delete('/lifequote/:userId/:key', async (req, res) => {
