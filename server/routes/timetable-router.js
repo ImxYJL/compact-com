@@ -20,7 +20,11 @@ router.get('/timetable/:userId', async (req, res) => {
 
   const { entryIdCounter, timetableMap } = timetableSnapshot.data();
 
-  res.status(200).json({ entryIdCounter, timetableMap });
+  res.status(200).json({
+    message: 'Data retrieved successfully.',
+    entryIdCounter,
+    timetableMap,
+  });
 });
 
 router.delete('/timetable/:userId/:key', async (req, res) => {
