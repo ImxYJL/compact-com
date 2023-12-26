@@ -20,7 +20,7 @@ router.get('/timetable/:userId', async (req, res) => {
 
   const { entryIdCounter, timetableMap } = timetableSnapshot.data();
 
-  res.status(200).send({ entryIdCounter, timetableMap });
+  res.status(200).json({ entryIdCounter, timetableMap });
 });
 
 router.delete('/timetable/:userId/:key', async (req, res) => {
@@ -32,7 +32,7 @@ router.delete('/timetable/:userId/:key', async (req, res) => {
     [`timetableMap.${key}`]: deleteField(),
   });
 
-  res.status(200).send({ message: 'Deleted successfully.' });
+  res.status(200).json({ message: 'Deleted successfully.' });
 });
 
 router.put('/timetable/:userId', async (req, res) => {
@@ -43,7 +43,7 @@ router.put('/timetable/:userId', async (req, res) => {
   const timetableSnapshot = await getDoc(timetableDoc);
 
   if (!timetableSnapshot.exists()) {
-    return res.status(404).send('No timetable exists.');
+    return res.status(404).json({ message: 'No timetable exists.' });
   }
 
   const timetableData = timetableSnapshot.data();
@@ -52,7 +52,7 @@ router.put('/timetable/:userId', async (req, res) => {
 
   await setDoc(timetableDoc, timetableData, { merge: true });
 
-  res.status(200).send('Completed successfully.');
+  res.status(200).json({ message: 'Wrote successfully.' });
 });
 
 export default router;

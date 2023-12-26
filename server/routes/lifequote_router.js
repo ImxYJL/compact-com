@@ -21,7 +21,7 @@ router.get('/lifequote/:userId', async (req, res) => {
   const { data } = await getLifequoteData(req.params.userId);
 
   const { counter, lifequoteMap } = data;
-  res.status(200).send({ counter, lifequoteMap });
+  res.status(200).json({ counter, lifequoteMap });
 });
 
 router.delete('/lifequote/:userId/:key', async (req, res) => {
@@ -31,7 +31,7 @@ router.delete('/lifequote/:userId/:key', async (req, res) => {
     [`lifequoteMap.${req.params.key}`]: deleteField(),
   });
 
-  res.status(200).send({ message: 'Deleted successfully' });
+  res.status(200).json({ message: 'Deleted successfully' });
 });
 
 router.put('/lifequote/:userId', async (req, res) => {
@@ -45,7 +45,7 @@ router.put('/lifequote/:userId', async (req, res) => {
 
   await setDoc(lifequoteDoc, lifequoteData, { merge: true });
 
-  res.status(200).send('Completed successfylly.');
+  res.status(200).json({ message: 'Wrote successfully.' });
 });
 
 export default router;
