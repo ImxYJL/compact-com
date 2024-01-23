@@ -56,7 +56,7 @@ const handleRequest = async (config) => {
 
     return config;
   } catch (error) {
-    console.error(`Intercepter Error: ${error}`);
+    //console.error(`Intercepter Error: ${error}`);
     throw error;
   }
 };
@@ -76,7 +76,12 @@ const handleResponseError = (error) => {
     error.response.status === 403 &&
     error.response.data === 'Invalid refresh token'
   ) {
-    window.location.href = 'index.html';
+    window.location.href = 'start.html';
+  }
+
+  if (error.response.status === 401) {
+    alert(error.response.data.message);
+    //return;
   }
 
   return Promise.reject(error);

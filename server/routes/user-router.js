@@ -1,3 +1,30 @@
+import express from 'express';
+import db from '../firebase.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import session from 'express-session';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+
+const SECRET_KEY = process.env.SECRET_KEY;
+
+const router = express.Router();
+
+router.use(
+  session({
+    secret: SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  }),
+);
+
+const getDocFromDb = async (collection, userId) => {
+  const docRef = doc(db, collection, userId);
+  const docSnap = await getDoc(docRef);
+
+  return docSnap;
+};
+
 router.post('/data', (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
 
@@ -48,10 +75,10 @@ router.post('/login', async (req, res) => {
       .json({ status: 'error', message: 'Your ID or password is incorrect.' });
   }
 
-  const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' });
+  const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '3h' });
   const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '7d' });
 
-  req.session.userId = userId;
+  //req.session.userId = userId;
 
   res.status(200).json({
     status: 'success',
@@ -81,3 +108,5 @@ router.post('/token', (req, res) => {
       .json({ status: 'error', message: 'Invalid refresh token' });
   }
 });
+
+export default router;

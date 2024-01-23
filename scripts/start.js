@@ -1,3 +1,5 @@
+import api from './utility/intercepter.js';
+
 const desktopEl = document.querySelector('#desktop');
 const logInEl = document.querySelector('#login-body');
 const signUpEl = document.querySelector('#signup-body');
@@ -12,7 +14,7 @@ const clickLoginBtn = async () => {
   }
 
   try {
-    const response = await axios.post('http://localhost:3000/login', {
+    const response = await api.post('http://localhost:3000/login', {
       userId,
       password,
     });
@@ -20,17 +22,16 @@ const clickLoginBtn = async () => {
     const { accessToken, refreshToken } = response.data;
     sessionStorage.setItem('accessToken', accessToken);
     sessionStorage.setItem('refreshToken', refreshToken);
-  } catch (error) {
-    if (error.response) {
-      alert(`Login failed: ${error.response.data}`);
-      return;
-    }
-    alert(error);
-  }
 
-  localStorage.setItem('userId', userId); // To call API
-  setInputsEmpty();
-  window.location.href = 'index.html';
+    localStorage.setItem('userId', userId); // To call API
+
+    setInputsEmpty();
+
+    window.location.href = 'index.html';
+  } catch (error) {
+    console.log(error);
+    return;
+  }
 };
 
 const clickBackBtn = () => {
