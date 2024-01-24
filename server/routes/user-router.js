@@ -75,8 +75,8 @@ router.post('/login', async (req, res) => {
       .json({ status: 'error', message: 'Your ID or password is incorrect.' });
   }
 
-  const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '3h' });
-  const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '7d' });
+  const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '30s' });
+  const refreshToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1m' });
 
   //req.session.userId = userId;
 
@@ -99,7 +99,7 @@ router.post('/token', (req, res) => {
   try {
     const payload = jwt.verify(refreshToken, SECRET_KEY);
     const accessToken = jwt.sign({ userId: payload.userId }, SECRET_KEY, {
-      expiresIn: '1h',
+      expiresIn: '30s',
     });
     res.status(200).json({ status: 'success', accessToken });
   } catch (error) {

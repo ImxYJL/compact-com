@@ -35,29 +35,41 @@ const getDecodedJwt = (token) => {
 };
 
 const handleRequest = async (config) => {
-  try {
-    let accessToken = sessionStorage.getItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN);
-    const refreshToken = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.REFRESH_TOKEN,
-    );
+  let accessToken = sessionStorage.getItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN);
+  const refreshToken = sessionStorage.getItem(
+    SESSION_STORAGE_KEYS.REFRESH_TOKEN,
+  );
 
-    if (accessToken && refreshToken) {
-      const decoded = getDecodedJwt(accessToken);
-      const currentTime = Date.now().valueOf() / 1000;
+  if (accessToken && refreshToken) {
+    const decoded = getDecodedJwt(accessToken);
+    const currentTime = Date.now().valueOf() / 1000;
 
-      if (decoded.exp < currentTime) {
-        const response = await api.post('/token', { token: refreshToken });
+    if (decoded && decoded.exp < currentTime) {
+      try {
+        const response = await axios.post('http://localhost:3000/token', {
+          token: refreshToken,
+        });
         accessToken = response.data.accessToken;
         sessionStorage.setItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      } catch (error) {
+        handleRefreshTokenError(error); // Separate error handling function
+        throw error;
       }
-
-      config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+};
 
-    return config;
-  } catch (error) {
-    //console.error(`Intercepter Error: ${error}`);
-    throw error;
+// Function to handle refresh token error
+const handleRefreshTokenError = (error) => {
+  if (error.response && error.response.status === 403) {
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.ACCESS_TOKEN);
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.REFRESH_TOKEN);
+    alert('Please login again.');
+    window.location.href = 'start.html';
+  } else {
+    console.error(`Error refreshing token: ${error}`);
   }
 };
 
@@ -81,7 +93,6 @@ const handleResponseError = (error) => {
 
   if (error.response.status === 401) {
     alert(error.response.data.message);
-    //return;
   }
 
   return Promise.reject(error);
